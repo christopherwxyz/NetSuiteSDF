@@ -1,0 +1,117 @@
+{
+    "name": "netsuitesdf",
+    "displayName": "NetSuiteSDF",
+    "description": "Plugin to integrate NetSuite SDF CLI",
+    "version": "0.0.1",
+    "publisher": "Markk",
+    "engines": {
+        "vscode": "^1.20.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.addDependencies",
+        "onCommand:extension.deploy",
+        "onCommand:extension.importBundle",
+        "onCommand:extension.importFiles",
+        "onCommand:extension.importObjects",
+        "onCommand:extension.listBundles",
+        "onCommand:extension.listFiles",
+        "onCommand:extension.listMissingDependencies",
+        "onCommand:extension.listObjects",
+        "onCommand:extension.preview",
+        "onCommand:extension.update",
+        "onCommand:extension.updateCustomRecordsWithInstances",
+        "onCommand:extension.validate",
+        "onCommand:extension.clearPassword"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.addDependencies",
+                "title": "Add Dependencies to Manifest",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.deploy",
+                "title": "Deploy to Account",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.importBundle",
+                "title": "Import Bundle",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.importFiles",
+                "title": "Import Files",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.importObjects",
+                "title": "Import Objects",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.listBundles",
+                "title": "List Bundles",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.listFiles",
+                "title": "List Files",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.listMissingDependencies",
+                "title": "List Missing Dependencies",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.listObjects",
+                "title": "List Objects",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.preview",
+                "title": "Preview",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.update",
+                "title": "Update",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.updateCustomRecordWithInstances",
+                "title": "Update Custom Record with Instances",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.validateProject",
+                "title": "Validate Project",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.clearPassword",
+                "title": "Clear Password",
+                "category": "SDF"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    }
+}
