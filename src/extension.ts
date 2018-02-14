@@ -9,20 +9,20 @@ export function activate(context: vscode.ExtensionContext) {
 
     const netsuiteSdf = new NetSuiteSDF(context);
 
-    let addDependencies = vscode.commands.registerCommand('extension.addDependencies', netsuiteSdf.addDependencies);
-    let clearPassword = vscode.commands.registerCommand('extension.clearPassword', netsuiteSdf.clearPassword);
-    let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy);
-    let importBundle = vscode.commands.registerCommand('extension.importBundle', netsuiteSdf.importBundle);
-    let importFiles = vscode.commands.registerCommand('extension.importFiles', netsuiteSdf.importFiles);
-    let importObjects = vscode.commands.registerCommand('extension.importObjects', netsuiteSdf.importObjects);
-    let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles);
-    let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles);
-    let listMissingDependencies = vscode.commands.registerCommand('extension.listMissingDependencies', netsuiteSdf.listMissingDependencies);
-    let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects);
-    let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview);
-    let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update);
-    let updateCustomRecordsWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordsWithInstances', netsuiteSdf.updateCustomRecordsWithInstances);
-    let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate);
+    let addDependencies = vscode.commands.registerCommand('extension.addDependencies', netsuiteSdf.addDependencies.bind(netsuiteSdf));
+    let clearPassword = vscode.commands.registerCommand('extension.clearPassword', netsuiteSdf.clearPassword.bind(netsuiteSdf));
+    let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
+    let importBundle = vscode.commands.registerCommand('extension.importBundle', netsuiteSdf.importBundle.bind(netsuiteSdf));
+    let importFiles = vscode.commands.registerCommand('extension.importFiles', netsuiteSdf.importFiles.bind(netsuiteSdf));
+    let importObjects = vscode.commands.registerCommand('extension.importObjects', netsuiteSdf.importObjects.bind(netsuiteSdf));
+    let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles.bind(netsuiteSdf));
+    let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles.bind(netsuiteSdf));
+    let listMissingDependencies = vscode.commands.registerCommand('extension.listMissingDependencies', netsuiteSdf.listMissingDependencies.bind(netsuiteSdf));
+    let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects.bind(netsuiteSdf));
+    let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
+    let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
+    let updateCustomRecordsWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordsWithInstances', netsuiteSdf.updateCustomRecordsWithInstances.bind(netsuiteSdf));
+    let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
     context.subscriptions.push(addDependencies);
     context.subscriptions.push(clearPassword);
