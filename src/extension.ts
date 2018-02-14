@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
     let listMissingDependencies = vscode.commands.registerCommand('extension.listMissingDependencies', netsuiteSdf.listMissingDependencies.bind(netsuiteSdf));
     let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects.bind(netsuiteSdf));
     let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
+    let refreshConfig = vscode.commands.registerCommand('extension.refreshConfig', netsuiteSdf.refreshConfig.bind(netsuiteSdf));
     let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
     let updateCustomRecordsWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordsWithInstances', netsuiteSdf.updateCustomRecordsWithInstances.bind(netsuiteSdf));
     let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));

@@ -12,6 +12,7 @@
     ],
     "activationEvents": [
         "onCommand:extension.addDependencies",
+        "onCommand:extension.clearPassword",
         "onCommand:extension.deploy",
         "onCommand:extension.importBundle",
         "onCommand:extension.importFiles",
@@ -21,10 +22,10 @@
         "onCommand:extension.listMissingDependencies",
         "onCommand:extension.listObjects",
         "onCommand:extension.preview",
+        "onCommand:extension.refreshConfig",
         "onCommand:extension.update",
         "onCommand:extension.updateCustomRecordsWithInstances",
-        "onCommand:extension.validate",
-        "onCommand:extension.clearPassword"
+        "onCommand:extension.validate"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -77,6 +78,11 @@
             {
                 "command": "extension.preview",
                 "title": "Preview",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.refreshConfig",
+                "title": "Refresh Config",
                 "category": "SDF"
             },
             {

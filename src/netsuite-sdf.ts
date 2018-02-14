@@ -1,8 +1,13 @@
 import * as vscode from 'vscode';
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { exec } from 'child_process';
 
 export class NetSuiteSDF {
+
+  rootPath: string;
+  sdfConfig: { [key: string]: any };
 
   constructor(private context: vscode.ExtensionContext) { }
 
@@ -41,17 +46,67 @@ export class NetSuiteSDF {
   listMissingDependencies() { }
   listObjects() { }
   preview() { }
+  refreshConfig() {
+    this.getConfig({ force: true });
+  }
   update() { }
   updateCustomRecordsWithInstances() { }
   validate() { }
   clearPassword() { }
 
-  runCommand(command: string) {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (workspaceFolders) {
-      vscode.window.showInformationMessage(`Workspace folder: ${workspaceFolders[0].uri.path}`);
-    } else {
-      vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdf or .sdfcli file.");
+  async runCommand(command: string) {
+    await this.getConfig();
+    if (this.sdfConfig) {
+
     }
+  }
+
+  async getConfig({ force = false }: { force?: boolean } = {}) {
+    if (force || !this.sdfConfig) {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (workspaceFolders) {
+        this.rootPath = workspaceFolders[0].uri.path;
+        const sdfPath = path.join(this.rootPath, '.sdfcli');
+        const sdfPathExists = await this.fileExists(sdfPath)
+        if (sdfPathExists) {
+          const buffer = await this.openFile(path.join(this.rootPath, '.sdfcli'));
+          const jsonString = buffer.toString();
+          try {
+            this.sdfConfig = JSON.parse(jsonString);
+          } catch (e) {
+            vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
+          }
+        } else {
+          vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
+        }
+      } else {
+        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdf or .sdfcli file.");
+      }
+    }
+  }
+
+  /**************/
+  /*** UTILS ****/
+  /**************/
+
+  openFile(path: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(data);
+      });
+    })
+  }
+
+  fileExists(path: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      try {
+        fs.exists(path, exists => resolve(exists));
+      } catch (e) {
+        reject(e);
+      }
+    })
   }
 }
