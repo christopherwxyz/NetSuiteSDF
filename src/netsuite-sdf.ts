@@ -12,6 +12,7 @@ export class NetSuiteSDF {
 
   activeEnvironment: Environment;
   addProjectParameter = true;
+  pw: string;
   rootPath: string;
   sdfConfig: SDFConfig;
 
@@ -22,7 +23,7 @@ export class NetSuiteSDF {
   }
 
   async deploy() {
-    this.runCommand('deploy', '-all');
+    this.runCommand('deploy');
   }
 
   importBundle() {
@@ -64,7 +65,20 @@ export class NetSuiteSDF {
     this.getConfig({ force: true });
   }
 
-  resetPassword() { }
+  async resetPassword() {
+    const _resetPassword = async () => {
+      const prompt = `Please enter your password for your ${this.activeEnvironment.name} account.`
+      const pw = await vscode.window.showInputBox({ prompt: prompt, password: true });
+      this.pw = pw;
+    }
+
+    if (this.sdfConfig) {
+      await _resetPassword();
+    } else {
+      await this.getConfig({ force: true });
+      await _resetPassword();
+    }
+  }
 
   async selectEnvironment() {
     const _selectEnvironment = async () => {
@@ -98,12 +112,12 @@ export class NetSuiteSDF {
     this.runCommand('validate');
   }
 
-
   async runCommand(command: string, ...args) {
     await this.getConfig();
-    if (this.sdfConfig) {
+    if (this.sdfConfig && this.activeEnvironment && this.pw) {
       const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
+      outputChannel.clear();
       outputChannel.show();
 
       const commandArray: string[] = [
@@ -124,7 +138,7 @@ export class NetSuiteSDF {
 
       sdfcli.stdout.on('data', (data) => {
         if (data.toString().includes('SuiteCloud Development Framework CLI')) {
-          sdfcli.stdin.write('PASSWORD\n');
+          sdfcli.stdin.write(`${this.pw}\n`);
         }
         outputChannel.append(`stdout: ${data}`);
       });
@@ -156,7 +170,10 @@ export class NetSuiteSDF {
           const jsonString = buffer.toString();
           try {
             this.sdfConfig = JSON.parse(jsonString);
-            return this.selectEnvironment();
+            await this.selectEnvironment();
+            if (this.activeEnvironment) {
+              await this.resetPassword();
+            }
           } catch (e) {
             vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
           }
@@ -166,6 +183,13 @@ export class NetSuiteSDF {
       } else {
         vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
       }
+    } else if (!this.activeEnvironment) {
+      await this.selectEnvironment();
+      if (this.activeEnvironment) {
+        await this.resetPassword();
+      }
+    } else if (!this.pw) {
+      await this.resetPassword();
     }
   }
 
