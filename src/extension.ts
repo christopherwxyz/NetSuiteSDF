@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
     let resetPassword = vscode.commands.registerCommand('extension.resetPassword', netsuiteSdf.resetPassword.bind(netsuiteSdf));
     let selectEnvironment = vscode.commands.registerCommand('extension.selectEnvironment', netsuiteSdf.selectEnvironment.bind(netsuiteSdf));
     let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
-    let updateCustomRecordsWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordsWithInstances', netsuiteSdf.updateCustomRecordsWithInstances.bind(netsuiteSdf));
+    let updateCustomRecordWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordWithInstances', netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf));
     let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
     context.subscriptions.push(addDependencies);
@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(resetPassword);
     context.subscriptions.push(selectEnvironment);
     context.subscriptions.push(update);
-    context.subscriptions.push(updateCustomRecordsWithInstances);
+    context.subscriptions.push(updateCustomRecordWithInstances);
     context.subscriptions.push(validate);
 
 }

@@ -7,6 +7,8 @@ import { spawn } from 'child_process';
 
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
+import { CLIParser } from './cli-parser';
+import { CLICommand } from './cli-command';
 
 export class NetSuiteSDF {
 
@@ -16,49 +18,51 @@ export class NetSuiteSDF {
   rootPath: string;
   sdfConfig: SDFConfig;
 
+
+
   constructor(private context: vscode.ExtensionContext) { }
 
   addDependencies() {
-    this.runCommand('adddependencies', '-all')
+    this.runCommand(CLICommand.AddDependencies, '-all')
   }
 
   async deploy() {
-    this.runCommand('deploy');
+    this.runCommand(CLICommand.Deploy);
   }
 
   importBundle() {
     this.addProjectParameter = false;
-    this.runCommand('importbundle');
+    this.runCommand(CLICommand.ImportBundle);
   }
 
   importFiles() {
-    this.runCommand('importfiles');
+    this.runCommand(CLICommand.ImportFiles);
   }
 
   importObjects() {
-    this.runCommand('importobjects');
+    this.runCommand(CLICommand.ImportObjects);
   }
 
   listBundles() {
     this.addProjectParameter = false;
-    this.runCommand('listbundles');
+    this.runCommand(CLICommand.ListBundles);
   }
 
   listFiles() {
     this.addProjectParameter = false;
-    this.runCommand('listfiles', '-folder "/SuiteScripts"');
+    this.runCommand(CLICommand.ListFiles, '-folder "/SuiteScripts"');
   }
 
   listMissingDependencies() {
-    this.runCommand('listmissingdependencies');
+    this.runCommand(CLICommand.ListMissingDependencies);
   }
 
   listObjects() {
-    this.runCommand('listobjects');
+    this.runCommand(CLICommand.ListObjects);
   }
 
   preview() {
-    this.runCommand('preview');
+    this.runCommand(CLICommand.Preview);
   }
 
   refreshConfig() {
@@ -101,18 +105,18 @@ export class NetSuiteSDF {
   }
 
   update() {
-    this.runCommand('update');
+    this.runCommand(CLICommand.Update);
   }
 
-  updateCustomRecordsWithInstances() {
-    this.runCommand('updatecustomrecordswithinstances');
+  updateCustomRecordWithInstances() {
+    this.runCommand(CLICommand.UpdateCustomRecordsWithInstances);
   }
 
   validate() {
-    this.runCommand('validate');
+    this.runCommand(CLICommand.Validate);
   }
 
-  async runCommand(command: string, ...args) {
+  async runCommand(command: CLICommand, ...args) {
     await this.getConfig();
     if (this.sdfConfig && this.activeEnvironment && this.pw) {
       const outputChannel = vscode.window.createOutputChannel('SDF');
@@ -120,13 +124,14 @@ export class NetSuiteSDF {
       outputChannel.clear();
       outputChannel.show();
 
-      const commandArray: string[] = [
+      const commandArray: [CLICommand, string, string, string, string] = [
         command,
         `-account ${this.activeEnvironment.account}`,
         `-email ${this.activeEnvironment.email}`,
         `-role ${this.activeEnvironment.role}`,
         `-url ${this.activeEnvironment.url}`,
       ];
+
       if (this.addProjectParameter) {
         commandArray.push(`-p "${this.rootPath}"`);
       }
@@ -136,24 +141,19 @@ export class NetSuiteSDF {
 
       const sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
 
-      sdfcli.stdout.on('data', (data) => {
-        if (data.toString().includes('SuiteCloud Development Framework CLI')) {
-          sdfcli.stdin.write(`${this.pw}\n`);
-        }
-        outputChannel.append(`stdout: ${data}`);
-      });
+      const cliParser = new CLIParser(sdfcli, command, outputChannel, this);
 
-      sdfcli.stderr.on('data', (data) => {
-        outputChannel.append(`stderr: ${data}`);
-      });
+      let collectedData = [];
 
-      sdfcli.on('close', (code) => {
-        outputChannel.append(`child process exited with code ${code}`);
-        this.cleanup();
-      });
+      sdfcli.stdout.on('data', cliParser.stdout.bind(cliParser));
+      sdfcli.stderr.on('data', cliParser.stderr.bind(cliParser));
+      sdfcli.on('close', cliParser.close.bind(cliParser));
     }
   }
 
+  /*
+  Clean up instance variables (or other matters) after thread closes.
+  */
   cleanup() {
     this.addProjectParameter = true;
   }
