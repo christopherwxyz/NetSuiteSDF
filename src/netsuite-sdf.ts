@@ -2,63 +2,146 @@ import * as vscode from 'vscode';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { exec } from 'child_process';
+import { chdir } from 'process';
+import { spawn } from 'child_process';
+
+import { Environment } from './environment';
+import { SDFConfig } from './sdf-config';
 
 export class NetSuiteSDF {
 
+  activeEnvironment: Environment;
+  addProjectParameter = true;
   rootPath: string;
-  sdfConfig: { [key: string]: any };
+  sdfConfig: SDFConfig;
 
   constructor(private context: vscode.ExtensionContext) { }
 
   addDependencies() {
-    vscode.window.showQuickPick(['Item1', 'Item2']).then(item => console.log(item));
+    this.runCommand('adddependencies', '-all')
   }
 
-  deploy() {
-    this.runCommand('deploy');
-    // const outputChannel = vscode.window.createOutputChannel('SDF');
-    // const workspaceFolders = vscode.workspace.workspaceFolders;
-    // outputChannel.show();
-    // if (workspaceFolders) {
-    //   for (let folder of vscode.workspace.workspaceFolders) {
-    //     outputChannel.append(folder.toString());
-    //   }
-    // } else {
-    //   outputChannel.append("No workspace folders found.");
-    // }
-    // exec('ls -al', (error, stdout, stderr) => {
-    //   outputChannel.show();
-    //   if (error) {
-    //     outputChannel.append(`exec error: ${error}`);
-    //     return;
-    //   }
-    //   outputChannel.append(`stdout: ${stdout}`);
-    //   outputChannel.append(`stderr: ${stderr}`);
-    // });
+  async deploy() {
+    this.runCommand('deploy', '-all');
   }
 
-  importBundle() { }
-  importFiles() { }
-  importObjects() { }
-  listBundles() { }
-  listFiles() { }
-  listMissingDependencies() { }
-  listObjects() { }
-  preview() { }
+  importBundle() {
+    this.addProjectParameter = false;
+    this.runCommand('importbundle');
+  }
+
+  importFiles() {
+    this.runCommand('importfiles');
+  }
+
+  importObjects() {
+    this.runCommand('importobjects');
+  }
+
+  listBundles() {
+    this.addProjectParameter = false;
+    this.runCommand('listbundles');
+  }
+
+  listFiles() {
+    this.addProjectParameter = false;
+    this.runCommand('listfiles', '-folder "/SuiteScripts"');
+  }
+
+  listMissingDependencies() {
+    this.runCommand('listmissingdependencies');
+  }
+
+  listObjects() {
+    this.runCommand('listobjects');
+  }
+
+  preview() {
+    this.runCommand('preview');
+  }
+
   refreshConfig() {
     this.getConfig({ force: true });
   }
-  update() { }
-  updateCustomRecordsWithInstances() { }
-  validate() { }
-  clearPassword() { }
 
-  async runCommand(command: string) {
+  resetPassword() { }
+
+  async selectEnvironment() {
+    const _selectEnvironment = async () => {
+      try {
+        const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => { acc[curr.name] = curr; return acc }, {});
+        const environmentNames = Object.keys(environments);
+        const environmentName = await vscode.window.showQuickPick(environmentNames);
+        this.activeEnvironment = environments[environmentName];
+      } catch (e) {
+        vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
+      }
+    }
+
+    if (this.sdfConfig) {
+      await _selectEnvironment();
+    } else {
+      await this.getConfig({ force: true });
+      await _selectEnvironment();
+    }
+  }
+
+  update() {
+    this.runCommand('update');
+  }
+
+  updateCustomRecordsWithInstances() {
+    this.runCommand('updatecustomrecordswithinstances');
+  }
+
+  validate() {
+    this.runCommand('validate');
+  }
+
+
+  async runCommand(command: string, ...args) {
     await this.getConfig();
     if (this.sdfConfig) {
+      const outputChannel = vscode.window.createOutputChannel('SDF');
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      outputChannel.show();
 
+      const commandArray: string[] = [
+        command,
+        `-account ${this.activeEnvironment.account}`,
+        `-email ${this.activeEnvironment.email}`,
+        `-role ${this.activeEnvironment.role}`,
+        `-url ${this.activeEnvironment.url}`,
+      ];
+      if (this.addProjectParameter) {
+        commandArray.push(`-p "${this.rootPath}"`);
+      }
+      for (let arg of args) {
+        commandArray.push(arg);
+      }
+
+      const sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
+
+      sdfcli.stdout.on('data', (data) => {
+        if (data.toString().includes('SuiteCloud Development Framework CLI')) {
+          sdfcli.stdin.write('PASSWORD\n');
+        }
+        outputChannel.append(`stdout: ${data}`);
+      });
+
+      sdfcli.stderr.on('data', (data) => {
+        outputChannel.append(`stderr: ${data}`);
+      });
+
+      sdfcli.on('close', (code) => {
+        outputChannel.append(`child process exited with code ${code}`);
+        this.cleanup();
+      });
     }
+  }
+
+  cleanup() {
+    this.addProjectParameter = true;
   }
 
   async getConfig({ force = false }: { force?: boolean } = {}) {
@@ -73,6 +156,7 @@ export class NetSuiteSDF {
           const jsonString = buffer.toString();
           try {
             this.sdfConfig = JSON.parse(jsonString);
+            return this.selectEnvironment();
           } catch (e) {
             vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
           }
@@ -80,7 +164,7 @@ export class NetSuiteSDF {
           vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
         }
       } else {
-        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdf or .sdfcli file.");
+        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
       }
     }
   }

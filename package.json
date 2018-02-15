@@ -12,7 +12,6 @@
     ],
     "activationEvents": [
         "onCommand:extension.addDependencies",
-        "onCommand:extension.clearPassword",
         "onCommand:extension.deploy",
         "onCommand:extension.importBundle",
         "onCommand:extension.importFiles",
@@ -23,6 +22,8 @@
         "onCommand:extension.listObjects",
         "onCommand:extension.preview",
         "onCommand:extension.refreshConfig",
+        "onCommand:extension.resetPassword",
+        "onCommand:extension.selectEnvironment",
         "onCommand:extension.update",
         "onCommand:extension.updateCustomRecordsWithInstances",
         "onCommand:extension.validate"
@@ -86,6 +87,11 @@
                 "category": "SDF"
             },
             {
+                "command": "extension.selectEnvironment",
+                "title": "Select Environment",
+                "category": "SDF"
+            },
+            {
                 "command": "extension.update",
                 "title": "Update",
                 "category": "SDF"
@@ -101,8 +107,8 @@
                 "category": "SDF"
             },
             {
-                "command": "extension.clearPassword",
-                "title": "Clear Password",
+                "command": "extension.resetPassword",
+                "title": "Reset Password",
                 "category": "SDF"
             }
         ]
