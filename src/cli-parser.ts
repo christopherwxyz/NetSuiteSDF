@@ -41,18 +41,21 @@ export class CLIParser {
   }
 
   private parseStdOut(data: string) {
-    switch (true) {
-      case data.startsWith('[INFO]'):
-      case data.startsWith('SuiteCloud Development Framework CLI'):
-      case data.startsWith('Done.'):
-        break;
-      case data.startsWith('Enter password:'):
-        const startIndex = data.indexOf('/');
-        data = data.substring(startIndex);
-      default:
-        const lines = data.trim().split('\n');
-        this.netsuiteSdf.collectedData = this.netsuiteSdf.collectedData.concat(lines);
-    }
+    const lines = data.trim().split('\n').reduce((acc: string[], value: string) => {
+      switch (true) {
+        case value.startsWith('[INFO]'):
+        case value.startsWith('SuiteCloud Development Framework CLI'):
+        case value.startsWith('Done.'):
+          return acc;
+        case value.startsWith('Enter password:'):
+          const startIndex = value.indexOf('/');
+          value = value.substring(startIndex);
+        default:
+          acc.push(value);
+          return acc;
+      }
+    }, []);
+    this.netsuiteSdf.collectedData = this.netsuiteSdf.collectedData.concat(lines);
   }
-
 }
+
