@@ -3,11 +3,20 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { chdir } from 'process';
-import { spawn, ChildProcess } from 'child_process';
+import { ChildProcess } from 'child_process';
+
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/concatMap';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
+
+import { spawn } from 'spawn-rx';
 
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
-import { CLIParser } from './cli-parser';
 import { CLICommand } from './cli-command';
 
 export class NetSuiteSDF {
@@ -19,7 +28,7 @@ export class NetSuiteSDF {
   pw: string;
   returnData = false;
   rootPath: string;
-  sdfcli: ChildProcess;
+  sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
   showOutput = true;
 
@@ -47,8 +56,8 @@ export class NetSuiteSDF {
     this.returnData = true;
     this.showOutput = false;
 
-    await this.listFiles();
-    const selectedFile = await vscode.window.showQuickPick(this.collectedData);
+    const collectedData = await this.listFiles();
+    const selectedFile = await vscode.window.showQuickPick(collectedData);
     this.runCommand(CLICommand.ImportFiles);
   }
 
@@ -192,24 +201,22 @@ export class NetSuiteSDF {
         commandArray.push(arg);
       }
 
-      this.sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
+      const stdinSubject = new Subject();
+
+      this.sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath, stdin: stdinSubject });
+
       this.showStatus();
 
-      const cliParser = new CLIParser(this.sdfcli, command, outputChannel, this);
+      const collectedData = await this.sdfcli
+        .concatMap(data => data.trim().split('\n'))
+        .map(line => line.startsWith('Enter password:') ? line.substring(line.indexOf('/')) : line)
+        .do(line => this.showOutput ? outputChannel.append(`${line}\n`) : null)
+        .do(line => line.includes('SuiteCloud Development Framework CLI') ? stdinSubject.next(`${this.pw}\n`) : null)
+        .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
+        .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
+        .toPromise();
 
-      let collectedData = [];
-
-      this.sdfcli.stdout.on('data', cliParser.stdout.bind(cliParser));
-      this.sdfcli.stderr.on('data', cliParser.stderr.bind(cliParser));
-      // this.sdfcli.on('close', cliParser.close.bind(cliParser));
-      return new Promise(resolve => {
-        this.sdfcli.on('close', (code: number, signal: string) => {
-          outputChannel.append(`Child process exited with code ${code}`);
-          this.cleanup();
-          resolve(code);
-        })
-      })
-
+      return collectedData;
     }
   }
 
