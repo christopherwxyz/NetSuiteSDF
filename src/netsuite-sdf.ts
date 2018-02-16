@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { chdir } from 'process';
-import { spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
@@ -16,6 +16,7 @@ export class NetSuiteSDF {
   addProjectParameter = true;
   pw: string;
   rootPath: string;
+  sdfcli: ChildProcess;
   sdfConfig: SDFConfig;
 
 
@@ -139,15 +140,15 @@ export class NetSuiteSDF {
         commandArray.push(arg);
       }
 
-      const sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
+      this.sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
 
-      const cliParser = new CLIParser(sdfcli, command, outputChannel, this);
+      const cliParser = new CLIParser(this.sdfcli, command, outputChannel, this);
 
       let collectedData = [];
 
-      sdfcli.stdout.on('data', cliParser.stdout.bind(cliParser));
-      sdfcli.stderr.on('data', cliParser.stderr.bind(cliParser));
-      sdfcli.on('close', cliParser.close.bind(cliParser));
+      this.sdfcli.stdout.on('data', cliParser.stdout.bind(cliParser));
+      this.sdfcli.stderr.on('data', cliParser.stderr.bind(cliParser));
+      this.sdfcli.on('close', cliParser.close.bind(cliParser));
     }
   }
 
@@ -156,6 +157,7 @@ export class NetSuiteSDF {
   */
   cleanup() {
     this.addProjectParameter = true;
+    this.sdfcli = undefined;
   }
 
   async getConfig({ force = false }: { force?: boolean } = {}) {
