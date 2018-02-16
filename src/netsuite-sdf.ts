@@ -14,12 +14,13 @@ export class NetSuiteSDF {
 
   activeEnvironment: Environment;
   addProjectParameter = true;
+  collectedData: string[] = [];
   pw: string;
+  returnData = false;
   rootPath: string;
   sdfcli: ChildProcess;
   sdfConfig: SDFConfig;
-
-
+  showOutput = true;
 
   constructor(private context: vscode.ExtensionContext) { }
 
@@ -36,7 +37,13 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.ImportBundle);
   }
 
-  importFiles() {
+  async importFiles() {
+    this.addProjectParameter = false;
+    this.returnData = true;
+    this.showOutput = false;
+
+    await this.listFiles();
+    const selectedFile = await vscode.window.showQuickPick(this.collectedData);
     this.runCommand(CLICommand.ImportFiles);
   }
 
@@ -51,7 +58,7 @@ export class NetSuiteSDF {
 
   listFiles() {
     this.addProjectParameter = false;
-    this.runCommand(CLICommand.ListFiles, '-folder "/SuiteScripts"');
+    return this.runCommand(CLICommand.ListFiles, '-folder "/SuiteScripts"');
   }
 
   listMissingDependencies() {
@@ -117,13 +124,15 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Validate);
   }
 
-  async runCommand(command: CLICommand, ...args) {
+  async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
     if (this.sdfConfig && this.activeEnvironment && this.pw) {
       const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
-      outputChannel.clear();
-      outputChannel.show();
+      if (this.showOutput) {
+        outputChannel.clear();
+        outputChannel.show();
+      }
 
       const commandArray: [CLICommand, string, string, string, string] = [
         command,
@@ -148,7 +157,15 @@ export class NetSuiteSDF {
 
       this.sdfcli.stdout.on('data', cliParser.stdout.bind(cliParser));
       this.sdfcli.stderr.on('data', cliParser.stderr.bind(cliParser));
-      this.sdfcli.on('close', cliParser.close.bind(cliParser));
+      // this.sdfcli.on('close', cliParser.close.bind(cliParser));
+      return new Promise(resolve => {
+        this.sdfcli.on('close', (code: number, signal: string) => {
+          outputChannel.append(`Child process exited with code ${code}`);
+          this.cleanup();
+          resolve(code);
+        })
+      })
+
     }
   }
 
@@ -156,9 +173,16 @@ export class NetSuiteSDF {
   Clean up instance variables (or other matters) after thread closes.
   */
   cleanup() {
+    if (!this.returnData) {
+      this.collectedData = [];
+    }
+
     this.addProjectParameter = true;
+    this.returnData = false;
     this.sdfcli = undefined;
+    this.showOutput = true;
   }
+
 
   async getConfig({ force = false }: { force?: boolean } = {}) {
     if (force || !this.sdfConfig) {
@@ -219,4 +243,5 @@ export class NetSuiteSDF {
       }
     })
   }
+
 }

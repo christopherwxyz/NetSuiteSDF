@@ -25,7 +25,9 @@ export class CLIParser {
     if (stringData.includes('SuiteCloud Development Framework CLI')) {
       this.sdfcli.stdin.write(`${this.netsuiteSdf.pw}\n`);
     }
-    this.outputChannel.append(stringData);
+    if (this.netsuiteSdf.showOutput) {
+      this.outputChannel.append(stringData);
+    }
     this.parseStdOut(stringData);
   }
 
@@ -34,7 +36,7 @@ export class CLIParser {
   }
 
   close(code: number) {
-    this.outputChannel.append(`child process exited with code ${code}`);
+    this.netsuiteSdf.collectedData = this.collectedData;
     this.netsuiteSdf.cleanup();
   }
 
@@ -49,7 +51,7 @@ export class CLIParser {
         data = data.substring(startIndex);
       default:
         const lines = data.trim().split('\n');
-        this.collectedData = this.collectedData.concat(lines);
+        this.netsuiteSdf.collectedData = this.netsuiteSdf.collectedData.concat(lines);
     }
   }
 
