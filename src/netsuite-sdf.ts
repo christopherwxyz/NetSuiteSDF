@@ -15,6 +15,7 @@ export class NetSuiteSDF {
   activeEnvironment: Environment;
   addProjectParameter = true;
   collectedData: string[] = [];
+  intervalId;
   pw: string;
   returnData = false;
   rootPath: string;
@@ -150,6 +151,7 @@ export class NetSuiteSDF {
       }
 
       this.sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath });
+      this.showStatus();
 
       const cliParser = new CLIParser(this.sdfcli, command, outputChannel, this);
 
@@ -176,8 +178,11 @@ export class NetSuiteSDF {
     if (!this.returnData) {
       this.collectedData = [];
     }
+    clearInterval(this.intervalId);
+    this.clearStatus();
 
     this.addProjectParameter = true;
+    this.intervalId = undefined;
     this.returnData = false;
     this.sdfcli = undefined;
     this.showOutput = true;
@@ -217,6 +222,20 @@ export class NetSuiteSDF {
     } else if (!this.pw) {
       await this.resetPassword();
     }
+  }
+
+  clearStatus() {
+    vscode.window.setStatusBarMessage('SDF');
+  }
+
+  showStatus(msg = "SDF ") {
+    const mode1 = "[= ]";
+    const mode2 = "[ =]";
+    let currentMode = mode1;
+    this.intervalId = setInterval(() => {
+      currentMode = currentMode === mode1 ? mode2 : mode1;
+      vscode.window.setStatusBarMessage(msg + currentMode);
+    }, 500);
   }
 
   /**************/
