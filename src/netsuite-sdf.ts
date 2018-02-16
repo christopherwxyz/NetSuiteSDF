@@ -25,11 +25,15 @@ export class NetSuiteSDF {
 
   constructor(private context: vscode.ExtensionContext) { }
 
+  /*********************/
+  /** SDF CLI Commands */
+  /*********************/
+
   addDependencies() {
     this.runCommand(CLICommand.AddDependencies, '-all')
   }
 
-  async deploy() {
+  deploy() {
     this.runCommand(CLICommand.Deploy);
   }
 
@@ -74,6 +78,76 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
+  update() {
+    this.runCommand(CLICommand.Update);
+  }
+
+  updateCustomRecordWithInstances() {
+    this.runCommand(CLICommand.UpdateCustomRecordsWithInstances);
+  }
+
+  validate() {
+    this.runCommand(CLICommand.Validate);
+  }
+
+  /*********************/
+  /** VS Code Helpers **/
+  /*********************/
+
+  cleanup() {
+    // Clean up instance variables (or other matters) after thread closes.
+    if (!this.returnData) {
+      this.collectedData = [];
+    }
+    clearInterval(this.intervalId);
+    this.clearStatus();
+
+    this.addProjectParameter = true;
+    this.intervalId = undefined;
+    this.returnData = false;
+    this.sdfcli = undefined;
+    this.showOutput = true;
+  }
+
+  clearStatus() {
+    vscode.window.setStatusBarMessage('SDF');
+  }
+
+  async getConfig({ force = false }: { force?: boolean } = {}) {
+    if (force || !this.sdfConfig) {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (workspaceFolders) {
+        this.rootPath = workspaceFolders[0].uri.path;
+        const sdfPath = path.join(this.rootPath, '.sdfcli');
+        const sdfPathExists = await this.fileExists(sdfPath)
+        if (sdfPathExists) {
+          const buffer = await this.openFile(path.join(this.rootPath, '.sdfcli'));
+          const jsonString = buffer.toString();
+          try {
+            this.sdfConfig = JSON.parse(jsonString);
+            await this.selectEnvironment();
+            if (this.activeEnvironment) {
+              await this.resetPassword();
+            }
+          } catch (e) {
+            vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
+          }
+        } else {
+          vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
+        }
+      } else {
+        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
+      }
+    } else if (!this.activeEnvironment) {
+      await this.selectEnvironment();
+      if (this.activeEnvironment) {
+        await this.resetPassword();
+      }
+    } else if (!this.pw) {
+      await this.resetPassword();
+    }
+  }
+
   refreshConfig() {
     this.getConfig({ force: true });
   }
@@ -91,38 +165,6 @@ export class NetSuiteSDF {
       await this.getConfig({ force: true });
       await _resetPassword();
     }
-  }
-
-  async selectEnvironment() {
-    const _selectEnvironment = async () => {
-      try {
-        const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => { acc[curr.name] = curr; return acc }, {});
-        const environmentNames = Object.keys(environments);
-        const environmentName = await vscode.window.showQuickPick(environmentNames);
-        this.activeEnvironment = environments[environmentName];
-      } catch (e) {
-        vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
-      }
-    }
-
-    if (this.sdfConfig) {
-      await _selectEnvironment();
-    } else {
-      await this.getConfig({ force: true });
-      await _selectEnvironment();
-    }
-  }
-
-  update() {
-    this.runCommand(CLICommand.Update);
-  }
-
-  updateCustomRecordWithInstances() {
-    this.runCommand(CLICommand.UpdateCustomRecordsWithInstances);
-  }
-
-  validate() {
-    this.runCommand(CLICommand.Validate);
   }
 
   async runCommand(command: CLICommand, ...args): Promise<any> {
@@ -171,61 +213,24 @@ export class NetSuiteSDF {
     }
   }
 
-  /*
-  Clean up instance variables (or other matters) after thread closes.
-  */
-  cleanup() {
-    if (!this.returnData) {
-      this.collectedData = [];
-    }
-    clearInterval(this.intervalId);
-    this.clearStatus();
-
-    this.addProjectParameter = true;
-    this.intervalId = undefined;
-    this.returnData = false;
-    this.sdfcli = undefined;
-    this.showOutput = true;
-  }
-
-
-  async getConfig({ force = false }: { force?: boolean } = {}) {
-    if (force || !this.sdfConfig) {
-      const workspaceFolders = vscode.workspace.workspaceFolders;
-      if (workspaceFolders) {
-        this.rootPath = workspaceFolders[0].uri.path;
-        const sdfPath = path.join(this.rootPath, '.sdfcli');
-        const sdfPathExists = await this.fileExists(sdfPath)
-        if (sdfPathExists) {
-          const buffer = await this.openFile(path.join(this.rootPath, '.sdfcli'));
-          const jsonString = buffer.toString();
-          try {
-            this.sdfConfig = JSON.parse(jsonString);
-            await this.selectEnvironment();
-            if (this.activeEnvironment) {
-              await this.resetPassword();
-            }
-          } catch (e) {
-            vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
-          }
-        } else {
-          vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
-        }
-      } else {
-        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
+  async selectEnvironment() {
+    const _selectEnvironment = async () => {
+      try {
+        const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => { acc[curr.name] = curr; return acc }, {});
+        const environmentNames = Object.keys(environments);
+        const environmentName = await vscode.window.showQuickPick(environmentNames);
+        this.activeEnvironment = environments[environmentName];
+      } catch (e) {
+        vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
       }
-    } else if (!this.activeEnvironment) {
-      await this.selectEnvironment();
-      if (this.activeEnvironment) {
-        await this.resetPassword();
-      }
-    } else if (!this.pw) {
-      await this.resetPassword();
     }
-  }
 
-  clearStatus() {
-    vscode.window.setStatusBarMessage('SDF');
+    if (this.sdfConfig) {
+      await _selectEnvironment();
+    } else {
+      await this.getConfig({ force: true });
+      await _selectEnvironment();
+    }
   }
 
   showStatus(msg = "SDF ") {
