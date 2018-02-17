@@ -18,13 +18,14 @@ import { spawn } from 'spawn-rx';
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
 import { CLICommand } from './cli-command';
-import { CustomObjects } from './custom-object';
+import { CustomObjects, CustomObject } from './custom-object';
 
 export class NetSuiteSDF {
 
   activeEnvironment: Environment;
   addProjectParameter = true;
   collectedData: string[] = [];
+  currentObject: CustomObject;
   intervalId;
   pw: string;
   returnData = false;
@@ -55,18 +56,30 @@ export class NetSuiteSDF {
   async importFiles() {
     this.addProjectParameter = false;
     this.returnData = true;
-    this.showOutput = true;
 
     const collectedData = await this.listFiles();
-    const selectedFile = await vscode.window.showQuickPick(collectedData);
-    if (selectedFile) {
-      this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
+    if (collectedData) {
+      const selectedFile = await vscode.window.showQuickPick(collectedData);
+      if (selectedFile) {
+        this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
+      }
     }
   }
 
   async importObjects() {
-    const selectedObject = await vscode.window.showQuickPick(CustomObjects);
-    this.runCommand(CLICommand.ImportObjects);
+    const collectedData = await this.listObjects();
+    if (collectedData) {
+      const objectId = await vscode.window.showQuickPick(collectedData);
+      if (objectId) {
+        this.runCommand(
+          CLICommand.ImportObjects,
+          `-scriptid ${objectId}`,
+          `-type ${this.currentObject.type}`,
+          `-destinationfolder ${this.currentObject.destination}`
+        );
+      }
+    }
+
   }
 
   listBundles() {
@@ -83,8 +96,15 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.ListMissingDependencies);
   }
 
-  listObjects() {
-    this.runCommand(CLICommand.ListObjects);
+  async listObjects() {
+    this.addProjectParameter = false;
+    this.returnData = true;
+
+    await this.getConfig();
+    this.currentObject = await vscode.window.showQuickPick(CustomObjects);
+    if (this.currentObject) {
+      return this.runCommand(CLICommand.ListObjects, `-type ${this.currentObject.type}`);
+    }
   }
 
   preview() {
@@ -111,6 +131,7 @@ export class NetSuiteSDF {
     // Clean up instance variables (or other matters) after thread closes.
     if (!this.returnData) {
       this.collectedData = [];
+      this.currentObject = undefined;
     }
     clearInterval(this.intervalId);
     this.clearStatus();
@@ -177,6 +198,15 @@ export class NetSuiteSDF {
     }
   }
 
+  mapCommandOutput(command: CLICommand, line: string) {
+    switch (command) {
+      case CLICommand.ListObjects:
+        return line.includes(':') ? line.split(':')[1] : line;
+      default:
+        return line;
+    }
+  }
+
   refreshConfig() {
     this.getConfig({ force: true });
   }
@@ -232,6 +262,7 @@ export class NetSuiteSDF {
         .do(line => this.showOutput ? outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
+        .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise();
 
