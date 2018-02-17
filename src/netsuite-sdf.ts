@@ -68,7 +68,9 @@ export class NetSuiteSDF {
 
   async importObjects() {
     const collectedData = await this.listObjects();
+
     if (collectedData) {
+      this.createPath(this.currentObject.destination);
       const objectId = await vscode.window.showQuickPick(collectedData);
       if (objectId) {
         this.runCommand(
@@ -305,15 +307,25 @@ export class NetSuiteSDF {
   /*** UTILS ****/
   /**************/
 
-  openFile(path: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      fs.readFile(path, (err, data) => {
-        if (err) {
-          reject(err)
+  createPath(targetDir) {
+    // Strip leading '/'
+    targetDir = targetDir.substring(1);
+    const sep = path.sep;
+    const initDir = this.rootPath;
+    const baseDir = this.rootPath;
+
+    targetDir.split(sep).reduce((parentDir, childDir) => {
+      const curDir = path.resolve(baseDir, parentDir, childDir);
+      try {
+        fs.mkdirSync(curDir);
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          throw err;
         }
-        resolve(data);
-      });
-    })
+      }
+
+      return curDir;
+    }, initDir);
   }
 
   fileExists(path: string): Promise<boolean> {
@@ -323,6 +335,17 @@ export class NetSuiteSDF {
       } catch (e) {
         reject(e);
       }
+    })
+  }
+
+  openFile(path: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(data);
+      });
     })
   }
 
