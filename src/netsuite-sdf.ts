@@ -268,6 +268,7 @@ export class NetSuiteSDF {
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise();
 
+      stdinSubject.complete();
       this.cleanup();
       return collectedData;
     }
