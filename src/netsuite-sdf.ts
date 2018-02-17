@@ -54,11 +54,13 @@ export class NetSuiteSDF {
   async importFiles() {
     this.addProjectParameter = false;
     this.returnData = true;
-    this.showOutput = false;
+    this.showOutput = true;
 
     const collectedData = await this.listFiles();
     const selectedFile = await vscode.window.showQuickPick(collectedData);
-    this.runCommand(CLICommand.ImportFiles);
+    if (selectedFile) {
+      this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
+    }
   }
 
   importObjects() {
@@ -157,6 +159,22 @@ export class NetSuiteSDF {
     }
   }
 
+  handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<any>) {
+    switch (true) {
+      case line.includes('SuiteCloud Development Framework CLI'):
+        stdinSubject.next(`${this.pw}\n`);
+        break;
+      case line.includes('Type YES to continue'):
+      case line.includes('enter YES to continue'):
+      case line.includes('Type YES to update the manifest file'):
+      case line.includes('Proceed with deploy?'):
+        stdinSubject.next('YES\n');
+        break;
+      default:
+        break;
+    }
+  }
+
   refreshConfig() {
     this.getConfig({ force: true });
   }
@@ -182,7 +200,6 @@ export class NetSuiteSDF {
       const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.showOutput) {
-        outputChannel.clear();
         outputChannel.show();
       }
 
@@ -209,13 +226,14 @@ export class NetSuiteSDF {
 
       const collectedData = await this.sdfcli
         .concatMap(data => data.trim().split('\n'))
-        .map(line => line.startsWith('Enter password:') ? line.substring(line.indexOf('/')) : line)
+        .map(line => line.startsWith('Enter password:') ? line.substring(15) : line)
         .do(line => this.showOutput ? outputChannel.append(`${line}\n`) : null)
-        .do(line => line.includes('SuiteCloud Development Framework CLI') ? stdinSubject.next(`${this.pw}\n`) : null)
+        .do(line => this.handleStdIn(line, command, stdinSubject))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise();
 
+      this.cleanup();
       return collectedData;
     }
   }
