@@ -18,6 +18,7 @@ import { spawn } from 'spawn-rx';
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
 import { CLICommand } from './cli-command';
+import { CustomObjects } from './custom-object';
 
 export class NetSuiteSDF {
 
@@ -63,7 +64,8 @@ export class NetSuiteSDF {
     }
   }
 
-  importObjects() {
+  async importObjects() {
+    const selectedObject = await vscode.window.showQuickPick(CustomObjects);
     this.runCommand(CLICommand.ImportObjects);
   }
 
