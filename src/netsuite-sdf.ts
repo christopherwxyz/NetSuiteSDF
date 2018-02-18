@@ -154,10 +154,10 @@ export class NetSuiteSDF {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.path;
-        const sdfPath = path.join(this.rootPath, '.sdfcli');
+        const sdfPath = path.join(this.rootPath, '.sdfcli.json');
         const sdfPathExists = await this.fileExists(sdfPath)
         if (sdfPathExists) {
-          const buffer = await this.openFile(path.join(this.rootPath, '.sdfcli'));
+          const buffer = await this.openFile(path.join(this.rootPath, '.sdfcli.json'));
           const jsonString = buffer.toString();
           try {
             this.sdfConfig = JSON.parse(jsonString);
