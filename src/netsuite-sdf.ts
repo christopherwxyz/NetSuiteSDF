@@ -23,16 +23,17 @@ import { CustomObjects, CustomObject } from './custom-object';
 export class NetSuiteSDF {
 
   activeEnvironment: Environment;
-  addProjectParameter = true;
   collectedData: string[] = [];
   currentObject: CustomObject;
+  doAddProjectParameter = true;
+  doReturnData = false;
+  doSendPassword = true;
+  doShowOutput = true;
   intervalId;
   password: string;
-  returnData = false;
   rootPath: string;
   sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
-  showOutput = true;
 
   constructor(private context: vscode.ExtensionContext) { }
 
@@ -41,11 +42,13 @@ export class NetSuiteSDF {
   /*********************/
 
   async addDependencies() {
+    this.doSendPassword = false;
+
     await this.getConfig();
     const projectName = this.sdfConfig.projectName || "PROJECT_NAME_MISSING";
     const defaultXml = `
     <manifest projecttype="ACCOUNTCUSTOMIZATION">
-      <projectname>${this.sdfConfig.projectName}</projectname>
+      <projectname>${projectName}</projectname>
       <frameworkversion>1.0</frameworkversion>
     </manifest>
     `;
@@ -60,13 +63,13 @@ export class NetSuiteSDF {
   }
 
   importBundle() {
-    this.addProjectParameter = false;
+    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ImportBundle);
   }
 
   async importFiles() {
-    this.addProjectParameter = false;
-    this.returnData = true;
+    this.doAddProjectParameter = false;
+    this.doReturnData = true;
 
     const collectedData = await this.listFiles();
     if (collectedData) {
@@ -96,22 +99,23 @@ export class NetSuiteSDF {
   }
 
   listBundles() {
-    this.addProjectParameter = false;
+    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ListBundles);
   }
 
   listFiles() {
-    this.addProjectParameter = false;
+    this.doAddProjectParameter = false;
     return this.runCommand(CLICommand.ListFiles, '-folder "/SuiteScripts"');
   }
 
   listMissingDependencies() {
+    this.doSendPassword = false;
     this.runCommand(CLICommand.ListMissingDependencies);
   }
 
   async listObjects() {
-    this.addProjectParameter = false;
-    this.returnData = true;
+    this.doAddProjectParameter = false;
+    this.doReturnData = true;
 
     await this.getConfig();
     this.currentObject = await vscode.window.showQuickPick(CustomObjects);
@@ -141,19 +145,20 @@ export class NetSuiteSDF {
   /*********************/
 
   cleanup() {
-    // Clean up instance variables (or other matters) after thread closes.
-    if (!this.returnData) {
+    // Clean up default instance variables (or other matters) after thread closes.
+    if (!this.doReturnData) {
       this.collectedData = [];
       this.currentObject = undefined;
     }
     clearInterval(this.intervalId);
     this.clearStatus();
 
-    this.addProjectParameter = true;
+    this.doAddProjectParameter = true;
+    this.doReturnData = false;
+    this.doSendPassword = true;
     this.intervalId = undefined;
-    this.returnData = false;
     this.sdfcli = undefined;
-    this.showOutput = true;
+    this.doShowOutput = true;
   }
 
   clearStatus() {
@@ -197,7 +202,7 @@ export class NetSuiteSDF {
 
   handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
     switch (true) {
-      case (line.includes('SuiteCloud Development Framework CLI') && command !== CLICommand.AddDependencies):
+      case (line.includes('SuiteCloud Development Framework CLI') && this.doSendPassword):
         stdinSubject.next(`${this.password}\n`);
         break;
       case line.includes('Type YES to continue'):
@@ -244,7 +249,7 @@ export class NetSuiteSDF {
     if (this.sdfConfig && this.activeEnvironment && this.password) {
       const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
-      if (this.showOutput) {
+      if (this.doShowOutput) {
         outputChannel.show();
       }
 
@@ -256,7 +261,7 @@ export class NetSuiteSDF {
         `-url ${this.activeEnvironment.url}`,
       ];
 
-      if (this.addProjectParameter) {
+      if (this.doAddProjectParameter) {
         commandArray.push(`-p "${this.rootPath}"`);
       }
       for (let arg of args) {
@@ -272,7 +277,7 @@ export class NetSuiteSDF {
       const collectedData = await this.sdfcli
         .concatMap(data => data.trim().split('\n'))
         .map(line => line.startsWith('Enter password:') ? line.substring(15) : line)
-        .do(line => this.showOutput ? outputChannel.append(`${line}\n`) : null)
+        .do(line => this.doShowOutput ? outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .map(line => this.mapCommandOutput(command, line))
