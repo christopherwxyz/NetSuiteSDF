@@ -17,6 +17,7 @@ import { spawn } from 'spawn-rx';
 
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
+import { SdfCliJson } from './sdf-cli-json';
 import { CLICommand } from './cli-command';
 import { CustomObjects, CustomObject } from './custom-object';
 
@@ -185,7 +186,8 @@ export class NetSuiteSDF {
             vscode.window.showErrorMessage(`Unable to parse .sdfcli.json file found at project root: ${this.rootPath}`);
           }
         } else {
-          vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
+          fs.writeFileSync(path.join(this.rootPath, '.sdfcli.json'), JSON.stringify(SdfCliJson));
+          vscode.window.showErrorMessage(`No .sdfcli.json file found at project root: ${this.rootPath}. Generated a blank .sdfcli.json template.`);
         }
       } else {
         vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
@@ -299,6 +301,10 @@ export class NetSuiteSDF {
         } else {
           const environmentName = await vscode.window.showQuickPick(environmentNames);
           this.activeEnvironment = environments[environmentName];
+          if (this.activeEnvironment.account === '00000000') {
+            vscode.window.showErrorMessage('.sdfcli.json account number appears to be wrong. Are you still using the blank template?');
+            this.activeEnvironment = undefined;
+          }
         }
       } catch (e) {
         vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
