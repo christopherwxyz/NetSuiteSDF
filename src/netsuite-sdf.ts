@@ -27,7 +27,7 @@ export class NetSuiteSDF {
   collectedData: string[] = [];
   currentObject: CustomObject;
   intervalId;
-  pw: string;
+  password: string;
   returnData = false;
   rootPath: string;
   sdfcli: Observable<string>;
@@ -40,8 +40,19 @@ export class NetSuiteSDF {
   /** SDF CLI Commands */
   /*********************/
 
-  addDependencies() {
-    this.runCommand(CLICommand.AddDependencies, '-all')
+  async addDependencies() {
+    await this.getConfig();
+    const projectName = this.sdfConfig.projectName || "PROJECT_NAME_MISSING";
+    const defaultXml = `
+    <manifest projecttype="ACCOUNTCUSTOMIZATION">
+      <projectname>${this.sdfConfig.projectName}</projectname>
+      <frameworkversion>1.0</frameworkversion>
+    </manifest>
+    `;
+    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function (err) {
+      if (err) throw err;
+    });
+    await this.runCommand(CLICommand.AddDependencies, '-all');
   }
 
   deploy() {
@@ -166,7 +177,7 @@ export class NetSuiteSDF {
               await this.resetPassword();
             }
           } catch (e) {
-            vscode.window.showErrorMessage(`Unable to parse .sdfcli file found at project root: ${this.rootPath}`);
+            vscode.window.showErrorMessage(`Unable to parse .sdfcli.json file found at project root: ${this.rootPath}`);
           }
         } else {
           vscode.window.showErrorMessage(`No .sdfcli file found at project root: ${this.rootPath}`);
@@ -179,15 +190,15 @@ export class NetSuiteSDF {
       if (this.activeEnvironment) {
         await this.resetPassword();
       }
-    } else if (!this.pw) {
+    } else if (!this.password) {
       await this.resetPassword();
     }
   }
 
-  handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<any>) {
+  handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
     switch (true) {
-      case line.includes('SuiteCloud Development Framework CLI'):
-        stdinSubject.next(`${this.pw}\n`);
+      case (line.includes('SuiteCloud Development Framework CLI') && command !== CLICommand.AddDependencies):
+        stdinSubject.next(`${this.password}\n`);
         break;
       case line.includes('Type YES to continue'):
       case line.includes('enter YES to continue'):
@@ -216,8 +227,8 @@ export class NetSuiteSDF {
   async resetPassword() {
     const _resetPassword = async () => {
       const prompt = `Please enter your password for your ${this.activeEnvironment.name} account.`
-      const pw = await vscode.window.showInputBox({ prompt: prompt, password: true });
-      this.pw = pw;
+      const password = await vscode.window.showInputBox({ prompt: prompt, password: true });
+      this.password = password;
     }
 
     if (this.sdfConfig) {
@@ -230,7 +241,7 @@ export class NetSuiteSDF {
 
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
-    if (this.sdfConfig && this.activeEnvironment && this.pw) {
+    if (this.sdfConfig && this.activeEnvironment && this.password) {
       const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.showOutput) {
@@ -252,7 +263,7 @@ export class NetSuiteSDF {
         commandArray.push(arg);
       }
 
-      const stdinSubject = new Subject();
+      const stdinSubject = new Subject<string>();
 
       this.sdfcli = spawn('sdfcli', commandArray, { cwd: this.rootPath, stdin: stdinSubject });
 
@@ -268,7 +279,6 @@ export class NetSuiteSDF {
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise();
 
-      stdinSubject.complete();
       this.cleanup();
       return collectedData;
     }
@@ -279,8 +289,12 @@ export class NetSuiteSDF {
       try {
         const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => { acc[curr.name] = curr; return acc }, {});
         const environmentNames = Object.keys(environments);
-        const environmentName = await vscode.window.showQuickPick(environmentNames);
-        this.activeEnvironment = environments[environmentName];
+        if (environmentNames.length === 1) {
+          this.activeEnvironment = environments[environmentNames[0]]
+        } else {
+          const environmentName = await vscode.window.showQuickPick(environmentNames);
+          this.activeEnvironment = environments[environmentName];
+        }
       } catch (e) {
         vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
       }
