@@ -314,6 +314,7 @@ export class NetSuiteSDF {
           this.activeEnvironment = environments[environmentName];
           if (this.activeEnvironment.account === '00000000') {
             vscode.window.showErrorMessage('.sdfcli.json account number appears to be wrong. Are you still using the blank template?');
+            this.sdfConfig = undefined;
             this.activeEnvironment = undefined;
           }
         }
