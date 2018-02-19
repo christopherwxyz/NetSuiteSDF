@@ -60,10 +60,12 @@ export class NetSuiteSDF {
   }
 
   deploy() {
+    // TODO
     this.runCommand(CLICommand.Deploy);
   }
 
   importBundle() {
+    // TODO?
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ImportBundle);
   }
@@ -100,6 +102,7 @@ export class NetSuiteSDF {
   }
 
   listBundles() {
+    // TODO?
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ListBundles);
   }
@@ -130,10 +133,12 @@ export class NetSuiteSDF {
   }
 
   update() {
+    // TODO
     this.runCommand(CLICommand.Update);
   }
 
   updateCustomRecordWithInstances() {
+    // TODO
     this.runCommand(CLICommand.UpdateCustomRecordsWithInstances);
   }
 
