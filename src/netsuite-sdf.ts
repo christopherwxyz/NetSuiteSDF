@@ -202,6 +202,17 @@ export class NetSuiteSDF {
     }
   }
 
+  handlePassword(line: string, command: CLICommand, stdinSubject: Subject<string>) {
+    if (line.startsWith('Enter password:')) {
+      line = line.substring(15);
+    }
+    if (line.includes('You have entered an invalid email address or password. Please try again.')) {
+      this.password = undefined;
+      vscode.window.showErrorMessage("Invalid email or password. Be careful! Too many attempts will lock you out!");
+    }
+    return line;
+  }
+
   handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
     switch (true) {
       case (line.includes('SuiteCloud Development Framework CLI') && this.doSendPassword):
@@ -278,7 +289,7 @@ export class NetSuiteSDF {
 
       const collectedData = await this.sdfcli
         .concatMap(data => data.trim().split('\n'))
-        .map(line => line.startsWith('Enter password:') ? line.substring(15) : line)
+        .map(line => this.handlePassword(line, command, stdinSubject))
         .do(line => this.doShowOutput ? outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
