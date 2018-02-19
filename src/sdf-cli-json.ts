@@ -1,4 +1,4 @@
-export const SdfCliJson = {
+export const SdfCliJson = `{
   "projectName": "ProjectName",
   "environments": [
     {
@@ -16,4 +16,4 @@ export const SdfCliJson = {
       "email": "email@address.com"
     }
   ]
-}
+}`;

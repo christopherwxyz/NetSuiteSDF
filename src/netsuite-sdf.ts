@@ -186,7 +186,7 @@ export class NetSuiteSDF {
             vscode.window.showErrorMessage(`Unable to parse .sdfcli.json file found at project root: ${this.rootPath}`);
           }
         } else {
-          fs.writeFileSync(path.join(this.rootPath, '.sdfcli.json'), JSON.stringify(SdfCliJson));
+          fs.writeFileSync(path.join(this.rootPath, '.sdfcli.json'), SdfCliJson);
           vscode.window.showErrorMessage(`No .sdfcli.json file found at project root: ${this.rootPath}. Generated a blank .sdfcli.json template.`);
         }
       } else {
