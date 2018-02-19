@@ -102,7 +102,7 @@
                 "category": "SDF"
             },
             {
-                "command": "extension.validateProject",
+                "command": "extension.validate",
                 "title": "Validate Project",
                 "category": "SDF"
             },
