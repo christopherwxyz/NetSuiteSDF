@@ -33,10 +33,17 @@ export class NetSuiteSDF {
   intervalId;
   password: string;
   rootPath: string;
+  savedStatus: string;
   sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
+  statusBarDefault = 'SDF';
 
-  constructor(private context: vscode.ExtensionContext) { }
+  constructor(private context: vscode.ExtensionContext, private statusBar: vscode.StatusBarItem) {
+    this.statusBar.text = this.statusBarDefault;
+    this.statusBar.tooltip = 'Click here to select your NetSuite environment';
+    this.statusBar.command = 'extension.selectEnvironment';
+    this.statusBar.show();
+  }
 
   /*********************/
   /** SDF CLI Commands */
@@ -168,7 +175,12 @@ export class NetSuiteSDF {
   }
 
   clearStatus() {
-    vscode.window.setStatusBarMessage('SDF');
+    if (this.savedStatus) {
+      this.statusBar.text = this.savedStatus;
+      this.savedStatus = undefined;
+    } else {
+      this.statusBar.text = this.statusBarDefault;
+    }
   }
 
   async getConfig({ force = false }: { force?: boolean } = {}) {
@@ -195,7 +207,7 @@ export class NetSuiteSDF {
           vscode.window.showErrorMessage(`No .sdfcli.json file found at project root: ${this.rootPath}. Generated a blank .sdfcli.json template.`);
         }
       } else {
-        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli file.");
+        vscode.window.showErrorMessage("No workspace folder found. SDF plugin cannot work without a workspace folder root containing a .sdfcli.json file.");
       }
     } else if (!this.activeEnvironment) {
       await this.selectEnvironment();
@@ -313,7 +325,10 @@ export class NetSuiteSDF {
         const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => { acc[curr.name] = curr; return acc }, {});
         const environmentNames = Object.keys(environments);
         if (environmentNames.length === 1) {
-          this.activeEnvironment = environments[environmentNames[0]]
+          const environmentName = environmentNames[0];
+          this.activeEnvironment = environments[environmentName];
+          this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
+          vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
         } else {
           const environmentName = await vscode.window.showQuickPick(environmentNames);
           this.activeEnvironment = environments[environmentName];
@@ -321,10 +336,14 @@ export class NetSuiteSDF {
             vscode.window.showErrorMessage('.sdfcli.json account number appears to be wrong. Are you still using the blank template?');
             this.sdfConfig = undefined;
             this.activeEnvironment = undefined;
+            this.clearStatus();
+          } else {
+            this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
           }
         }
       } catch (e) {
-        vscode.window.showErrorMessage('Unable to parse .sdfcli environments. Please check repo for .sdfcli JSON formatting.');
+        vscode.window.showErrorMessage('Unable to parse .sdfcli.json environments. Please check repo for .sdfcli.json formatting.');
+        this.clearStatus();
       }
     }
 
@@ -336,13 +355,14 @@ export class NetSuiteSDF {
     }
   }
 
-  showStatus(msg = "SDF ") {
-    const mode1 = "[= ]";
-    const mode2 = "[ =]";
+  showStatus() {
+    this.savedStatus = this.statusBar.text;
+    const mode1 = " [= ]";
+    const mode2 = " [ =]";
     let currentMode = mode1;
     this.intervalId = setInterval(() => {
       currentMode = currentMode === mode1 ? mode2 : mode1;
-      vscode.window.setStatusBarMessage(msg + currentMode);
+      this.statusBar.text = (this.savedStatus + currentMode);
     }, 500);
   }
 

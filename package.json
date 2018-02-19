@@ -11,6 +11,8 @@
         "Other"
     ],
     "activationEvents": [
+        "workspaceContains:**/.sdf",
+        "workspaceContains:**/.sdfcli.json",
         "onCommand:extension.addDependencies",
         "onCommand:extension.deploy",
         "onCommand:extension.importBundle",
