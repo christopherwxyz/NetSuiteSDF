@@ -6,7 +6,7 @@
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
     "engines": {
-        "vscode": "^1.20.0"
+        "vscode": "^1.10.0"
     },
     "categories": [
         "Other"
