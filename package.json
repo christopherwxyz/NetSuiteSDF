@@ -2,7 +2,7 @@
     "name": "netsuitesdf",
     "displayName": "NetSuiteSDF",
     "description": "Plugin to integrate NetSuite SDF CLI",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "publisher": "Markk",
     "engines": {
         "vscode": "^1.20.0"
