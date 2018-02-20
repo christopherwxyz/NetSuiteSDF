@@ -5,7 +5,7 @@ This is a Visual Studio Code wrapper around the NetSuite SDF command-line interf
 
 ## Inspiration
 
-This is a port of the functionality provided by [tjtyrrell](https://github.com/tjtyrrell)'s Sublime SDF plugin (<https://github.com/limebox/framework>). And we are borrowing the work he did in getting the Windows and Mac SDFCLI installers working.
+This is a port of the functionality provided by [tjtyrrell](https://github.com/tjtyrrell)'s Sublime SDF plugin (<https://github.com/limebox/sublime-sdf>). And we are borrowing the work he did in getting the Windows and Mac SDFCLI installers working.
 
 ## Features
 
