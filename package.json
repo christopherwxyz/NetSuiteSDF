@@ -4,6 +4,7 @@
     "description": "Plugin to integrate NetSuite SDF CLI",
     "version": "0.1.0",
     "publisher": "markkeaton",
+    "repository": "https://github.com/mark-keaton/NetSuiteSDF",
     "engines": {
         "vscode": "^1.20.0"
     },
