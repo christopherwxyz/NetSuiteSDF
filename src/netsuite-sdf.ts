@@ -331,14 +331,16 @@ export class NetSuiteSDF {
           vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
         } else {
           const environmentName = await vscode.window.showQuickPick(environmentNames);
-          this.activeEnvironment = environments[environmentName];
-          if (this.activeEnvironment.account === '00000000') {
-            vscode.window.showErrorMessage('.sdfcli.json account number appears to be wrong. Are you still using the blank template?');
-            this.sdfConfig = undefined;
-            this.activeEnvironment = undefined;
-            this.clearStatus();
-          } else {
-            this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
+          if (environmentName) {
+            this.activeEnvironment = environments[environmentName];
+            if (this.activeEnvironment.account === '00000000') {
+              vscode.window.showErrorMessage('.sdfcli.json account number appears to be wrong. Are you still using the blank template?');
+              this.sdfConfig = undefined;
+              this.activeEnvironment = undefined;
+              this.clearStatus();
+            } else {
+              this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
+            }
           }
         }
       } catch (e) {
