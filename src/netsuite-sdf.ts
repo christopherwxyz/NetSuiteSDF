@@ -237,10 +237,20 @@ export class NetSuiteSDF {
     return line;
   }
 
-  handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
+  async handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>, outputChannel: vscode.OutputChannel) {
     switch (true) {
       case (line.includes('SuiteCloud Development Framework CLI') && this.doSendPassword):
         stdinSubject.next(`${this.password}\n`);
+        break;
+      case (line.includes('WARNING! You are deploying to a Production account, enter YES to continue')):
+        const prompt = "Please type 'Deploy' to deploy to production.";
+        const answer = await vscode.window.showInputBox({ prompt: prompt });
+        if (answer === 'Deploy') {
+          stdinSubject.next('YES\n');
+        } else {
+          outputChannel.append('Cancelling deployment.\n');
+          stdinSubject.next('NO\n');
+        }
         break;
       case line.includes('Type YES to continue'):
       case line.includes('enter YES to continue'):
@@ -315,7 +325,7 @@ export class NetSuiteSDF {
         .concatMap(data => data.trim().split('\n'))
         .map(line => this.handlePassword(line, command, stdinSubject))
         .do(line => this.doShowOutput ? outputChannel.append(`${line}\n`) : null)
-        .do(line => this.handleStdIn(line, command, stdinSubject))
+        .do(line => this.handleStdIn(line, command, stdinSubject, outputChannel))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
