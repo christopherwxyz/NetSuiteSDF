@@ -2,7 +2,7 @@
     "name": "netsuitesdf",
     "displayName": "NetSuiteSDF",
     "description": "Plugin to integrate NetSuite SDF CLI",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
     "engines": {
@@ -33,6 +33,88 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "keybindings": [
+            {
+                "command": "extension.addDependencies",
+                "key": "ctrl+; a",
+                "mac": "cmd+; a"
+            },
+            {
+                "command": "extension.deploy",
+                "key": "ctrl+; d",
+                "mac": "cmd+; d"
+            },
+            {
+                "command": "extension.importBundle",
+                "key": "ctrl+; shift+b",
+                "mac": "cmd+; shift+b"
+            },
+            {
+                "command": "extension.importFiles",
+                "key": "ctrl+; shift+f",
+                "mac": "cmd+; shift+f"
+            },
+            {
+                "command": "extension.importObjects",
+                "key": "ctrl+; shift+o",
+                "mac": "cmd+; shift+o"
+            },
+            {
+                "command": "extension.listBundles",
+                "key": "ctrl+; b",
+                "mac": "cmd+; b"
+            },
+            {
+                "command": "extension.listFiles",
+                "key": "ctrl+; f",
+                "mac": "cmd+; f"
+            },
+            {
+                "command": "extension.listMissingDependencies",
+                "key": "ctrl+; m",
+                "mac": "cmd+; m"
+            },
+            {
+                "command": "extension.listObjects",
+                "key": "ctrl+; o",
+                "mac": "cmd+; o"
+            },
+            {
+                "command": "extension.preview",
+                "key": "ctrl+; p",
+                "mac": "cmd+; p"
+            },
+            {
+                "command": "extension.refreshConfig",
+                "key": "ctrl+; r",
+                "mac": "cmd+; r"
+            },
+            {
+                "command": "extension.selectEnvironment",
+                "key": "ctrl+; s",
+                "mac": "cmd+; s"
+            },
+            {
+                "command": "extension.update",
+                "key": "ctrl+; u",
+                "mac": "cmd+; u"
+            },
+            {
+                "command": "extension.updateCustomRecordWithInstances",
+                "key": "ctrl+; shift+u",
+                "mac": "cmd+; shift+u"
+            },
+            {
+                "command": "extension.validate",
+                "key": "ctrl+; v",
+                "mac": "cmd+; v"
+            },
+            {
+                "command": "extension.resetPassword",
+                "key": "ctrl+; shift+p",
+                "mac": "cmd+; shift+p"
+            }
+        ],
         "commands": [
             {
                 "command": "extension.addDependencies",
