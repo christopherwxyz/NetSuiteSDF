@@ -36,13 +36,20 @@ export class NetSuiteSDF {
   savedStatus: string;
   sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
-  statusBarDefault = 'SDF';
 
   constructor(private context: vscode.ExtensionContext, private statusBar: vscode.StatusBarItem) {
     this.statusBar.text = this.statusBarDefault;
     this.statusBar.tooltip = 'Click here to select your NetSuite environment';
     this.statusBar.command = 'extension.selectEnvironment';
     this.statusBar.show();
+  }
+
+  get statusBarDefault() {
+    if (this.activeEnvironment) {
+      return `SDF (${this.activeEnvironment.name})`;
+    } else {
+      return 'SDF';
+    }
   }
 
   /*********************/
@@ -312,7 +319,8 @@ export class NetSuiteSDF {
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
-        .toPromise();
+        .toPromise()
+        .catch(err => this.cleanup());
 
       this.cleanup();
       return collectedData;
@@ -327,7 +335,7 @@ export class NetSuiteSDF {
         if (environmentNames.length === 1) {
           const environmentName = environmentNames[0];
           this.activeEnvironment = environments[environmentName];
-          this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
+          this.statusBar.text = this.statusBarDefault;
           vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
         } else {
           const environmentName = await vscode.window.showQuickPick(environmentNames);
@@ -339,7 +347,7 @@ export class NetSuiteSDF {
               this.activeEnvironment = undefined;
               this.clearStatus();
             } else {
-              this.statusBar.text = `${this.statusBarDefault} (${environmentName})`;
+              this.statusBar.text = this.statusBarDefault;
             }
           }
         }
