@@ -31,12 +31,13 @@ export class NetSuiteSDF {
   doSendPassword = true;
   doShowOutput = true;
   intervalId;
+  outputChannel: vscode.OutputChannel;
   password: string;
   rootPath: string;
   savedStatus: string;
   sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
-  sdfCliIsInstalled: boolean;
+  sdfCliIsInstalled = true; // Prevents error messages while Code is testing SDFCLI is installed.
   statusBar: vscode.StatusBarItem;
 
   constructor(private context: vscode.ExtensionContext) {
@@ -44,6 +45,7 @@ export class NetSuiteSDF {
       .then(() => {
         if (this.sdfCliIsInstalled) {
           this.initializeStatusBar();
+          this.outputChannel = vscode.window.createOutputChannel('SDF');
         }
       });
   }
@@ -334,7 +336,7 @@ export class NetSuiteSDF {
     return line;
   }
 
-  async handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>, outputChannel: vscode.OutputChannel) {
+  async handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
     switch (true) {
       case (line.includes('SuiteCloud Development Framework CLI') && this.doSendPassword):
         stdinSubject.next(`${this.password}\n`);
@@ -345,7 +347,7 @@ export class NetSuiteSDF {
         if (answer === 'Deploy') {
           stdinSubject.next('YES\n');
         } else {
-          outputChannel.append('Cancelling deployment.\n');
+          this.outputChannel.append('Cancelling deployment.\n');
           stdinSubject.next('NO\n');
         }
         break;
@@ -396,10 +398,9 @@ export class NetSuiteSDF {
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
     if (this.sdfConfig && this.activeEnvironment && this.password) {
-      const outputChannel = vscode.window.createOutputChannel('SDF');
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
-        outputChannel.show();
+        this.outputChannel.show();
       }
 
       const commandArray: [CLICommand, string, string, string, string] = [
@@ -426,8 +427,8 @@ export class NetSuiteSDF {
       const collectedData = await this.sdfcli
         .concatMap(data => data.trim().split('\n'))
         .map(line => this.handlePassword(line, command, stdinSubject))
-        .do(line => this.doShowOutput ? outputChannel.append(`${line}\n`) : null)
-        .do(line => this.handleStdIn(line, command, stdinSubject, outputChannel))
+        .do(line => this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null)
+        .do(line => this.handleStdIn(line, command, stdinSubject))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
