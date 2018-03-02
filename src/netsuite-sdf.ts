@@ -74,7 +74,6 @@ export class NetSuiteSDF {
   }
 
   deploy() {
-    // TODO
     this.runCommand(CLICommand.Deploy);
   }
 
@@ -116,7 +115,6 @@ export class NetSuiteSDF {
   }
 
   listBundles() {
-    // TODO?
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ListBundles);
   }
@@ -136,9 +134,11 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     await this.getConfig();
-    this.currentObject = await vscode.window.showQuickPick(CustomObjects);
-    if (this.currentObject) {
-      return this.runCommand(CLICommand.ListObjects, `-type ${this.currentObject.type}`);
+    if (this.sdfConfig && this.password) {
+      this.currentObject = await vscode.window.showQuickPick(CustomObjects);
+      if (this.currentObject) {
+        return this.runCommand(CLICommand.ListObjects, `-type ${this.currentObject.type}`);
+      }
     }
   }
 
