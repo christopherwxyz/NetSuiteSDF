@@ -36,8 +36,14 @@ export class NetSuiteSDF {
   savedStatus: string;
   sdfcli: Observable<string>;
   sdfConfig: SDFConfig;
+  statusBar: vscode.StatusBarItem;
 
-  constructor(private context: vscode.ExtensionContext, private statusBar: vscode.StatusBarItem) {
+  constructor(private context: vscode.ExtensionContext) {
+    this.initializeStatusBar();
+  }
+
+  private initializeStatusBar() {
+    this.statusBar = vscode.window.createStatusBarItem();
     this.statusBar.text = this.statusBarDefault;
     this.statusBar.tooltip = 'Click here to select your NetSuite environment';
     this.statusBar.command = 'extension.selectEnvironment';

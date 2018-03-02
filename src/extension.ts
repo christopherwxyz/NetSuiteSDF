@@ -7,9 +7,7 @@ import { NetSuiteSDF } from './netsuite-sdf';
 
 export function activate(context: vscode.ExtensionContext) {
 
-    const statusBar = vscode.window.createStatusBarItem();
-
-    const netsuiteSdf = new NetSuiteSDF(context, statusBar);
+    const netsuiteSdf = new NetSuiteSDF(context);
 
     let addDependencies = vscode.commands.registerCommand('extension.addDependencies', netsuiteSdf.addDependencies.bind(netsuiteSdf));
     let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
