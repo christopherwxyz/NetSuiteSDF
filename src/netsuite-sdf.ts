@@ -220,14 +220,34 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Update);
   }
 
-  updateCustomRecordWithInstances() {
+  async updateCustomRecordWithInstances() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
 
-    // TODO
-    this.runCommand(CLICommand.UpdateCustomRecordsWithInstances);
+    await this.getConfig();
+    const customRecordPath = path.join(this.rootPath, '/Objects/Records');
+    const pathExists = await this.fileExists(customRecordPath)
+    if (pathExists) {
+      const rawFileList = await this.ls(customRecordPath);
+      const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
+
+      if (fileList) {
+        const objectId = await vscode.window.showQuickPick(fileList);
+        if (objectId) {
+          this.runCommand(
+            CLICommand.UpdateCustomRecordsWithInstances,
+            `-scriptid ${objectId}`,
+          );
+        }
+      }
+    } else {
+      vscode.window.showErrorMessage("No custom records found in /Objects/Records. Import Objects before updating with custom records.");
+    }
+
+
+
   }
 
   validate() {
@@ -362,6 +382,15 @@ export class NetSuiteSDF {
     }
   }
 
+  async handleStdOut(line: string, command: CLICommand) {
+    switch (true) {
+      case (line.includes('does not exist.')):
+        vscode.window.showErrorMessage('Custom record does exist for updating. Please Import Object first.')
+      default:
+        break;
+    }
+  }
+
   mapCommandOutput(command: CLICommand, line: string) {
     switch (command) {
       case CLICommand.ListObjects:
@@ -429,6 +458,7 @@ export class NetSuiteSDF {
         .map(line => this.handlePassword(line, command, stdinSubject))
         .do(line => this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))
+        .do(line => this.handleStdOut(line, command))
         .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
         .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
@@ -538,6 +568,17 @@ export class NetSuiteSDF {
         resolve(data);
       });
     })
+  }
+
+  ls(path: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      fs.readdir(path, function (err, items) {
+        if (err) {
+          reject(err)
+        }
+        resolve(items);
+      });
+    });
   }
 
 }
