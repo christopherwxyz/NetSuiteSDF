@@ -8,9 +8,12 @@ import { ChildProcess } from 'child_process';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/concatMap';
+import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/scan';
+import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/toPromise';
 
 import { spawn } from 'spawn-rx';
@@ -453,8 +456,26 @@ export class NetSuiteSDF {
 
       this.showStatus();
 
-      const collectedData = await this.sdfcli
-        .concatMap(data => data.trim().split('\n'))
+      let streamWrapper = Observable.create((observer) => {
+        let acc = "";
+
+        return this.sdfcli.subscribe(
+          (value) => {
+            acc = acc + value;
+            if (acc.includes("\n")) {
+              let lines = acc.split('\n');
+              for (let line of lines.slice(0, -1)) {
+                observer.next(line);
+              }
+              acc = lines[lines.length - 1];
+            }
+          },
+          (error) => observer.error(error),
+          () => observer.complete(),
+        );
+      });
+
+      const collectedData = await streamWrapper
         .map(line => this.handlePassword(line, command, stdinSubject))
         .do(line => this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))

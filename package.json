@@ -206,7 +206,8 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "spawn-rx": "~2.0.12"
+        "spawn-rx": "~2.0.12",
+        "rxjs": "^5.5.10"
     },
     "devDependencies": {
         "typescript": "^2.6.1",
