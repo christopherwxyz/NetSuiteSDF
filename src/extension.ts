@@ -4,10 +4,14 @@
 import * as vscode from 'vscode';
 
 import { NetSuiteSDF } from './netsuite-sdf';
+import { SDFProvider } from './sdf-provider';
 
 export function activate(context: vscode.ExtensionContext) {
 
     const netsuiteSdf = new NetSuiteSDF(context);
+
+    const sdfProvider = new SDFProvider(netsuiteSdf);
+    vscode.window.registerTreeDataProvider('netsuitesdf', sdfProvider);
 
     let addDependencies = vscode.commands.registerCommand('extension.addDependencies', netsuiteSdf.addDependencies.bind(netsuiteSdf));
     let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
