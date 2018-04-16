@@ -6,7 +6,7 @@
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.15.0"
     },
     "categories": [
         "Other"
@@ -33,6 +33,14 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "netsuitesdf",
+                    "name": "NetSuiteSDF"
+                }
+            ]
+        },
         "keybindings": [
             {
                 "command": "extension.addDependencies",
@@ -206,10 +214,12 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
+        "lodash": "^4.17.5",
         "spawn-rx": "~2.0.12",
         "rxjs": "^5.5.10"
     },
     "devDependencies": {
+        "@types/lodash": "^4.14.107",
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.61",
         "typescript": "^2.8.1",
