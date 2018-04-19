@@ -5,8 +5,9 @@
     "version": "0.4.0",
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
+    "license": "MIT",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.15.0"
     },
     "categories": [
         "Other"
