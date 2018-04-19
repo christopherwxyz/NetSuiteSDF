@@ -152,6 +152,16 @@ export class NetSuiteSDF {
 
   }
 
+  issueToken() { 
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.IssueToken);
+  }
+
   listBundles() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
@@ -207,6 +217,16 @@ export class NetSuiteSDF {
     }
 
     this.runCommand(CLICommand.Preview);
+  }
+
+  revokeToken() { 
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.RevokeToken);
   }
 
   update() {
