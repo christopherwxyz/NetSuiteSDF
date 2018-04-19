@@ -7,6 +7,13 @@ export interface CustomObject extends QuickPickItem {
 
 export const CustomObjects: CustomObject[] = [
   {
+    label: 'Advanced PDF Template',
+    type: 'advancedpdftemplate',
+    destination: '/Objects/AdvancedPDFTemplate',
+    detail: 'custtmpl',
+    description: ''
+  },
+  {
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
     destination: '/Objects/BundleInstallation',
