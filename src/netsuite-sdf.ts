@@ -152,7 +152,7 @@ export class NetSuiteSDF {
 
   }
 
-  issueToken() { 
+  issueToken() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
@@ -219,7 +219,7 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
-  revokeToken() { 
+  revokeToken() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
@@ -382,7 +382,7 @@ export class NetSuiteSDF {
         break;
       case (line.includes('WARNING! You are deploying to a Production account, enter YES to continue')):
         const prompt = "Please type 'Deploy' to deploy to production.";
-        const answer = await vscode.window.showInputBox({ prompt: prompt });
+        const answer = await vscode.window.showInputBox({ prompt: prompt, ignoreFocusOut: true });
         if (answer === 'Deploy') {
           stdinSubject.next('YES\n');
         } else {
@@ -431,7 +431,7 @@ export class NetSuiteSDF {
 
     const _resetPassword = async () => {
       const prompt = `Please enter your password for your ${this.activeEnvironment.name} account.`
-      const password = await vscode.window.showInputBox({ prompt: prompt, password: true });
+      const password = await vscode.window.showInputBox({ prompt: prompt, password: true, ignoreFocusOut: true });
       this.password = password;
     }
 
@@ -496,7 +496,7 @@ export class NetSuiteSDF {
         .do(line => this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null)
         .do(line => this.handleStdIn(line, command, stdinSubject))
         .do(line => this.handleStdOut(line, command))
-        .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.')))
+        .filter(line => !(line.startsWith('[INFO]') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('SuiteCloud Development Framework CLI') || line.startsWith('Done.') || line.startsWith('Using ')))
         .map(line => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise()
