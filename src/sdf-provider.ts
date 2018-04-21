@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import * as _ from 'lodash';
 import { NetSuiteSDF } from './netsuite-sdf';
+import { CustomObjects } from './custom-object';
 
 type FilePath = string;
 type CustomObject = string;
@@ -27,10 +28,16 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
     if (element && element.label === 'SuiteScripts') {
       await this.getSuiteScripts(<SDFFolder>element);
       return (<SDFFolder>element).getChildren();
+    } else if (element && element.label === 'Objects') {
+      await this.getObjects(<SDFFolder>element);
+      return (<SDFFolder>element).getChildren();
     } else if (element) {
       return (<SDFFolder>element).getChildren();
     } else {
-      return [new SDFFolder('SuiteScripts', [])]
+      return [
+        this.getObjectFolders(),
+        new SDFFolder('SuiteScripts'),
+      ]
     }
   }
 
@@ -69,12 +76,57 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
     }
   }
 
-  private parsePath(path: string) {
-    const pathList = path.split('/').slice(2);
-    if (pathList.length === 1) {
+  private getObjectFolders() {
+    const objects = new SDFFolder('Objects');
+    const objectsMap = _.reduce(CustomObjects, (acc, customObject) => {
+      const folderName = customObject._destination[0];
+      const child = folderName in acc ? acc[folderName] : new SDFFolder(folderName);
+      if (customObject._destination.length > 1) {
+        const grandchild = customObject._destination[1];
+        child.children.push(new SDFFolder(grandchild));
+      }
+      acc[folderName] = child;
+      return acc;
+    }, {});
+    objects.children = _.sortBy(Object.values(objectsMap), 'label');
+    return objects;
+  }
 
+  private async getObjects(suiteScriptsFolder: SDFFolder) {
+    this.sdf.doAddProjectParameter = false;
+    this.sdf.doReturnData = true;
+
+    const collectedData = await this.sdf.listFiles();
+    if (collectedData) {
+      const reducedData = _(collectedData)
+        .filter(path => path)
+        .map(path => path.split('/').slice(2))
+        .reduce((acc, pathParts, index) => {
+          const path = collectedData[index];
+          const fileName = pathParts[pathParts.length - 1];
+
+          if (pathParts.length === 1) {
+            acc.children.push(new SDFFile(fileName, path));
+          } else {
+            const dirParts = pathParts.slice(0, -1);
+
+            let dirObj = acc;
+            while (!_.isEmpty(dirParts)) {
+              let dir = dirParts.shift();
+              if (!_.has(dirObj, dir)) {
+                dirObj[dir] = new SDFFolder(dir);
+              }
+              dirObj = dirObj[dir];
+            }
+
+            dirObj['children'].push(new SDFFile(fileName, path));
+          }
+          return acc;
+        }, suiteScriptsFolder);
+      console.log(reducedData);
     }
   }
+
 }
 
 export class SDFFile extends vscode.TreeItem {

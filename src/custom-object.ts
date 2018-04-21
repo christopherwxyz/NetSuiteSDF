@@ -21,7 +21,6 @@ export class CustomObject implements ICustomObject {
   }
 }
 
-
 export const CustomObjects: CustomObject[] = [
   new CustomObject({
     label: 'Advanced PDF Template',
