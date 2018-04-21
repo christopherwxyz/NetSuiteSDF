@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
     let importBundle = vscode.commands.registerCommand('extension.importBundle', netsuiteSdf.importBundle.bind(netsuiteSdf));
     let importFiles = vscode.commands.registerCommand('extension.importFiles', netsuiteSdf.importFiles.bind(netsuiteSdf));
     let importObjects = vscode.commands.registerCommand('extension.importObjects', netsuiteSdf.importObjects.bind(netsuiteSdf));
+    let issueToken = vscode.commands.registerCommand('extension.issueToken', netsuiteSdf.issueToken.bind(netsuiteSdf));
     let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles.bind(netsuiteSdf));
     let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles.bind(netsuiteSdf));
     let listMissingDependencies = vscode.commands.registerCommand('extension.listMissingDependencies', netsuiteSdf.listMissingDependencies.bind(netsuiteSdf));
@@ -25,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
     let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
     let refreshConfig = vscode.commands.registerCommand('extension.refreshConfig', netsuiteSdf.refreshConfig.bind(netsuiteSdf));
     let resetPassword = vscode.commands.registerCommand('extension.resetPassword', netsuiteSdf.resetPassword.bind(netsuiteSdf));
+    let revokeToken = vscode.commands.registerCommand('extension.revokeToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
     let selectEnvironment = vscode.commands.registerCommand('extension.selectEnvironment', netsuiteSdf.selectEnvironment.bind(netsuiteSdf));
     let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
     let updateCustomRecordWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordWithInstances', netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf));
@@ -35,6 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(importBundle);
     context.subscriptions.push(importFiles);
     context.subscriptions.push(importObjects);
+    context.subscriptions.push(issueToken);
     context.subscriptions.push(listBundles);
     context.subscriptions.push(listFiles);
     context.subscriptions.push(listMissingDependencies);
@@ -42,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(preview);
     context.subscriptions.push(refreshConfig);
     context.subscriptions.push(resetPassword);
+    context.subscriptions.push(revokeToken);
     context.subscriptions.push(selectEnvironment);
     context.subscriptions.push(update);
     context.subscriptions.push(updateCustomRecordWithInstances);
