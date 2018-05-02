@@ -122,7 +122,7 @@ export class NetSuiteSDF {
 
     const collectedData = await this.listFiles();
     if (collectedData) {
-      const selectedFile = await vscode.window.showQuickPick(collectedData);
+      const selectedFile = await vscode.window.showQuickPick(collectedData, { ignoreFocusOut: true });
       if (selectedFile) {
         this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
       }
@@ -138,7 +138,7 @@ export class NetSuiteSDF {
     const collectedData = await this.listObjects();
 
     if (collectedData) {
-      const objectId = await vscode.window.showQuickPick(collectedData);
+      const objectId = await vscode.window.showQuickPick(collectedData, { ignoreFocusOut: true });
       if (objectId) {
         this._importObjects(this.currentObject.type, [objectId], this.currentObject.destination);
       }
@@ -208,7 +208,7 @@ export class NetSuiteSDF {
 
     await this.getConfig();
     if (this.sdfConfig && this.password) {
-      this.currentObject = await vscode.window.showQuickPick(CustomObjects);
+      this.currentObject = await vscode.window.showQuickPick(CustomObjects, { ignoreFocusOut: true });
       if (this.currentObject) {
         return this.runCommand(CLICommand.ListObjects, `-type ${this.currentObject.type}`);
       }
@@ -258,7 +258,7 @@ export class NetSuiteSDF {
       const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
 
       if (fileList) {
-        const objectId = await vscode.window.showQuickPick(fileList);
+        const objectId = await vscode.window.showQuickPick(fileList, { ignoreFocusOut: true });
         if (objectId) {
           this.runCommand(
             CLICommand.UpdateCustomRecordsWithInstances,
@@ -528,7 +528,7 @@ export class NetSuiteSDF {
           this.statusBar.text = this.statusBarDefault;
           vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
         } else {
-          const environmentName = await vscode.window.showQuickPick(environmentNames);
+          const environmentName = await vscode.window.showQuickPick(environmentNames, { ignoreFocusOut: true });
           if (environmentName) {
             this.activeEnvironment = environments[environmentName];
             if (this.activeEnvironment.account === '00000000') {
