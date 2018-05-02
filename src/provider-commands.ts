@@ -7,6 +7,10 @@ export let _importObject = (sdf: NetSuiteSDF) => (context?: SDFObject) => {
   sdf._importObjects(context.type, [context.label], context.path);
 }
 
+export let _importFile = (sdf: NetSuiteSDF) => (context?: SDFObject) => {
+  sdf._importFiles([context.path]);
+}
+
 export let _importObjectFolder = (sdf: NetSuiteSDF) => async (context?: SDFObjectFolder) => {
   const children = await context.getChildren();
   const scriptIds = _.map(children, (sdfObject: SDFObject) => sdfObject.label);

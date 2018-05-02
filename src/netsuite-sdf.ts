@@ -124,9 +124,14 @@ export class NetSuiteSDF {
     if (collectedData) {
       const selectedFile = await vscode.window.showQuickPick(collectedData, { ignoreFocusOut: true });
       if (selectedFile) {
-        this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
+        this._importFiles([selectedFile]);
       }
     }
+  }
+
+  async _importFiles(files: string[]) {
+    const fileString = files.join(' ');
+    this.runCommand(CLICommand.ImportFiles, `-paths ${fileString}`);
   }
 
   async importObjects(context?: any) {
