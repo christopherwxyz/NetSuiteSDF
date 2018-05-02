@@ -129,7 +129,7 @@ export class NetSuiteSDF {
     }
   }
 
-  async importObjects() {
+  async importObjects(context?: any) {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
@@ -138,18 +138,23 @@ export class NetSuiteSDF {
     const collectedData = await this.listObjects();
 
     if (collectedData) {
-      this.createPath(this.currentObject.destination);
       const objectId = await vscode.window.showQuickPick(collectedData);
       if (objectId) {
-        this.runCommand(
-          CLICommand.ImportObjects,
-          `-scriptid ${objectId}`,
-          `-type ${this.currentObject.type}`,
-          `-destinationfolder ${this.currentObject.destination}`
-        );
+        this._importObjects(this.currentObject.type, [objectId], this.currentObject.destination);
       }
     }
 
+  }
+
+  async _importObjects(scriptType: string, scriptIds: string[], destination: string) {
+    await this.createPath(destination);
+    const scriptIdString = scriptIds.join(' ');
+    return this.runCommand(
+      CLICommand.ImportObjects,
+      `-scriptid ${scriptIdString}`,
+      `-type ${scriptType}`,
+      `-destinationfolder ${destination}`
+    );
   }
 
   issueToken() {

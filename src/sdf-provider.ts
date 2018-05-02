@@ -16,8 +16,9 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
 
   constructor(private sdf: NetSuiteSDF) { }
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
+  refresh(event?: any): void {
+    console.log(event);
+    console.log(event);
   }
 
   getTreeItem(element: SDFFile): vscode.TreeItem {
@@ -107,6 +108,24 @@ export class SDFFile extends vscode.TreeItem {
     return `${this.label}`
   }
 
+  contextValue = 'sdf-file';
+
+}
+
+export class SDFObject extends vscode.TreeItem {
+
+  constructor(
+    public readonly label: string,
+    public path: string,
+    public type: string,
+  ) {
+    super(label, vscode.TreeItemCollapsibleState.None);
+  }
+
+  get tooltip(): string {
+    return `${this.label}`
+  }
+
   contextValue = 'sdf-object';
 
 }
@@ -158,7 +177,7 @@ export class SDFObjectFolder extends vscode.TreeItem {
     await this.sdf.getConfig();
     if (this.sdf.sdfConfig && this.sdf.password) {
       const files = await this.sdf.runCommand(CLICommand.ListObjects, `-type ${this.object.type}`);
-      return _.map(files, (file: string) => new SDFFile(file, this.object.destination));
+      return _.map(files, (file: string) => new SDFObject(file, this.object.destination, this.object.type));
     }
   }
 

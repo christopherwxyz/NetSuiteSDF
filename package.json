@@ -129,6 +129,16 @@
         ],
         "commands": [
             {
+                "command": "extension.importFolder",
+                "title": "Import Folder",
+                "category": "SDF"
+            },
+            {
+                "command": "extension.importObject",
+                "title": "Import Object",
+                "category": "SDF"
+            },
+            {
                 "command": "extension.addDependencies",
                 "title": "Add Dependencies to Manifest",
                 "category": "SDF"
@@ -217,8 +227,35 @@
                 "command": "extension.resetPassword",
                 "title": "Reset Password",
                 "category": "SDF"
+            },
+            {
+                "command": "extension.refresh",
+                "title": "Refresh",
+                "icon": {
+                    "light": "resources/light/refresh.svg",
+                    "dark": "resources/dark/refresh.svg"
+                }
             }
-        ]
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "extension.refresh",
+                    "when": "view == netsuitesdf",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "extension.importFolder",
+                    "when": "view == netsuitesdf && viewItem == sdf-object-folder"
+                },
+                {
+                    "command": "extension.importObject",
+                    "when": "view == netsuitesdf && viewItem == sdf-object"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
