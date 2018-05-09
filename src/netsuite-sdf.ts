@@ -5,6 +5,7 @@ import * as path from 'path';
 import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
 
+import * as _ from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/do';
@@ -130,7 +131,8 @@ export class NetSuiteSDF {
   }
 
   async _importFiles(files: string[]) {
-    const fileString = files.join(' ');
+    const cleanedFiles = _.map(files, file => `"${file}"`);
+    const fileString = cleanedFiles.join(' ');
     this.runCommand(CLICommand.ImportFiles, `-paths ${fileString}`);
   }
 
