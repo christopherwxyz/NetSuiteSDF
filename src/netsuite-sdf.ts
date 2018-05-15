@@ -39,6 +39,7 @@ export class NetSuiteSDF {
   sdfConfig: SDFConfig;
   sdfCliIsInstalled = true; // Prevents error messages while Code is testing SDFCLI is installed.
   statusBar: vscode.StatusBarItem;
+  hasSdfCache: boolean;
 
   constructor(private context: vscode.ExtensionContext) {
     this.checkSdfCliIsInstalled()
@@ -345,6 +346,14 @@ export class NetSuiteSDF {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.path;
+
+        const sdfTokenPath = path.join(this.rootPath, '.clicache');
+        const sdfCacheExists = await this.fileExists(sdfTokenPath);
+
+        if (sdfCacheExists) {
+          this.hasSdfCache = true
+        }
+
         const sdfPath = path.join(this.rootPath, '.sdfcli.json');
         const sdfPathExists = await this.fileExists(sdfPath)
         if (sdfPathExists) {
@@ -457,7 +466,7 @@ export class NetSuiteSDF {
 
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
-    if (this.sdfConfig && this.activeEnvironment && this.password) {
+    if (this.sdfConfig && this.activeEnvironment && (this.password || this.hasSdfCache)) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
         this.outputChannel.show();
