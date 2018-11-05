@@ -236,7 +236,6 @@ export class NetSuiteSDF {
             }
           });
           const selectionStr = selectedFile.map(file => file.scriptid.substring(0, file.scriptid.indexOf('.'))).join(' ');
-          console.log('Selection', selectionStr);
           this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
         }
       }
