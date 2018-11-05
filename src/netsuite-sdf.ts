@@ -645,7 +645,11 @@ export class NetSuiteSDF {
         return folders;
       }
     };
-    await traversFolders(dirList, root);
-    return fileList;
+    try {
+      await traversFolders(dirList, root);
+      return fileList;
+    } catch (err) {
+      vscode.window.showErrorMessage('Unable to get file list: ', err.message);
+    }
   }
 }
