@@ -138,7 +138,6 @@ export class NetSuiteSDF {
 
     const collectedData = await this.listObjects();
     const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
-    console.log('Collected Data', filteredData);
 
     if (filteredData) {
       this.createPath(this.currentObject.destination);
