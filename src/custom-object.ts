@@ -7,6 +7,13 @@ export interface CustomObject extends QuickPickItem {
 
 export const CustomObjects: CustomObject[] = [
   {
+    label: 'Advanced PDF Template',
+    type: 'advancedpdftemplate',
+    destination: '/Objects/Templates/AdvanedPDF',
+    detail: 'custtmpl',
+    description: ''
+  },
+  {
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
     destination: '/Objects/BundleInstallation',
@@ -74,6 +81,13 @@ export const CustomObjects: CustomObject[] = [
     type: 'emailcaptureplugin',
     destination: '/Objects/Plugins/Email',
     detail: 'customscript',
+    description: ''
+  },
+  {
+    label: 'Email Template',
+    type: 'emailtemplate',
+    destination: '/Objects/Templates/Email',
+    detail: 'custemailtmpl',
     description: ''
   },
   {
@@ -165,6 +179,13 @@ export const CustomObjects: CustomObject[] = [
     type: 'role',
     destination: '/Objects/Roles',
     detail: 'customrole',
+    description: ''
+  },
+  {
+    label: 'Saved CSV Import',
+    type: 'savedcsvimport',
+    destination: '/Objects/CSVImports',
+    detail: 'custimport',
     description: ''
   },
   {
