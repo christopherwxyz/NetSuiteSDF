@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
-import { parseString } from 'xml2js';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -123,9 +122,9 @@ export class NetSuiteSDF {
 
     const collectedData = await this.listFiles();
     if (collectedData) {
-      const selectedFile = await vscode.window.showQuickPick(collectedData);
-      if (selectedFile) {
-        this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFile}`);
+      const selectedFileArr = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
+      if (selectedFileArr && selectedFileArr.length > 0) {
+        this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFileArr.join(' ')}`);
       }
     }
   }
@@ -140,11 +139,11 @@ export class NetSuiteSDF {
 
     if (collectedData) {
       this.createPath(this.currentObject.destination);
-      const objectId: string[] = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
-      if (objectId) {
+      const selectionArr = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
+      if (selectionArr && selectionArr.length > 0) {
         this.runCommand(
           CLICommand.ImportObjects,
-          `-scriptid ${objectId}`,
+          `-scriptid ${selectionArr.join(' ')}`,
           `-type ${this.currentObject.type}`,
           `-destinationfolder ${this.currentObject.destination}`
         );
@@ -226,7 +225,7 @@ export class NetSuiteSDF {
 
       if (filePathList.length > 0) {
         const shortNames = filePathList.map(file => file.path.substr(file.path.indexOf('Objects') + 8));
-        const selectionArr: any = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
+        const selectionArr = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
 
         if (selectionArr && selectionArr.length > 0) {
           const selectedFile = filePathList.filter(file => {
@@ -335,7 +334,7 @@ export class NetSuiteSDF {
     }
 
     if (force || !this.sdfConfig) {
-      const workspaceFolders = (<any>vscode.workspace).workspaceFolders;
+      const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.path;
         const sdfPath = path.join(this.rootPath, '.sdfcli.json');
@@ -451,7 +450,7 @@ export class NetSuiteSDF {
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
     if (this.sdfConfig && this.activeEnvironment && this.password) {
-      const workspaceFolders = (<any>vscode.workspace).workspaceFolders;
+      const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
         this.outputChannel.show();
       }
