@@ -68,7 +68,7 @@ choco install sdfcli # This installs Java 8 and Maven 3.5
 Install via [Homebrew](https://brew.sh)
 ```bash
 brew cask install caskroom/versions/java8 # Unless you already have Java 8 installed.
-brew install limebox/netsuite/sdfcli
+brew install limebox/netsuite/sdfsdk
 ```
 
 For more detailed information, check <https://netsuitesource.com/sublime/>
