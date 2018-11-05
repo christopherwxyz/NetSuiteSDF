@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
+import { parseString } from 'xml2js';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -139,7 +140,7 @@ export class NetSuiteSDF {
 
     if (collectedData) {
       this.createPath(this.currentObject.destination);
-      const objectId = await vscode.window.showQuickPick(collectedData);
+      const objectId: string[] = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
       if (objectId) {
         this.runCommand(
           CLICommand.ImportObjects,
@@ -209,14 +210,41 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
-  update() {
+  async update() {
+
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
 
-    // TODO
-    this.runCommand(CLICommand.Update);
+    await this.getConfig();
+    const objectsRecordPath = path.join(this.rootPath, 'Objects');
+    const pathExists = await this.fileExists(objectsRecordPath);
+
+    if (pathExists) {
+      const filePathList = await this.getXMLFileList(['Objects'], this.rootPath);
+
+      if (filePathList.length > 0) {
+        const fileObjectArr = await this.getScriptIds(filePathList);
+
+        if (fileObjectArr.length > 0) {
+          const shortNames = fileObjectArr.map(file => file.filePath.substr(file.filePath.indexOf('Objects') + 8));
+          const selectionArr: any = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
+
+          if (selectionArr.length > 0) {
+            const selectedFile = fileObjectArr.filter(file => {
+              for (const selection of selectionArr) {
+                if (file.filePath.indexOf(selection) >= 0){
+                  return true;
+                }
+              }
+            });
+            const selectionStr = selectedFile.map(file => file.scriptID).join(' ');
+            this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
+          }
+        }
+      }
+    }
   }
 
   async updateCustomRecordWithInstances() {
@@ -310,7 +338,7 @@ export class NetSuiteSDF {
     }
 
     if (force || !this.sdfConfig) {
-      const workspaceFolders = vscode.workspace.workspaceFolders;
+      const workspaceFolders = (<any>vscode.workspace).workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.path;
         const sdfPath = path.join(this.rootPath, '.sdfcli.json');
@@ -426,7 +454,7 @@ export class NetSuiteSDF {
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
     if (this.sdfConfig && this.activeEnvironment && this.password) {
-      const workspaceFolders = vscode.workspace.workspaceFolders;
+      const workspaceFolders = (<any>vscode.workspace).workspaceFolders;
       if (this.doShowOutput) {
         this.outputChannel.show();
       }
@@ -587,9 +615,9 @@ export class NetSuiteSDF {
     })
   }
 
-  ls(path: string): Promise<any> {
+  ls(path: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      fs.readdir(path, function (err, items) {
+      fs.readdir(path, (err, items) => {
         if (err) {
           reject(err)
         }
@@ -597,5 +625,52 @@ export class NetSuiteSDF {
       });
     });
   }
+
+  async getXMLFileList(dirList: string[], root: string): Promise<string[]> {
+    const fileList: string[] = [];
+    const traversFolders = async (folders: string[], root: string) => {
+      if (folders.length > 0) {
+        for (const folder of folders) {
+          const rawFileList = await this.ls(path.join(root, folder));
+          const dirList: string[] = [];
+          for (const fileName of rawFileList) {
+            const lstat = fs.lstatSync(path.join(root, folder, fileName));
+            if (lstat.isDirectory()) {
+              dirList.push(fileName);
+            } else {
+              if (fileName.slice(fileName.length - 4) === '.xml') {
+                fileList.push(path.join(root, folder, fileName));
+              }
+            }
+          }
+          await traversFolders(dirList, path.join(root, folder));
+        }
+      } else {
+        return folders;
+      }
+    };
+    await traversFolders(dirList, root);
+    return fileList;
+  }
+
+  async getScriptIds(filePathList: string[]): Promise<{ scriptID: string, filePath: string }[]> {
+    const idPromises: Promise<{ scriptID: string, filePath: string }>[] = filePathList.map((filePath) => {
+      return new Promise(async (resolve, reject) => {
+        const fileContents = await this.openFile(filePath);
+        parseString(fileContents, (err, result) => {
+          if (err) {
+            reject(err);
+          }
+          const mainNode = result[Object.keys(result)[0]];
+          if (mainNode.$ && mainNode.$.scriptid) {
+            const scriptID = mainNode.$.scriptid;
+            resolve({ scriptID, filePath });
+          }
+          reject();
+        });
+      });
+    });
+    return await Promise.all(idPromises);
+  };
 
 }
