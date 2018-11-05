@@ -121,8 +121,9 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     const collectedData = await this.listFiles();
-    if (collectedData) {
-      const selectedFileArr = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
+    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
+    if (filteredData) {
+      const selectedFileArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true });
       if (selectedFileArr && selectedFileArr.length > 0) {
         this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFileArr.join(' ')}`);
       }
@@ -136,10 +137,12 @@ export class NetSuiteSDF {
     }
 
     const collectedData = await this.listObjects();
+    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
+    console.log('Collected Data', filteredData);
 
-    if (collectedData) {
+    if (filteredData) {
       this.createPath(this.currentObject.destination);
-      const selectionArr = await vscode.window.showQuickPick(collectedData, { canPickMany: true });
+      const selectionArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true });
       if (selectionArr && selectionArr.length > 0) {
         this.runCommand(
           CLICommand.ImportObjects,
@@ -150,6 +153,26 @@ export class NetSuiteSDF {
       }
     }
 
+  }
+
+  issueToken() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.IssueToken);
+  }
+
+  revokeToken() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.RevokeToken);
   }
 
   listBundles() {
