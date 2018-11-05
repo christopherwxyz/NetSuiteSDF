@@ -27,6 +27,7 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | importconfiguration      |              	|
 | importfiles       |  ✔            	|
 | importobjects     |  ✔            	|
+| issuetoken     |               	|
 | listbundles       |              	|
 | listconfiguration       |              	|
 | listfiles         |  ✔            	|
@@ -34,6 +35,7 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | listObjects      |  ✔            	|
 | preview      |  ✔            	|
 | project      |  (Handled by extension)            	|
+| revoketoken      |              	|
 | update      |  ✔            	|
 | updatecustomrecordwithinstances      |  ✔            	|
 | validate      |  ✔            	|
