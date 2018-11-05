@@ -225,23 +225,20 @@ export class NetSuiteSDF {
       const filePathList = await this.getXMLFileList(['Objects'], this.rootPath);
 
       if (filePathList.length > 0) {
-        const fileObjectArr = await this.getScriptIds(filePathList);
+        const shortNames = filePathList.map(file => file.path.substr(file.path.indexOf('Objects') + 8));
+        const selectionArr: any = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
 
-        if (fileObjectArr.length > 0) {
-          const shortNames = fileObjectArr.map(file => file.filePath.substr(file.filePath.indexOf('Objects') + 8));
-          const selectionArr: any = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
-
-          if (selectionArr.length > 0) {
-            const selectedFile = fileObjectArr.filter(file => {
-              for (const selection of selectionArr) {
-                if (file.filePath.indexOf(selection) >= 0){
-                  return true;
-                }
+        if (selectionArr && selectionArr.length > 0) {
+          const selectedFile = filePathList.filter(file => {
+            for (const selection of selectionArr) {
+              if (file.path.indexOf(selection) >= 0) {
+                return true;
               }
-            });
-            const selectionStr = selectedFile.map(file => file.scriptID).join(' ');
-            this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
-          }
+            }
+          });
+          const selectionStr = selectedFile.map(file => file.scriptid.substring(0, file.scriptid.indexOf('.'))).join(' ');
+          console.log('Selection', selectionStr);
+          this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
         }
       }
     }
@@ -626,8 +623,8 @@ export class NetSuiteSDF {
     });
   }
 
-  async getXMLFileList(dirList: string[], root: string): Promise<string[]> {
-    const fileList: string[] = [];
+  async getXMLFileList(dirList: string[], root: string): Promise<{ path: string; scriptid: string }[]> {
+    const fileList: { path: string; scriptid: string }[] = [];
     const traversFolders = async (folders: string[], root: string) => {
       if (folders.length > 0) {
         for (const folder of folders) {
@@ -639,7 +636,7 @@ export class NetSuiteSDF {
               dirList.push(fileName);
             } else {
               if (fileName.slice(fileName.length - 4) === '.xml') {
-                fileList.push(path.join(root, folder, fileName));
+                fileList.push({ path: path.join(root, folder, fileName), scriptid: fileName });
               }
             }
           }
@@ -652,25 +649,4 @@ export class NetSuiteSDF {
     await traversFolders(dirList, root);
     return fileList;
   }
-
-  async getScriptIds(filePathList: string[]): Promise<{ scriptID: string, filePath: string }[]> {
-    const idPromises: Promise<{ scriptID: string, filePath: string }>[] = filePathList.map((filePath) => {
-      return new Promise(async (resolve, reject) => {
-        const fileContents = await this.openFile(filePath);
-        parseString(fileContents, (err, result) => {
-          if (err) {
-            reject(err);
-          }
-          const mainNode = result[Object.keys(result)[0]];
-          if (mainNode.$ && mainNode.$.scriptid) {
-            const scriptID = mainNode.$.scriptid;
-            resolve({ scriptID, filePath });
-          }
-          reject();
-        });
-      });
-    });
-    return await Promise.all(idPromises);
-  };
-
 }
