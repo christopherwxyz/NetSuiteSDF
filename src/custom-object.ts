@@ -1,4 +1,4 @@
-import { QuickPickItem } from "vscode";
+import { QuickPickItem } from 'vscode';
 
 export interface ICustomObject extends QuickPickItem {
   _destination: string[];
@@ -22,14 +22,14 @@ export class CustomObject implements ICustomObject {
 }
 
 export const CustomObjects: CustomObject[] = [
-  {
+  new CustomObject({
     label: 'Advanced PDF Template',
     type: 'advancedpdftemplate',
-    destination: '/Objects/Templates/AdvancedPDFs',
+    _destination: ['Templates', 'AdvancedPDFs'],
     detail: 'custtmpl',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
     _destination: ['BundleInstallation'],
@@ -93,22 +93,20 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-  {
     label: 'Custom Segment',
     type: 'customsegment',
-    destination: '/Objects/CustomSegments',
+    _destination: ['CustomSegments'],
     detail: 'cseg',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Custom Transactions',
     type: 'customtransactiontype',
-    destination: '/Objects/CustomTransactions',
+    _destination: ['CustomTransactions'],
     detail: 'customtransaction',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Email Capture Plugins',
     type: 'emailcaptureplugin',
     _destination: ['Plugins', 'Email'],
@@ -116,15 +114,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-  {
     label: 'Email Template',
     type: 'emailtemplate',
-    destination: '/Objects/Templates/Email',
+    _destination: ['Templates', 'Email'],
     detail: 'custemailtmpl',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Entity Custom Fields',
     type: 'entitycustomfield',
     _destination: ['Fields', 'Entity'],
@@ -167,16 +163,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-
-  {
     label: 'KPI Scorecard',
     type: 'kpiscorecard',
-    destination: '/Objects/KPIScorecards',
+    _destination: ['KPIScorecards'],
     detail: 'custkpiscorecard',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Map Reduce Script',
     type: 'mapreducescript',
     _destination: ['Scripts', 'MapReduce'],
@@ -198,24 +191,21 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-
-  {
     label: 'Plugin Implementation',
     type: 'pluginimplementation',
-    destination: '/Objects/PluginImplementations',
+    _destination: ['PluginImplementations'],
     detail: 'customscript',
     description: ''
-  },
+  }),
 
-  {
+  new CustomObject({
     label: 'Plugin Type',
     type: 'plugintype',
-    destination: '/Objects/PluginTypes',
+    _destination: ['PluginTypes'],
     detail: 'customscript',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Portlets',
     type: 'portlet',
     _destination: ['Scripts', 'Portlet'],
@@ -230,16 +220,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-
-  {
     label: 'Publish Dashboards',
     type: 'publisheddashboard',
-    destination: '/Objects/PublishDashboards',
+    _destination: ['PublishDashboards'],
     detail: 'custpubdashboard',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Restlets',
     type: 'restlet',
     _destination: ['Scripts', 'Restlet'],
@@ -254,15 +241,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-  {
     label: 'Saved CSV Import',
     type: 'savedcsvimport',
-    destination: '/Objects/CSVImports',
+    _destination: ['CSVImports'],
     detail: 'custimport',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Saved Searches',
     type: 'savedsearch',
     _destination: ['SavedSearches'],
@@ -277,24 +262,20 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-
-  {
     label: 'SSP Applications',
     type: 'sspapplication',
-    destination: '/Objects/SSPApplications',
+    _destination: ['SSPApplications'],
     detail: 'webapp',
     description: ''
-  },
-
-  {
+  }),
+  new CustomObject({
     label: 'Sublists',
     type: 'sublist',
-    destination: '/Objects/Sublists',
+    _destination: ['Sublists'],
     detail: 'custsublist',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'SubTabs',
     type: 'subtab',
     _destination: ['CentersAndTabs', 'SubTab'],
@@ -309,15 +290,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-  },
-  {
     label: 'Transaction Forms',
     type: 'transactionForm',
-    destination: '/Objects/Forms/TransactionForm',
+    _destination: ['Forms', 'TransactionForm'],
     detail: 'custform',
     description: ''
-  },
-  {
+  }),
+  new CustomObject({
     label: 'Transaction Body Custom Field',
     type: 'transactionbodycustomfield',
     _destination: ['Fields', 'TransactionBody'],
@@ -351,5 +330,5 @@ export const CustomObjects: CustomObject[] = [
     _destination: ['Scripts', 'WorkflowAction'],
     detail: 'customscript',
     description: ''
-  }),
-]
+  })
+];
