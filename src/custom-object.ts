@@ -9,14 +9,14 @@ export const CustomObjects: CustomObject[] = [
   {
     label: 'Advanced PDF Template',
     type: 'advancedpdftemplate',
-    destination: '/Objects/Templates/AdvanedPDF',
+    destination: '/Objects/Templates/AdvancedPDFs',
     detail: 'custtmpl',
     description: ''
   },
   {
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
-    destination: '/Objects/BundleInstallation',
+    destination: '/Objects/Scripts/BundleInstallation',
     detail: 'customscript',
     description: ''
   },
