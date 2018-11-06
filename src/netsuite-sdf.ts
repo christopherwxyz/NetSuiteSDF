@@ -121,8 +121,8 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     const collectedData = await this.listFiles();
-    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
-    if (filteredData) {
+    if (collectedData) {
+      const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
       const selectedFileArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true });
       if (selectedFileArr && selectedFileArr.length > 0) {
         this.runCommand(CLICommand.ImportFiles, `-paths ${selectedFileArr.join(' ')}`);
@@ -137,9 +137,9 @@ export class NetSuiteSDF {
     }
 
     const collectedData = await this.listObjects();
-    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
 
-    if (filteredData) {
+    if (collectedData) {
+      const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
       this.createPath(this.currentObject.destination);
       const selectionArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true });
       if (selectionArr && selectionArr.length > 0) {
