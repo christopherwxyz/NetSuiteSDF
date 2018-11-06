@@ -7,9 +7,16 @@ export interface CustomObject extends QuickPickItem {
 
 export const CustomObjects: CustomObject[] = [
   {
+    label: 'Advanced PDF Template',
+    type: 'advancedpdftemplate',
+    destination: '/Objects/Templates/AdvancedPDFs',
+    detail: 'custtmpl',
+    description: ''
+  },
+  {
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
-    destination: '/Objects/BundleInstallation',
+    destination: '/Objects/Scripts/BundleInstallation',
     detail: 'customscript',
     description: ''
   },
@@ -70,10 +77,31 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   },
   {
+    label: 'Custom Segment',
+    type: 'customsegment',
+    destination: '/Objects/CustomSegments',
+    detail: 'cseg',
+    description: ''
+  },
+  {
+    label: 'Custom Transactions',
+    type: 'customtransactiontype',
+    destination: '/Objects/CustomTransactions',
+    detail: 'customtransaction',
+    description: ''
+  },
+  {
     label: 'Email Capture Plugins',
     type: 'emailcaptureplugin',
     destination: '/Objects/Plugins/Email',
     detail: 'customscript',
+    description: ''
+  },
+  {
+    label: 'Email Template',
+    type: 'emailtemplate',
+    destination: '/Objects/Templates/Email',
+    detail: 'custemailtmpl',
     description: ''
   },
   {
@@ -87,13 +115,6 @@ export const CustomObjects: CustomObject[] = [
     label: 'Entity Forms',
     type: 'entryForm',
     destination: '/Objects/Forms/EntryForm',
-    detail: 'custform',
-    description: ''
-  },
-  {
-    label: 'Transaction Forms',
-    type: 'transactionForm',
-    destination: '/Objects/Forms/TransactionForm',
     detail: 'custform',
     description: ''
   },
@@ -118,6 +139,14 @@ export const CustomObjects: CustomObject[] = [
     detail: 'custitemoption',
     description: ''
   },
+
+  {
+    label: 'KPI Scorecard',
+    type: 'kpiscorecard',
+    destination: '/Objects/KPIScorecards',
+    detail: 'custkpiscorecard',
+    description: ''
+  },
   {
     label: 'Map Reduce Script',
     type: 'mapreducescript',
@@ -139,6 +168,22 @@ export const CustomObjects: CustomObject[] = [
     detail: 'custrecord',
     description: ''
   },
+
+  {
+    label: 'Plugin Implementation',
+    type: 'pluginimplementation',
+    destination: '/Objects/PluginImplementations',
+    detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'Plugin Type',
+    type: 'plugintype',
+    destination: '/Objects/PluginTypes',
+    detail: 'customscript',
+    description: ''
+  },
   {
     label: 'Portlets',
     type: 'portlet',
@@ -151,6 +196,14 @@ export const CustomObjects: CustomObject[] = [
     type: 'promotionsplugin',
     destination: '/Objects/Plugins/Promotions',
     detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'Publish Dashboards',
+    type: 'publisheddashboard',
+    destination: '/Objects/PublishDashboards',
+    detail: 'custpubdashboard',
     description: ''
   },
   {
@@ -168,6 +221,13 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   },
   {
+    label: 'Saved CSV Import',
+    type: 'savedcsvimport',
+    destination: '/Objects/CSVImports',
+    detail: 'custimport',
+    description: ''
+  },
+  {
     label: 'Saved Searches',
     type: 'savedsearch',
     destination: '/Objects/SavedSearches',
@@ -179,6 +239,22 @@ export const CustomObjects: CustomObject[] = [
     type: 'scheduledscript',
     destination: '/Objects/Scripts/Scheduled',
     detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'SSP Applications',
+    type: 'sspapplication',
+    destination: '/Objects/SSPApplications',
+    detail: 'webapp',
+    description: ''
+  },
+
+  {
+    label: 'Sublists',
+    type: 'sublist',
+    destination: '/Objects/Sublists',
+    detail: 'custsublist',
     description: ''
   },
   {
@@ -193,6 +269,13 @@ export const CustomObjects: CustomObject[] = [
     type: 'suitelet',
     destination: '/Objects/Scripts/Suitelet',
     detail: 'customscript',
+    description: ''
+  },
+  {
+    label: 'Transaction Forms',
+    type: 'transactionForm',
+    destination: '/Objects/Forms/TransactionForm',
+    detail: 'custform',
     description: ''
   },
   {

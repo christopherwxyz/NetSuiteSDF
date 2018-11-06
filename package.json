@@ -19,6 +19,7 @@
         "onCommand:extension.importBundle",
         "onCommand:extension.importFiles",
         "onCommand:extension.importObjects",
+        "onCommand:extension.issueToken",
         "onCommand:extension.listBundles",
         "onCommand:extension.listFiles",
         "onCommand:extension.listMissingDependencies",
@@ -26,6 +27,7 @@
         "onCommand:extension.preview",
         "onCommand:extension.refreshConfig",
         "onCommand:extension.resetPassword",
+        "onCommand:extension.revokeToken",
         "onCommand:extension.selectEnvironment",
         "onCommand:extension.update",
         "onCommand:extension.updateCustomRecordsWithInstances",
@@ -142,6 +144,11 @@
                 "category": "SDF"
             },
             {
+              "command": "extension.issueToken",
+              "title": "Issue Token",
+              "category": "SDF"
+            },
+            {
                 "command": "extension.listBundles",
                 "title": "List Bundles",
                 "category": "SDF"
@@ -170,6 +177,11 @@
                 "command": "extension.refreshConfig",
                 "title": "Refresh Config",
                 "category": "SDF"
+            },
+            {
+              "command": "extension.revokeToken",
+              "title": "Revoke Token",
+              "category": "SDF"
             },
             {
                 "command": "extension.selectEnvironment",
