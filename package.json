@@ -1,231 +1,271 @@
 {
-    "name": "netsuitesdf",
-    "displayName": "NetSuiteSDF",
-    "description": "Plugin to integrate NetSuite SDF CLI",
-    "version": "0.3.2",
-    "publisher": "markkeaton",
-    "repository": "https://github.com/mark-keaton/NetSuiteSDF",
-    "engines": {
-        "vscode": "^1.10.0"
+  "name": "netsuitesdf",
+  "displayName": "NetSuiteSDF",
+  "description": "Plugin to integrate NetSuite SDF CLI",
+  "version": "0.3.2",
+  "publisher": "markkeaton",
+  "license": "MIT",
+  "repository": "https://github.com/mark-keaton/NetSuiteSDF",
+  "engines": {
+    "vscode": "^1.10.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/.sdf",
+    "workspaceContains:**/.sdfcli.json",
+    "onCommand:extension.addDependencies",
+    "onCommand:extension.deploy",
+    "onCommand:extension.importBundle",
+    "onCommand:extension.importFiles",
+    "onCommand:extension.importObjects",
+    "onCommand:extension.issueToken",
+    "onCommand:extension.listBundles",
+    "onCommand:extension.listFiles",
+    "onCommand:extension.listMissingDependencies",
+    "onCommand:extension.listObjects",
+    "onCommand:extension.preview",
+    "onCommand:extension.refreshConfig",
+    "onCommand:extension.resetPassword",
+    "onCommand:extension.revokeToken",
+    "onCommand:extension.selectEnvironment",
+    "onCommand:extension.update",
+    "onCommand:extension.updateCustomRecordsWithInstances",
+    "onCommand:extension.validate"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "netsuitesdf",
+          "name": "NetSuiteSDF"
+        }
+      ]
     },
-    "categories": [
-        "Other"
+    "keybindings": [
+      {
+        "command": "extension.addDependencies",
+        "key": "ctrl+; a",
+        "mac": "cmd+; a"
+      },
+      {
+        "command": "extension.deploy",
+        "key": "ctrl+; d",
+        "mac": "cmd+; d"
+      },
+      {
+        "command": "extension.importBundle",
+        "key": "ctrl+; shift+b",
+        "mac": "cmd+; shift+b"
+      },
+      {
+        "command": "extension.importFiles",
+        "key": "ctrl+; shift+f",
+        "mac": "cmd+; shift+f"
+      },
+      {
+        "command": "extension.importObjects",
+        "key": "ctrl+; shift+o",
+        "mac": "cmd+; shift+o"
+      },
+      {
+        "command": "extension.listBundles",
+        "key": "ctrl+; b",
+        "mac": "cmd+; b"
+      },
+      {
+        "command": "extension.listFiles",
+        "key": "ctrl+; f",
+        "mac": "cmd+; f"
+      },
+      {
+        "command": "extension.listMissingDependencies",
+        "key": "ctrl+; m",
+        "mac": "cmd+; m"
+      },
+      {
+        "command": "extension.listObjects",
+        "key": "ctrl+; o",
+        "mac": "cmd+; o"
+      },
+      {
+        "command": "extension.preview",
+        "key": "ctrl+; p",
+        "mac": "cmd+; p"
+      },
+      {
+        "command": "extension.refreshConfig",
+        "key": "ctrl+; r",
+        "mac": "cmd+; r"
+      },
+      {
+        "command": "extension.selectEnvironment",
+        "key": "ctrl+; s",
+        "mac": "cmd+; s"
+      },
+      {
+        "command": "extension.update",
+        "key": "ctrl+; u",
+        "mac": "cmd+; u"
+      },
+      {
+        "command": "extension.updateCustomRecordWithInstances",
+        "key": "ctrl+; shift+u",
+        "mac": "cmd+; shift+u"
+      },
+      {
+        "command": "extension.validate",
+        "key": "ctrl+; v",
+        "mac": "cmd+; v"
+      },
+      {
+        "command": "extension.resetPassword",
+        "key": "ctrl+; shift+p",
+        "mac": "cmd+; shift+p"
+      }
     ],
-    "activationEvents": [
-        "workspaceContains:**/.sdf",
-        "workspaceContains:**/.sdfcli.json",
-        "onCommand:extension.addDependencies",
-        "onCommand:extension.deploy",
-        "onCommand:extension.importBundle",
-        "onCommand:extension.importFiles",
-        "onCommand:extension.importObjects",
-        "onCommand:extension.issueToken",
-        "onCommand:extension.listBundles",
-        "onCommand:extension.listFiles",
-        "onCommand:extension.listMissingDependencies",
-        "onCommand:extension.listObjects",
-        "onCommand:extension.preview",
-        "onCommand:extension.refreshConfig",
-        "onCommand:extension.resetPassword",
-        "onCommand:extension.revokeToken",
-        "onCommand:extension.selectEnvironment",
-        "onCommand:extension.update",
-        "onCommand:extension.updateCustomRecordsWithInstances",
-        "onCommand:extension.validate"
+    "commands": [
+      {
+        "command": "extension.addDependencies",
+        "title": "Add Dependencies to Manifest",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.deploy",
+        "title": "Deploy to Account",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importFolder",
+        "title": "Import Folder",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importObject",
+        "title": "Import Object",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importFile",
+        "title": "Import File",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importBundle",
+        "title": "Import Bundle",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importFiles",
+        "title": "Import Files",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.importObjects",
+        "title": "Import Objects",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.issueToken",
+        "title": "Issue Token",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.listBundles",
+        "title": "List Bundles",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.listFiles",
+        "title": "List Files",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.listMissingDependencies",
+        "title": "List Missing Dependencies",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.listObjects",
+        "title": "List Objects",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.preview",
+        "title": "Preview",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.refreshConfig",
+        "title": "Refresh Config",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.revokeToken",
+        "title": "Revoke Token",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.selectEnvironment",
+        "title": "Select Environment",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.update",
+        "title": "Update",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.updateCustomRecordWithInstances",
+        "title": "Update Custom Record with Instances",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.validate",
+        "title": "Validate Project",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.resetPassword",
+        "title": "Reset Password",
+        "category": "SDF"
+      }
     ],
-    "main": "./out/extension",
-    "contributes": {
-        "keybindings": [
-            {
-                "command": "extension.addDependencies",
-                "key": "ctrl+; a",
-                "mac": "cmd+; a"
-            },
-            {
-                "command": "extension.deploy",
-                "key": "ctrl+; d",
-                "mac": "cmd+; d"
-            },
-            {
-                "command": "extension.importBundle",
-                "key": "ctrl+; shift+b",
-                "mac": "cmd+; shift+b"
-            },
-            {
-                "command": "extension.importFiles",
-                "key": "ctrl+; shift+f",
-                "mac": "cmd+; shift+f"
-            },
-            {
-                "command": "extension.importObjects",
-                "key": "ctrl+; shift+o",
-                "mac": "cmd+; shift+o"
-            },
-            {
-                "command": "extension.listBundles",
-                "key": "ctrl+; b",
-                "mac": "cmd+; b"
-            },
-            {
-                "command": "extension.listFiles",
-                "key": "ctrl+; f",
-                "mac": "cmd+; f"
-            },
-            {
-                "command": "extension.listMissingDependencies",
-                "key": "ctrl+; m",
-                "mac": "cmd+; m"
-            },
-            {
-                "command": "extension.listObjects",
-                "key": "ctrl+; o",
-                "mac": "cmd+; o"
-            },
-            {
-                "command": "extension.preview",
-                "key": "ctrl+; p",
-                "mac": "cmd+; p"
-            },
-            {
-                "command": "extension.refreshConfig",
-                "key": "ctrl+; r",
-                "mac": "cmd+; r"
-            },
-            {
-                "command": "extension.selectEnvironment",
-                "key": "ctrl+; s",
-                "mac": "cmd+; s"
-            },
-            {
-                "command": "extension.update",
-                "key": "ctrl+; u",
-                "mac": "cmd+; u"
-            },
-            {
-                "command": "extension.updateCustomRecordWithInstances",
-                "key": "ctrl+; shift+u",
-                "mac": "cmd+; shift+u"
-            },
-            {
-                "command": "extension.validate",
-                "key": "ctrl+; v",
-                "mac": "cmd+; v"
-            },
-            {
-                "command": "extension.resetPassword",
-                "key": "ctrl+; shift+p",
-                "mac": "cmd+; shift+p"
-            }
-        ],
-        "commands": [
-            {
-                "command": "extension.addDependencies",
-                "title": "Add Dependencies to Manifest",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.deploy",
-                "title": "Deploy to Account",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.importBundle",
-                "title": "Import Bundle",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.importFiles",
-                "title": "Import Files",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.importObjects",
-                "title": "Import Objects",
-                "category": "SDF"
-            },
-            {
-              "command": "extension.issueToken",
-              "title": "Issue Token",
-              "category": "SDF"
-            },
-            {
-                "command": "extension.listBundles",
-                "title": "List Bundles",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.listFiles",
-                "title": "List Files",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.listMissingDependencies",
-                "title": "List Missing Dependencies",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.listObjects",
-                "title": "List Objects",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.preview",
-                "title": "Preview",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.refreshConfig",
-                "title": "Refresh Config",
-                "category": "SDF"
-            },
-            {
-              "command": "extension.revokeToken",
-              "title": "Revoke Token",
-              "category": "SDF"
-            },
-            {
-                "command": "extension.selectEnvironment",
-                "title": "Select Environment",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.update",
-                "title": "Update",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.updateCustomRecordWithInstances",
-                "title": "Update Custom Record with Instances",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.validate",
-                "title": "Validate Project",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.resetPassword",
-                "title": "Reset Password",
-                "category": "SDF"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "dependencies": {
-        "lodash": "^4.17.11",
-        "rxjs": "^5.5.10",
-        "spawn-rx": "~2.0.12"
-    },
-    "devDependencies": {
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^7.0.61",
-        "typescript": "^2.8.1",
-        "vscode": "^1.1.21"
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "extension.importFolder",
+          "when": "view == netsuitesdf && viewItem == sdf-object-folder"
+        },
+        {
+          "command": "extension.importObject",
+          "when": "view == netsuitesdf && viewItem == sdf-object"
+        },
+        {
+          "command": "extension.importFile",
+          "when": "view == netsuitesdf && viewItem == sdf-file"
+        }
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "rxjs": "^5.5.10",
+    "spawn-rx": "~2.0.12"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^7.0.61",
+    "typescript": "^2.8.1",
+    "vscode": "^1.1.21"
+  }
 }
