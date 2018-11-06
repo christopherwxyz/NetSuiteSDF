@@ -123,10 +123,11 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     const collectedData = await this.listFiles();
-    if (collectedData) {
-      const selectedFile = await vscode.window.showQuickPick(collectedData, { ignoreFocusOut: true });
-      if (selectedFile) {
-        this._importFiles([selectedFile]);
+    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
+    if (filteredData) {
+      const selectedFileArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true, ignoreFocusOut: true });
+      if (selectedFileArr && selectedFileArr.length > 0) {
+        this._importFiles(selectedFileArr);
       }
     }
   }
@@ -144,11 +145,13 @@ export class NetSuiteSDF {
     }
 
     const collectedData = await this.listObjects();
+    const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
 
-    if (collectedData) {
-      const objectId = await vscode.window.showQuickPick(collectedData, { ignoreFocusOut: true });
-      if (objectId) {
-        this._importObjects(this.currentObject.type, [objectId], this.currentObject.destination);
+    if (filteredData) {
+      this.createPath(this.currentObject.destination);
+      const selectionArr = await vscode.window.showQuickPick(filteredData, { canPickMany: true });
+      if (selectionArr && selectionArr.length > 0) {
+          this._importObjects(this.currentObject.type, [objectId], this.currentObject.destination);
       }
     }
 
@@ -171,8 +174,26 @@ export class NetSuiteSDF {
       return;
     }
 
+  }
+
+  issueToken() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.IssueToken);
+  }
+
+  revokeToken() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.RevokeToken);
   }
 
   listBundles() {
@@ -242,14 +263,37 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.RevokeToken);
   }
 
-  update() {
+  async update() {
+
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
 
-    // TODO
-    this.runCommand(CLICommand.Update);
+    await this.getConfig();
+    const objectsRecordPath = path.join(this.rootPath, 'Objects');
+    const pathExists = await this.fileExists(objectsRecordPath);
+
+    if (pathExists) {
+      const filePathList = await this.getXMLFileList(['Objects'], this.rootPath);
+
+      if (filePathList.length > 0) {
+        const shortNames = filePathList.map(file => file.path.substr(file.path.indexOf('Objects') + 8));
+        const selectionArr = await vscode.window.showQuickPick(shortNames, { canPickMany: true });
+
+        if (selectionArr && selectionArr.length > 0) {
+          const selectedFile = filePathList.filter(file => {
+            for (const selection of selectionArr) {
+              if (file.path.indexOf(selection) >= 0) {
+                return true;
+              }
+            }
+          });
+          const selectionStr = selectedFile.map(file => file.scriptid.substring(0, file.scriptid.indexOf('.'))).join(' ');
+          this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
+        }
+      }
+    }
   }
 
   async updateCustomRecordWithInstances() {
@@ -628,9 +672,9 @@ export class NetSuiteSDF {
     })
   }
 
-  ls(path: string): Promise<any> {
+  ls(path: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      fs.readdir(path, function (err, items) {
+      fs.readdir(path, (err, items) => {
         if (err) {
           reject(err)
         }
@@ -639,4 +683,34 @@ export class NetSuiteSDF {
     });
   }
 
+  async getXMLFileList(dirList: string[], root: string): Promise<{ path: string; scriptid: string }[]> {
+    const fileList: { path: string; scriptid: string }[] = [];
+    const traversFolders = async (folders: string[], root: string) => {
+      if (folders.length > 0) {
+        for (const folder of folders) {
+          const rawFileList = await this.ls(path.join(root, folder));
+          const dirList: string[] = [];
+          for (const fileName of rawFileList) {
+            const lstat = fs.lstatSync(path.join(root, folder, fileName));
+            if (lstat.isDirectory()) {
+              dirList.push(fileName);
+            } else {
+              if (fileName.slice(fileName.length - 4) === '.xml') {
+                fileList.push({ path: path.join(root, folder, fileName), scriptid: fileName });
+              }
+            }
+          }
+          await traversFolders(dirList, path.join(root, folder));
+        }
+      } else {
+        return folders;
+      }
+    };
+    try {
+      await traversFolders(dirList, root);
+      return fileList;
+    } catch (err) {
+      vscode.window.showErrorMessage('Unable to get file list: ', err.message);
+    }
+  }
 }

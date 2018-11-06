@@ -2,12 +2,11 @@
     "name": "netsuitesdf",
     "displayName": "NetSuiteSDF",
     "description": "Plugin to integrate NetSuite SDF CLI",
-    "version": "0.4.0",
+    "version": "0.3.2",
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
-    "license": "MIT",
     "engines": {
-        "vscode": "^1.15.0"
+        "vscode": "^1.10.0"
     },
     "categories": [
         "Other"
@@ -15,7 +14,6 @@
     "activationEvents": [
         "workspaceContains:**/.sdf",
         "workspaceContains:**/.sdfcli.json",
-        "workspaceContains:**/.clicache",
         "onCommand:extension.addDependencies",
         "onCommand:extension.deploy",
         "onCommand:extension.importBundle",
@@ -37,14 +35,6 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "views": {
-            "explorer": [
-                {
-                    "id": "netsuitesdf",
-                    "name": "NetSuiteSDF"
-                }
-            ]
-        },
         "keybindings": [
             {
                 "command": "extension.addDependencies",
@@ -129,21 +119,6 @@
         ],
         "commands": [
             {
-                "command": "extension.importFolder",
-                "title": "Import Folder",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.importObject",
-                "title": "Import Object",
-                "category": "SDF"
-            },
-            {
-                "command": "extension.importFile",
-                "title": "Import File",
-                "category": "SDF"
-            },
-            {
                 "command": "extension.addDependencies",
                 "title": "Add Dependencies to Manifest",
                 "category": "SDF"
@@ -169,9 +144,9 @@
                 "category": "SDF"
             },
             {
-                "command": "extension.issueToken",
-                "title": "Issue Token",
-                "category": "SDF"
+              "command": "extension.issueToken",
+              "title": "Issue Token",
+              "category": "SDF"
             },
             {
                 "command": "extension.listBundles",
@@ -204,9 +179,9 @@
                 "category": "SDF"
             },
             {
-                "command": "extension.revokeToken",
-                "title": "Revoke Token",
-                "category": "SDF"
+              "command": "extension.revokeToken",
+              "title": "Revoke Token",
+              "category": "SDF"
             },
             {
                 "command": "extension.selectEnvironment",
@@ -233,23 +208,7 @@
                 "title": "Reset Password",
                 "category": "SDF"
             }
-        ],
-        "menus": {
-            "view/item/context": [
-                {
-                    "command": "extension.importFolder",
-                    "when": "view == netsuitesdf && viewItem == sdf-object-folder"
-                },
-                {
-                    "command": "extension.importObject",
-                    "when": "view == netsuitesdf && viewItem == sdf-object"
-                },
-                {
-                    "command": "extension.importFile",
-                    "when": "view == netsuitesdf && viewItem == sdf-file"
-                }
-            ]
-        }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -259,15 +218,13 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "lodash": "^4.17.5",
-        "spawn-rx": "~2.0.12",
-        "rxjs": "^5.5.10"
+        "rxjs": "^5.5.10",
+        "spawn-rx": "~2.0.12"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.107",
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.61",
         "typescript": "^2.8.1",
-        "vscode": "^1.1.14"
+        "vscode": "^1.1.21"
     }
 }

@@ -22,14 +22,14 @@ export class CustomObject implements ICustomObject {
 }
 
 export const CustomObjects: CustomObject[] = [
-  new CustomObject({
+  {
     label: 'Advanced PDF Template',
     type: 'advancedpdftemplate',
-    _destination: ['AdvancedPDFTemplate'],
+    destination: '/Objects/Templates/AdvancedPDFs',
     detail: 'custtmpl',
     description: ''
-  }),
-  new CustomObject({
+  },
+  {
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
     _destination: ['BundleInstallation'],
@@ -93,6 +93,22 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+  {
+    label: 'Custom Segment',
+    type: 'customsegment',
+    destination: '/Objects/CustomSegments',
+    detail: 'cseg',
+    description: ''
+  },
+  {
+    label: 'Custom Transactions',
+    type: 'customtransactiontype',
+    destination: '/Objects/CustomTransactions',
+    detail: 'customtransaction',
+    description: ''
+  },
+  {
     label: 'Email Capture Plugins',
     type: 'emailcaptureplugin',
     _destination: ['Plugins', 'Email'],
@@ -100,6 +116,15 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+  {
+    label: 'Email Template',
+    type: 'emailtemplate',
+    destination: '/Objects/Templates/Email',
+    detail: 'custemailtmpl',
+    description: ''
+  },
+  {
     label: 'Entity Custom Fields',
     type: 'entitycustomfield',
     _destination: ['Fields', 'Entity'],
@@ -142,6 +167,16 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+
+  {
+    label: 'KPI Scorecard',
+    type: 'kpiscorecard',
+    destination: '/Objects/KPIScorecards',
+    detail: 'custkpiscorecard',
+    description: ''
+  },
+  {
     label: 'Map Reduce Script',
     type: 'mapreducescript',
     _destination: ['Scripts', 'MapReduce'],
@@ -163,6 +198,24 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+
+  {
+    label: 'Plugin Implementation',
+    type: 'pluginimplementation',
+    destination: '/Objects/PluginImplementations',
+    detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'Plugin Type',
+    type: 'plugintype',
+    destination: '/Objects/PluginTypes',
+    detail: 'customscript',
+    description: ''
+  },
+  {
     label: 'Portlets',
     type: 'portlet',
     _destination: ['Scripts', 'Portlet'],
@@ -177,6 +230,16 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+
+  {
+    label: 'Publish Dashboards',
+    type: 'publisheddashboard',
+    destination: '/Objects/PublishDashboards',
+    detail: 'custpubdashboard',
+    description: ''
+  },
+  {
     label: 'Restlets',
     type: 'restlet',
     _destination: ['Scripts', 'Restlet'],
@@ -191,6 +254,15 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+  {
+    label: 'Saved CSV Import',
+    type: 'savedcsvimport',
+    destination: '/Objects/CSVImports',
+    detail: 'custimport',
+    description: ''
+  },
+  {
     label: 'Saved Searches',
     type: 'savedsearch',
     _destination: ['SavedSearches'],
@@ -205,6 +277,24 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+
+  {
+    label: 'SSP Applications',
+    type: 'sspapplication',
+    destination: '/Objects/SSPApplications',
+    detail: 'webapp',
+    description: ''
+  },
+
+  {
+    label: 'Sublists',
+    type: 'sublist',
+    destination: '/Objects/Sublists',
+    detail: 'custsublist',
+    description: ''
+  },
+  {
     label: 'SubTabs',
     type: 'subtab',
     _destination: ['CentersAndTabs', 'SubTab'],
@@ -219,6 +309,15 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
+  },
+  {
+    label: 'Transaction Forms',
+    type: 'transactionForm',
+    destination: '/Objects/Forms/TransactionForm',
+    detail: 'custform',
+    description: ''
+  },
+  {
     label: 'Transaction Body Custom Field',
     type: 'transactionbodycustomfield',
     _destination: ['Fields', 'TransactionBody'],
