@@ -71,6 +71,11 @@
         "mac": "cmd+; shift+o"
       },
       {
+        "command": "extension.issueToken",
+        "key": "ctrl+; t",
+        "mac": "cmd+; t"
+      },
+      {
         "command": "extension.listBundles",
         "key": "ctrl+; b",
         "mac": "cmd+; b"
@@ -99,6 +104,11 @@
         "command": "extension.refreshConfig",
         "key": "ctrl+; r",
         "mac": "cmd+; r"
+      },
+      {
+        "command": "extension.revokeToken",
+        "key": "ctrl+; shift+t",
+        "mac": "cmd+; shift+t"
       },
       {
         "command": "extension.selectEnvironment",
