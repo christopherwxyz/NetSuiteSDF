@@ -77,6 +77,20 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   },
   {
+    label: 'Custom Segment',
+    type: 'customsegment',
+    destination: '/Objects/CustomSegments',
+    detail: 'cseg',
+    description: ''
+  },
+  {
+    label: 'Custom Transactions',
+    type: 'customtransactiontype',
+    destination: '/Objects/CustomTransactions',
+    detail: 'customtransaction',
+    description: ''
+  },
+  {
     label: 'Email Capture Plugins',
     type: 'emailcaptureplugin',
     destination: '/Objects/Plugins/Email',
@@ -105,13 +119,6 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   },
   {
-    label: 'Transaction Forms',
-    type: 'transactionForm',
-    destination: '/Objects/Forms/TransactionForm',
-    detail: 'custform',
-    description: ''
-  },
-  {
     label: 'Item Custom Fields',
     type: 'itemcustomfield',
     destination: '/Objects/Fields/Item',
@@ -130,6 +137,14 @@ export const CustomObjects: CustomObject[] = [
     type: 'itemoptioncustomfield',
     destination: '/Objects/Fields/ItemOption',
     detail: 'custitemoption',
+    description: ''
+  },
+
+  {
+    label: 'KPI Scorecard',
+    type: 'kpiscorecard',
+    destination: '/Objects/KPIScorecards',
+    detail: 'custkpiscorecard',
     description: ''
   },
   {
@@ -153,6 +168,22 @@ export const CustomObjects: CustomObject[] = [
     detail: 'custrecord',
     description: ''
   },
+
+  {
+    label: 'Plugin Implementation',
+    type: 'pluginimplementation',
+    destination: '/Objects/PluginImplementations',
+    detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'Plugin Type',
+    type: 'plugintype',
+    destination: '/Objects/PluginTypes',
+    detail: 'customscript',
+    description: ''
+  },
   {
     label: 'Portlets',
     type: 'portlet',
@@ -165,6 +196,14 @@ export const CustomObjects: CustomObject[] = [
     type: 'promotionsplugin',
     destination: '/Objects/Plugins/Promotions',
     detail: 'customscript',
+    description: ''
+  },
+
+  {
+    label: 'Publish Dashboards',
+    type: 'publisheddashboard',
+    destination: '/Objects/PublishDashboards',
+    detail: 'custpubdashboard',
     description: ''
   },
   {
@@ -202,6 +241,22 @@ export const CustomObjects: CustomObject[] = [
     detail: 'customscript',
     description: ''
   },
+
+  {
+    label: 'SSP Applications',
+    type: 'sspapplication',
+    destination: '/Objects/SSPApplications',
+    detail: 'webapp',
+    description: ''
+  },
+
+  {
+    label: 'Sublists',
+    type: 'sublist',
+    destination: '/Objects/Sublists',
+    detail: 'custsublist',
+    description: ''
+  },
   {
     label: 'SubTabs',
     type: 'subtab',
@@ -214,6 +269,13 @@ export const CustomObjects: CustomObject[] = [
     type: 'suitelet',
     destination: '/Objects/Scripts/Suitelet',
     detail: 'customscript',
+    description: ''
+  },
+  {
+    label: 'Transaction Forms',
+    type: 'transactionForm',
+    destination: '/Objects/Forms/TransactionForm',
+    detail: 'custform',
     description: ''
   },
   {
