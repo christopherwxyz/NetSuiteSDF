@@ -2,7 +2,7 @@
     "name": "netsuitesdf",
     "displayName": "NetSuiteSDF",
     "description": "Plugin to integrate NetSuite SDF CLI",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "publisher": "markkeaton",
     "repository": "https://github.com/mark-keaton/NetSuiteSDF",
     "engines": {
@@ -206,13 +206,13 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "spawn-rx": "~2.0.12",
-        "rxjs": "^5.5.10"
+        "rxjs": "^5.5.10",
+        "spawn-rx": "~2.0.12"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.61",
         "typescript": "^2.8.1",
-        "vscode": "^1.1.14"
+        "vscode": "^1.1.21"
     }
 }
