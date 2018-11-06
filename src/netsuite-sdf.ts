@@ -818,7 +818,7 @@ export class NetSuiteSDF {
     root: string
   ): Promise<{ path: string; scriptid: string }[]> {
     const fileList: { path: string; scriptid: string }[] = [];
-    const traversFolders = async (folders: string[], root: string) => {
+    const traverseFolders = async (folders: string[], root: string) => {
       if (folders.length > 0) {
         for (const folder of folders) {
           const rawFileList = await this.ls(path.join(root, folder));
@@ -836,14 +836,14 @@ export class NetSuiteSDF {
               }
             }
           }
-          await traversFolders(dirList, path.join(root, folder));
+          await traverseFolders(dirList, path.join(root, folder));
         }
       } else {
         return folders;
       }
     };
     try {
-      await traversFolders(dirList, root);
+      await traverseFolders(dirList, root);
       return fileList;
     } catch (err) {
       vscode.window.showErrorMessage('Unable to get file list: ', err.message);
