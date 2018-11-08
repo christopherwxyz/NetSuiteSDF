@@ -186,6 +186,7 @@ export class NetSuiteSDF {
   ) {
     await this.createPath(destination);
     const scriptIdString = scriptIds.join(' ');
+    console.log('Script IDs');
     return this.runCommand(
       CLICommand.ImportObjects,
       `-scriptid ${scriptIdString}`,
@@ -254,7 +255,7 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     await this.getConfig();
-    if (this.sdfConfig && this.password) {
+    if (this.sdfConfig) {
       this.currentObject = await vscode.window.showQuickPick(CustomObjects, {
         ignoreFocusOut: true
       });
@@ -596,7 +597,7 @@ export class NetSuiteSDF {
     if (
       this.sdfConfig &&
       this.activeEnvironment &&
-      (this.password || this.hasSdfCache)
+      (this.password || this.hasSdfCache) // No need if using tokens
     ) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
