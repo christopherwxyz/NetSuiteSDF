@@ -4,7 +4,9 @@
         "target": "es6",
         "outDir": "out",
         "lib": [
-            "es6"
+            "es6",
+            "es2016.array.include",
+            "es2017"
         ],
         "sourceMap": true,
         "rootDir": "src"

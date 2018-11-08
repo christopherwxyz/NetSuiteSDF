@@ -4,10 +4,24 @@
 import * as vscode from 'vscode';
 
 import { NetSuiteSDF } from './netsuite-sdf';
+import { SDFProvider } from './sdf-provider';
+import { _importObject, _importObjectFolder, _refresh, _importFile } from './provider-commands';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
     const netsuiteSdf = new NetSuiteSDF(context);
+
+    const sdfProvider = new SDFProvider(netsuiteSdf);
+    vscode.window.registerTreeDataProvider('netsuitesdf', sdfProvider);
+
+    let importFolderFunc = _importObjectFolder(netsuiteSdf);
+    let importObjectFunc = _importObject(netsuiteSdf);
+    let importFileFunc = _importFile(netsuiteSdf);
+    // let refreshFunc = _refresh(sdfProvider);
+    let importFolder = vscode.commands.registerCommand('extension.importFolder', importFolderFunc);
+    let importObject = vscode.commands.registerCommand('extension.importObject', importObjectFunc);
+    let importFile = vscode.commands.registerCommand('extension.importFile', importFileFunc);
+    // let refresh = vscode.commands.registerCommand('extension.refresh', refreshFunc);
 
     let addDependencies = vscode.commands.registerCommand('extension.addDependencies', netsuiteSdf.addDependencies.bind(netsuiteSdf));
     let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
@@ -27,6 +41,11 @@ export function activate(context: vscode.ExtensionContext) {
     let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
     let updateCustomRecordWithInstances = vscode.commands.registerCommand('extension.updateCustomRecordWithInstances', netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf));
     let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
+
+    context.subscriptions.push(importFolder);
+    context.subscriptions.push(importObject);
+    context.subscriptions.push(importFile);
+    // context.subscriptions.push(refresh);
 
     context.subscriptions.push(addDependencies);
     context.subscriptions.push(deploy);

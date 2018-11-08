@@ -4,14 +4,14 @@ export enum CLICommand {
   ImportBundle = 'importbundle',
   ImportFiles = 'importfiles',
   ImportObjects = 'importobjects',
+  IssueToken = 'issuetoken',
   ListBundles = 'listbundles',
   ListFiles = 'listfiles',
   ListMissingDependencies = 'listmissingdependencies',
   ListObjects = 'listobjects',
   Preview = 'preview',
+  RevokeToken = 'revoketoken',
   Update = 'update',
   UpdateCustomRecordsWithInstances = 'updatecustomrecordwithinstances',
-  Validate = 'validate',
-  IssueToken = 'issuetoken',
-  RevokeToken = 'revoketoken'
+  Validate = 'validate'
 }
