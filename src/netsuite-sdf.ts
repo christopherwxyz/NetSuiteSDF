@@ -490,9 +490,9 @@ export class NetSuiteSDF {
     command: CLICommand,
     stdinSubject: Subject<string>
   ) {
-    if (line.startsWith('Enter password:')) {
-      line = line.substring(15);
-    }
+    // if (line.startsWith('Enter password:')) {
+    //   line = line.substring(15);
+    // }
     if (line.includes('You have entered an invalid email address or password. Please try again.')) {
       this.password = undefined;
       vscode.window.showErrorMessage(
@@ -596,8 +596,8 @@ export class NetSuiteSDF {
     await this.getConfig();
     if (
       this.sdfConfig &&
-      this.activeEnvironment &&
-      (this.password || this.hasSdfCache) // No need if using tokens
+      this.activeEnvironment
+      // (this.password || this.hasSdfCache) // No need if using tokens
     ) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
