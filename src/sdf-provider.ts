@@ -1,13 +1,9 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
 
 import * as _ from 'lodash';
 import { NetSuiteSDF } from './netsuite-sdf';
 import { CustomObjects, CustomObject } from './custom-object';
 import { CLICommand } from './cli-command';
-
-type FilePath = string;
 
 export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
 
@@ -175,10 +171,8 @@ export class SDFObjectFolder extends vscode.TreeItem {
     this.sdf.doReturnData = true;
 
     await this.sdf.getConfig();
-    // if (this.sdf.sdfConfig && this.sdf.password) {
     if (this.sdf.sdfConfig) {
       const files = await this.sdf.runCommand(CLICommand.ListObjects, `-type ${this.object.type}`);
-      console.log('Files', files);
       return _.map(files, (file: string) => new SDFObject(file, this.object.destination, this.object.type));
     }
   }
