@@ -163,12 +163,12 @@ export class NetSuiteSDF {
     if (collectedData) {
       const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
       if (filteredData.length > 0) {
-        this.createPath(this.currentObject.destination);
         const selectedObjects = await vscode.window.showQuickPick(filteredData, {
           canPickMany: true,
           ignoreFocusOut: true
         });
         if (selectedObjects && selectedObjects.length > 0) {
+          this.createPath(this.currentObject.destination);
           this._importObjects(
             this.currentObject.type,
             selectedObjects,
@@ -186,7 +186,6 @@ export class NetSuiteSDF {
   ) {
     await this.createPath(destination);
     const scriptIdString = scriptIds.join(' ');
-    console.log('Script IDs');
     return this.runCommand(
       CLICommand.ImportObjects,
       `-scriptid ${scriptIdString}`,
