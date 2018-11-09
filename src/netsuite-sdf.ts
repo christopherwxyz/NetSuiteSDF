@@ -437,7 +437,7 @@ export class NetSuiteSDF {
     if (force || !this.sdfConfig) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
-        this.rootPath = workspaceFolders[0].uri.path;
+        this.rootPath = workspaceFolders[0].uri.fsPath;
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
