@@ -66,7 +66,6 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
           }
           return acc;
         }, suiteScriptsFolder);
-      console.log(reducedData);
     }
   }
 
