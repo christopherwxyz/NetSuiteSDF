@@ -178,6 +178,7 @@ export class SDFObjectFolder extends vscode.TreeItem {
     // if (this.sdf.sdfConfig && this.sdf.password) {
     if (this.sdf.sdfConfig) {
       const files = await this.sdf.runCommand(CLICommand.ListObjects, `-type ${this.object.type}`);
+      console.log('Files', files);
       return _.map(files, (file: string) => new SDFObject(file, this.object.destination, this.object.type));
     }
   }
