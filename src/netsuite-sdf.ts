@@ -490,9 +490,9 @@ export class NetSuiteSDF {
     command: CLICommand,
     stdinSubject: Subject<string>
   ) {
-    // if (line.startsWith('Enter password:')) {
-    //   line = line.substring(15);
-    // }
+    if (line.startsWith('Enter password:')) {
+      line = line.substring(15);
+    }
     if (line.includes('You have entered an invalid email address or password. Please try again.')) {
       this.password = undefined;
       vscode.window.showErrorMessage(
@@ -508,7 +508,7 @@ export class NetSuiteSDF {
     stdinSubject: Subject<string>
   ) {
     switch (true) {
-      case (line.includes('Enter password:') && this.doSendPassword):
+      case (line.includes('Using user credentials.') && this.doSendPassword):
         if (!this.password) {
           await this.resetPassword();
         }
@@ -665,8 +665,8 @@ export class NetSuiteSDF {
         .filter(
           line =>
             !(
+              !line ||
               line.startsWith('[INFO]') ||
-              line.startsWith('SuiteCloud Development Framework CLI') ||
               line.startsWith('SuiteCloud Development Framework CLI') ||
               line.startsWith('Done.') ||
               line.startsWith('Using ')
