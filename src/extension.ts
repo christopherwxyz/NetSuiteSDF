@@ -33,6 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
     let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles.bind(netsuiteSdf));
     let listMissingDependencies = vscode.commands.registerCommand('extension.listMissingDependencies', netsuiteSdf.listMissingDependencies.bind(netsuiteSdf));
     let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects.bind(netsuiteSdf));
+    let nightly = vscode.commands.registerCommand('extension.nightly', netsuiteSdf.nightly.bind(netsuiteSdf));
     let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
     let refreshConfig = vscode.commands.registerCommand('extension.refreshConfig', netsuiteSdf.refreshConfig.bind(netsuiteSdf));
     let resetPassword = vscode.commands.registerCommand('extension.resetPassword', netsuiteSdf.resetPassword.bind(netsuiteSdf));
@@ -57,6 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(listFiles);
     context.subscriptions.push(listMissingDependencies);
     context.subscriptions.push(listObjects);
+    context.subscriptions.push(nightly);
     context.subscriptions.push(preview);
     context.subscriptions.push(refreshConfig);
     context.subscriptions.push(resetPassword);

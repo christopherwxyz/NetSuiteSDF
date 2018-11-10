@@ -21,6 +21,8 @@ import { SdfCliJson } from './sdf-cli-json';
 import { CLICommand } from './cli-command';
 import { CustomObjects, CustomObject } from './custom-object';
 
+const Bluebird = require('bluebird');
+
 export class NetSuiteSDF {
   activeEnvironment: Environment;
   collectedData: string[] = [];
@@ -265,6 +267,28 @@ export class NetSuiteSDF {
         );
       }
     }
+  }
+
+  async nightly() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage(
+        "'sdfcli' not found in path. Please restart VS Code if you installed it."
+      );
+      return;
+    }
+    const recordCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object))
+    return Bluebird.map(this.getFiles, func => func(), { concurrency: 5 });
+
+  }
+
+  async getFiles() {
+    const files = await this.listFiles();
+    await this._importFiles(files);
+  }
+
+  getObjectFunc = (object: CustomObject) => async () => {
+    const objects = await this.listObjects();
+    await this._importObjects(object.type, objects, object.destination);
   }
 
   preview() {
