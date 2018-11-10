@@ -87,7 +87,7 @@ export class NetSuiteSDF {
       <frameworkversion>1.0</frameworkversion>
     </manifest>
     `;
-    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function(
+    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function (
       err
     ) {
       if (err) throw err;
@@ -131,16 +131,16 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     const collectedData = await this.listFiles();
-    const filteredData = collectedData.filter(
-      data => data.indexOf('cust') >= 0
-    );
-    if (filteredData) {
-      const selectedFiles = await vscode.window.showQuickPick(filteredData, {
-        canPickMany: true,
-        ignoreFocusOut: true
-      });
-      if (selectedFiles && selectedFiles.length > 0) {
-        this._importFiles(selectedFiles);
+    if (collectedData) {
+      const filteredData = collectedData.filter(data => data.indexOf('SuiteScripts') >= 0);
+      if (filteredData.length > 0) {
+        const selectedFiles = await vscode.window.showQuickPick(filteredData, {
+          canPickMany: true,
+          ignoreFocusOut: true
+        });
+        if (selectedFiles && selectedFiles.length > 0) {
+          this._importFiles(selectedFiles);
+        }
       }
     }
   }
@@ -160,22 +160,21 @@ export class NetSuiteSDF {
     }
 
     const collectedData = await this.listObjects();
-    const filteredData = collectedData.filter(
-      data => data.indexOf('cust') >= 0
-    );
-
-    if (filteredData) {
-      this.createPath(this.currentObject.destination);
-      const selectedObjects = await vscode.window.showQuickPick(filteredData, {
-        canPickMany: true,
-        ignoreFocusOut: true
-      });
-      if (selectedObjects && selectedObjects.length > 0) {
-        this._importObjects(
-          this.currentObject.type,
-          selectedObjects,
-          this.currentObject.destination
-        );
+    if (collectedData) {
+      const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
+      if (filteredData.length > 0) {
+        const selectedObjects = await vscode.window.showQuickPick(filteredData, {
+          canPickMany: true,
+          ignoreFocusOut: true
+        });
+        if (selectedObjects && selectedObjects.length > 0) {
+          this.createPath(this.currentObject.destination);
+          this._importObjects(
+            this.currentObject.type,
+            selectedObjects,
+            this.currentObject.destination
+          );
+        }
       }
     }
   }
@@ -255,7 +254,7 @@ export class NetSuiteSDF {
     this.doReturnData = true;
 
     await this.getConfig();
-    if (this.sdfConfig && this.password) {
+    if (this.sdfConfig) {
       this.currentObject = await vscode.window.showQuickPick(CustomObjects, {
         ignoreFocusOut: true
       });
@@ -438,7 +437,7 @@ export class NetSuiteSDF {
     if (force || !this.sdfConfig) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
-        this.rootPath = workspaceFolders[0].uri.path;
+        this.rootPath = workspaceFolders[0].uri.fsPath;
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
@@ -457,13 +456,10 @@ export class NetSuiteSDF {
           try {
             this.sdfConfig = JSON.parse(jsonString);
             await this.selectEnvironment();
-            if (this.activeEnvironment) {
-              await this.resetPassword();
-            }
           } catch (e) {
             vscode.window.showErrorMessage(
               `Unable to parse .sdfcli.json file found at project root: ${
-                this.rootPath
+              this.rootPath
               }`
             );
           }
@@ -474,7 +470,7 @@ export class NetSuiteSDF {
           );
           vscode.window.showErrorMessage(
             `No .sdfcli.json file found at project root: ${
-              this.rootPath
+            this.rootPath
             }. Generated a blank .sdfcli.json template.`
           );
         }
@@ -485,11 +481,6 @@ export class NetSuiteSDF {
       }
     } else if (!this.activeEnvironment) {
       await this.selectEnvironment();
-      if (this.activeEnvironment) {
-        await this.resetPassword();
-      }
-    } else if (!this.password) {
-      await this.resetPassword();
     }
   }
 
@@ -501,11 +492,7 @@ export class NetSuiteSDF {
     if (line.startsWith('Enter password:')) {
       line = line.substring(15);
     }
-    if (
-      line.includes(
-        'You have entered an invalid email address or password. Please try again.'
-      )
-    ) {
+    if (line.includes('You have entered an invalid email address or password. Please try again.')) {
       this.password = undefined;
       vscode.window.showErrorMessage(
         'Invalid email or password. Be careful! Too many attempts will lock you out!'
@@ -520,8 +507,10 @@ export class NetSuiteSDF {
     stdinSubject: Subject<string>
   ) {
     switch (true) {
-      case line.includes('SuiteCloud Development Framework CLI') &&
-        this.doSendPassword:
+      case (line.includes('Using user credentials.') && this.doSendPassword):
+        if (!this.password) {
+          await this.resetPassword();
+        }
         stdinSubject.next(`${this.password}\n`);
         break;
       case line.includes(
@@ -585,7 +574,7 @@ export class NetSuiteSDF {
     const _resetPassword = async () => {
       const prompt = `Please enter your password for your ${
         this.activeEnvironment.name
-      } account.`;
+        } account.`;
       const password = await vscode.window.showInputBox({
         prompt: prompt,
         password: true,
@@ -606,8 +595,8 @@ export class NetSuiteSDF {
     await this.getConfig();
     if (
       this.sdfConfig &&
-      this.activeEnvironment &&
-      (this.password || this.hasSdfCache)
+      this.activeEnvironment
+      // (this.password || this.hasSdfCache) // No need if using tokens
     ) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
@@ -644,13 +633,20 @@ export class NetSuiteSDF {
         return this.sdfcli.subscribe(
           value => {
             acc = acc + value;
-            if (acc.includes('\n')) {
-              let lines = acc.split('\n');
-              for (let line of lines.slice(0, -1)) {
-                observer.next(line);
+            let lines = acc.split('\n');
+
+            // Check if the last line is a password entry line - this is only an issue with Object and File imports
+            const endingPhrases = ['Enter password:'];
+            const endingLine = lines.filter(line => {
+              for (let phrase of endingPhrases) {
+                return line === phrase;
               }
-              acc = lines[lines.length - 1];
+
+            });
+            for (let line of lines.slice(0, -1).concat(endingLine)) {
+              observer.next(line);
             }
+            acc = endingLine.length > 0 ? '' : lines[lines.length - 1];
           },
           error => observer.error(error),
           () => observer.complete()
@@ -668,8 +664,8 @@ export class NetSuiteSDF {
         .filter(
           line =>
             !(
+              !line ||
               line.startsWith('[INFO]') ||
-              line.startsWith('SuiteCloud Development Framework CLI') ||
               line.startsWith('SuiteCloud Development Framework CLI') ||
               line.startsWith('Done.') ||
               line.startsWith('Using ')
