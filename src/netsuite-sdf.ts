@@ -333,7 +333,7 @@ export class NetSuiteSDF {
       return;
     }
     const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object))
-    const allCommands = this.getFiles().then(() => { Bluebird.map(objectCommands, func => func(), { concurrency: 1 }) });
+    const allCommands = this.getFiles().then(() => { Bluebird.map(objectCommands, func => func(), { concurrency: 5 }) });
   }
 
   async update() {
