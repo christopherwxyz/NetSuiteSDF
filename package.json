@@ -25,6 +25,7 @@
     "onCommand:extension.listFiles",
     "onCommand:extension.listMissingDependencies",
     "onCommand:extension.listObjects",
+    "onCommand:extension.nightly",
     "onCommand:extension.preview",
     "onCommand:extension.refreshConfig",
     "onCommand:extension.resetPassword",
@@ -200,6 +201,11 @@
       {
         "command": "extension.listObjects",
         "title": "List Objects",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.nightly",
+        "title": "Run Nightly Sync",
         "category": "SDF"
       },
       {
