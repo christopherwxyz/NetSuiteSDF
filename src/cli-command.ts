@@ -9,7 +9,6 @@ export enum CLICommand {
   ListFiles = 'listfiles',
   ListMissingDependencies = 'listmissingdependencies',
   ListObjects = 'listobjects',
-  Nightly = 'nightly',
   Preview = 'preview',
   RevokeToken = 'revoketoken',
   Update = 'update',

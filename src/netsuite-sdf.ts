@@ -269,6 +269,39 @@ export class NetSuiteSDF {
     }
   }
 
+  async getFiles() {
+
+    await this.getConfig();
+    if (this.sdfConfig) {
+      const files = await this.listFiles();
+      if (files){
+        await this._importFiles(files);
+        return;
+      }
+    } else {
+      return;
+    }
+  }
+
+  getObjectFunc = (object: CustomObject) => async () => {
+
+    this.doAddProjectParameter = false;
+    this.doReturnData = true;
+
+    vscode.window.showInformationMessage(JSON.stringify(object));
+    await this.getConfig();
+    if (this.sdfConfig) {
+      const objects = await this.runCommand(
+        CLICommand.ListObjects,
+        `-type ${object.type}`
+      );
+      if (objects){
+        await this._importObjects(object.type, objects, object.destination);
+      }
+      return;
+    }
+  }
+
   async nightly() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(
@@ -277,18 +310,8 @@ export class NetSuiteSDF {
       return;
     }
     const recordCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object))
-    return Bluebird.map(this.getFiles, func => func(), { concurrency: 5 });
-
-  }
-
-  async getFiles() {
-    const files = await this.listFiles();
-    await this._importFiles(files);
-  }
-
-  getObjectFunc = (object: CustomObject) => async () => {
-    const objects = await this.listObjects();
-    await this._importObjects(object.type, objects, object.destination);
+    const allCommands = [this.getFiles].concat(recordCommands);
+    return Bluebird.map(allCommands, func => func(), { concurrency: 5 });
   }
 
   preview() {
