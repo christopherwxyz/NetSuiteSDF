@@ -269,51 +269,6 @@ export class NetSuiteSDF {
     }
   }
 
-  async getFiles() {
-
-    await this.getConfig();
-    if (this.sdfConfig) {
-      const files = await this.listFiles();
-      if (files){
-        await this._importFiles(files);
-        return;
-      }
-    } else {
-      return;
-    }
-  }
-
-  getObjectFunc = (object: CustomObject) => async () => {
-
-    this.doAddProjectParameter = false;
-    this.doReturnData = true;
-
-    vscode.window.showInformationMessage(JSON.stringify(object));
-    await this.getConfig();
-    if (this.sdfConfig) {
-      const objects = await this.runCommand(
-        CLICommand.ListObjects,
-        `-type ${object.type}`
-      );
-      if (objects){
-        await this._importObjects(object.type, objects, object.destination);
-      }
-      return;
-    }
-  }
-
-  async nightly() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(
-        "'sdfcli' not found in path. Please restart VS Code if you installed it."
-      );
-      return;
-    }
-    const recordCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object))
-    const allCommands = [this.getFiles].concat(recordCommands);
-    return Bluebird.map(allCommands, func => func(), { concurrency: 5 });
-  }
-
   preview() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(
@@ -335,6 +290,50 @@ export class NetSuiteSDF {
 
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.RevokeToken);
+  }
+
+
+  async getFiles() {
+
+    await this.getConfig();
+    if (this.sdfConfig) {
+      vscode.window.showInformationMessage("Synchronizing SuiteScript folder.");
+      const files = await this.listFiles();
+      if (files){
+        await this._importFiles(files);
+      }
+    } else {
+      return;
+    }
+  }
+
+  getObjectFunc = (object: CustomObject) => async () => {
+
+    this.doAddProjectParameter = false;
+    this.doReturnData = true;
+
+    vscode.window.showInformationMessage("Synchronizing " + object.label);
+    await this.getConfig();
+    if (this.sdfConfig) {
+      const objects = await this.runCommand(
+        CLICommand.ListObjects,
+        `-type ${object.type}`
+      );
+      if (objects){
+        await this._importObjects(object.type, objects, object.destination);
+      }
+    }
+  }
+
+  async sync() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage(
+        "'sdfcli' not found in path. Please restart VS Code if you installed it."
+      );
+      return;
+    }
+    const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object))
+    const allCommands = this.getFiles().then(() => { Bluebird.map(objectCommands, func => func(), { concurrency: 1 }) });
   }
 
   async update() {

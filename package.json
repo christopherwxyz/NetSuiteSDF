@@ -25,12 +25,12 @@
     "onCommand:extension.listFiles",
     "onCommand:extension.listMissingDependencies",
     "onCommand:extension.listObjects",
-    "onCommand:extension.nightly",
     "onCommand:extension.preview",
     "onCommand:extension.refreshConfig",
     "onCommand:extension.resetPassword",
     "onCommand:extension.revokeToken",
     "onCommand:extension.selectEnvironment",
+    "onCommand:extension.sync",
     "onCommand:extension.update",
     "onCommand:extension.updateCustomRecordsWithInstances",
     "onCommand:extension.validate"
@@ -204,11 +204,6 @@
         "category": "SDF"
       },
       {
-        "command": "extension.nightly",
-        "title": "Run Nightly Sync",
-        "category": "SDF"
-      },
-      {
         "command": "extension.preview",
         "title": "Preview",
         "category": "SDF"
@@ -226,6 +221,11 @@
       {
         "command": "extension.selectEnvironment",
         "title": "Select Environment",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.sync",
+        "title": "Run Customization Sync",
         "category": "SDF"
       },
       {
