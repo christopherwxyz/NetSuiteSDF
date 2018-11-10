@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "https://github.com/mark-keaton/NetSuiteSDF",
   "engines": {
-    "vscode": "^1.10.0"
+    "vscode": "^1.28.2"
   },
   "categories": [
     "Other"
@@ -276,6 +276,6 @@
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.61",
     "typescript": "^2.8.1",
-    "vscode": "^1.1.21"
+    "vscode": "^1.28.2"
   }
 }
