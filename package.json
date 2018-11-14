@@ -2,12 +2,12 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "publisher": "markkeaton",
   "license": "MIT",
   "repository": "https://github.com/mark-keaton/NetSuiteSDF",
   "engines": {
-    "vscode": "^1.28.2"
+    "vscode": "^1.10.0"
   },
   "categories": [
     "Other"
