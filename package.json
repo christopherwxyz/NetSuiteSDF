@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "https://github.com/mark-keaton/NetSuiteSDF",
   "engines": {
-    "vscode": "^1.10.0"
+    "vscode": "^1.28.2"
   },
   "categories": [
     "Other"
@@ -35,6 +35,7 @@
     "onCommand:extension.resetPassword",
     "onCommand:extension.revokeToken",
     "onCommand:extension.selectEnvironment",
+    "onCommand:extension.sync",
     "onCommand:extension.update",
     "onCommand:extension.updateCustomRecordsWithInstances",
     "onCommand:extension.validate"
@@ -228,6 +229,11 @@
         "category": "SDF"
       },
       {
+        "command": "extension.sync",
+        "title": "Run Customization Sync",
+        "category": "SDF"
+      },
+      {
         "command": "extension.update",
         "title": "Update",
         "category": "SDF"
@@ -281,6 +287,6 @@
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.61",
     "typescript": "^2.8.1",
-    "vscode": "^1.1.21"
+    "vscode": "^1.28.2"
   }
 }
