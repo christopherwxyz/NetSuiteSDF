@@ -73,9 +73,18 @@ choco install sdfcli # This installs Java 8 and Maven 3.5
 
 Install via [Homebrew](https://brew.sh)
 
+_Warning: the Brew Cask has been renamed. If you used it previously as `sdfcli`, please untap the cask and uninstall:_
+
+```bash
+brew untap limebox/netsuite
+brew uninstall sdfcli
+```
+
+Install SDFSDK:
+
 ```bash
 brew cask install caskroom/versions/java8 # Unless you already have Java 8 installed.
-brew install limebox/netsuite/sdfcli
+brew install limebox/netsuite/sdfsdk
 ```
 
 2. The plugin is activated when a project is opened that has a `.sdf` or `.sdfcli.json` file in the root directory. So open a SDF project folder that contains a `.sdf` file.
