@@ -334,7 +334,6 @@ export class NetSuiteSDF {
         const objectsChunked = _.chunk(objects,10)
 
         for (let i = 0; i < objectsChunked.length; i++){
-          vscode.window.showInformationMessage('Importing objects: '+ objectsChunked[i]);
           await this._importObjects(object.type, objectsChunked[i], object.destination);
         }
       }
