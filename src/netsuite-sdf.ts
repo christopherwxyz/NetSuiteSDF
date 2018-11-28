@@ -315,6 +315,10 @@ export class NetSuiteSDF {
   }
 
   getObjectFunc = (object: CustomObject) => async () => {
+
+    //Saved Searches should not be supported at this time. 
+    if (object.type === 'savedsearch') return;
+
     this.doAddProjectParameter = false;
     this.doReturnData = true;
 
@@ -326,7 +330,13 @@ export class NetSuiteSDF {
       );
       if (objects && objects[0] !== 'No custom objects found.') {
         vscode.window.showInformationMessage('Synchronizing ' + object.label);
-        await this._importObjects(object.type, objects, object.destination);
+
+        const objectsChunked = _.chunk(objects,10)
+
+        for (let i = 0; i < objectsChunked.length; i++){
+          vscode.window.showInformationMessage('Importing objects: '+ objectsChunked[i]);
+          await this._importObjects(object.type, objectsChunked[i], object.destination);
+        }
       }
     }
   };
