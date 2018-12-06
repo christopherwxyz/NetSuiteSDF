@@ -696,7 +696,8 @@ export class NetSuiteSDF {
 
       this.sdfcli = spawn('sdfcli', commandArray, {
         cwd: this.rootPath,
-        stdin: stdinSubject
+        stdin: stdinSubject,
+        windowsVerbatimArguments: true
       });
 
       this.showStatus();
