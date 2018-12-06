@@ -48,6 +48,7 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | Refresh Config    | Force the extension to re-read .sdfcli.json                                                     |
 | resetPassword     | Enter password for use with environment                                                         |
 | selectEnvironment | Select active environment from list in .sdfcli.json. If only one, will automatically select it. |
+| sync              | Grabs all available customizations from NetSuite that is normally possible by the plugin.       |
 
 ### ToDo
 
