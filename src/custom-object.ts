@@ -135,13 +135,6 @@ export const CustomObjects: CustomObject[] = [
     description: ''
   }),
   new CustomObject({
-    label: 'Transaction Forms',
-    type: 'transactionForm',
-    _destination: ['Forms', 'TransactionForm'],
-    detail: 'custform',
-    description: ''
-  }),
-  new CustomObject({
     label: 'Item Custom Fields',
     type: 'itemcustomfield',
     _destination: ['Fields', 'Item'],
