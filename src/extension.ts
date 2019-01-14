@@ -35,6 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
     let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects.bind(netsuiteSdf));
     let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
     let refreshConfig = vscode.commands.registerCommand('extension.refreshConfig', netsuiteSdf.refreshConfig.bind(netsuiteSdf));
+    let removeFolders = vscode.commands.registerCommand('extension.removeFolders', netsuiteSdf.removeFolders.bind(netsuiteSdf));
     let resetPassword = vscode.commands.registerCommand('extension.resetPassword', netsuiteSdf.resetPassword.bind(netsuiteSdf));
     let revokeToken = vscode.commands.registerCommand('extension.revokeToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
     let selectEnvironment = vscode.commands.registerCommand('extension.selectEnvironment', netsuiteSdf.selectEnvironment.bind(netsuiteSdf));
@@ -60,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(listObjects);
     context.subscriptions.push(preview);
     context.subscriptions.push(refreshConfig);
+    context.subscriptions.push(removeFolders);
     context.subscriptions.push(resetPassword);
     context.subscriptions.push(revokeToken);
     context.subscriptions.push(selectEnvironment);
