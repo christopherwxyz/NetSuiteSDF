@@ -49,6 +49,7 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | resetPassword     | Enter password for use with environment                                                         |
 | selectEnvironment | Select active environment from list in .sdfcli.json. If only one, will automatically select it. |
 | sync              | Grabs all available customizations from NetSuite that is normally possible by the plugin.       |
+| remove folders    | Removes all created folders from the current directory. Used in conjunction with sync.          |
 
 ### ToDo
 
