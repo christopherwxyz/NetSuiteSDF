@@ -6,6 +6,7 @@ import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
 
 import * as _ from 'lodash';
+import * as rimraf from 'rimraf';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/do';
@@ -287,6 +288,22 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
+  async removeFolders() {
+    
+    await this.getConfig();
+
+    if (this.sdfConfig) {
+      vscode.window.showInformationMessage('Emptying: ' + this.rootPath+'/Objects/')
+      await rimraf(this.rootPath+'/Objects/*',(err: Error) => { 
+        vscode.window.showErrorMessage(err.message);
+      });
+      vscode.window.showInformationMessage('Emptying: ' + this.rootPath+'/FileCabinet/SuiteScripts/')
+      await rimraf(this.rootPath+'/FileCabinet/SuiteScripts/*', (err: Error) => { 
+        vscode.window.showErrorMessage(err.message);
+      });
+    }
+  }
+
   revokeToken() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(
@@ -348,6 +365,7 @@ export class NetSuiteSDF {
       return;
     }
     await this.getConfig();
+    await this.removeFolders();
     if (this.sdfConfig) {
       const objectCommands = _.map(CustomObjects, (object: CustomObject) =>
         this.getObjectFunc(object)
