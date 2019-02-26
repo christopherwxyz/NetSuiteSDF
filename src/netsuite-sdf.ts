@@ -619,6 +619,10 @@ export class NetSuiteSDF {
         vscode.window.showErrorMessage(
           'Custom record does not exist for updating. Please Import Object first.'
         );
+      case line.includes('Installation COMPLETE'):
+        vscode.window.showInformationMessage(
+          'Installation of deployment was completed.'
+        );
       default:
         break;
     }
