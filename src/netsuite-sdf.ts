@@ -246,21 +246,6 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
-  async removeFolders() {
-    await this.getConfig();
-
-    if (this.sdfConfig) {
-      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/Objects/');
-      await rimraf(this.rootPath + '/Objects/*', (err: Error) => {
-        vscode.window.showErrorMessage(err.message);
-      });
-      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/FileCabinet/SuiteScripts/');
-      await rimraf(this.rootPath + '/FileCabinet/SuiteScripts/*', (err: Error) => {
-        vscode.window.showErrorMessage(err.message);
-      });
-    }
-  }
-
   revokeToken() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
@@ -305,21 +290,6 @@ export class NetSuiteSDF {
       }
     }
   };
-
-  async sync() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
-      return;
-    }
-    await this.getConfig();
-    await this.removeFolders();
-    if (this.sdfConfig) {
-      const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
-      const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
-      await Bluebird.map(allCommands, func => func(), { concurrency: 5 });
-      vscode.window.showInformationMessage('Synchronization complete!');
-    }
-  }
 
   async update() {
     if (!this.sdfCliIsInstalled) {
@@ -392,6 +362,118 @@ export class NetSuiteSDF {
     }
 
     this.runCommand(CLICommand.Validate);
+  }
+
+  /************************/
+  /** Extension Commands **/
+  /************************/
+
+  refreshConfig() {
+    this.getConfig({ force: true });
+  }
+
+  async removeFolders() {
+    await this.getConfig();
+
+    if (this.sdfConfig) {
+      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/Objects/');
+      await rimraf(this.rootPath + '/Objects/*', (err: Error) => {
+        vscode.window.showErrorMessage(err.message);
+      });
+      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/FileCabinet/SuiteScripts/');
+      await rimraf(this.rootPath + '/FileCabinet/SuiteScripts/*', (err: Error) => {
+        vscode.window.showErrorMessage(err.message);
+      });
+    }
+  }
+
+  async resetPassword() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    const _resetPassword = async () => {
+      const prompt = `Please enter your password for your ${this.activeEnvironment.name} account.`;
+      const password = await vscode.window.showInputBox({
+        prompt: prompt,
+        password: true,
+        ignoreFocusOut: true
+      });
+      this.password = password;
+    };
+
+    if (this.sdfConfig) {
+      await _resetPassword();
+    } else {
+      await this.getConfig({ force: true });
+      await _resetPassword();
+    }
+  }
+
+  async selectEnvironment() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    const _selectEnvironment = async () => {
+      try {
+        const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => {
+          acc[curr.name] = curr;
+          return acc;
+        }, {});
+        const environmentNames = Object.keys(environments);
+        if (environmentNames.length === 1) {
+          const environmentName = environmentNames[0];
+          this.activeEnvironment = environments[environmentName];
+          this.statusBar.text = this.statusBarDefault;
+          vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
+        } else {
+          const environmentName = await vscode.window.showQuickPick(environmentNames, { ignoreFocusOut: true });
+          if (environmentName) {
+            this.activeEnvironment = environments[environmentName];
+            if (this.activeEnvironment.account === '00000000') {
+              vscode.window.showErrorMessage(
+                '.sdfcli.json account number appears to be wrong. Are you still using the blank template?'
+              );
+              this.sdfConfig = undefined;
+              this.activeEnvironment = undefined;
+              this.clearStatus();
+            } else {
+              this.statusBar.text = this.statusBarDefault;
+            }
+          }
+        }
+      } catch (e) {
+        vscode.window.showErrorMessage(
+          'Unable to parse .sdfcli.json environments. Please check repo for .sdfcli.json formatting.'
+        );
+        this.clearStatus();
+      }
+    };
+
+    if (this.sdfConfig) {
+      await _selectEnvironment();
+    } else {
+      await this.getConfig({ force: true });
+      await _selectEnvironment();
+    }
+  }
+
+  async sync() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+    await this.getConfig();
+    await this.removeFolders();
+    if (this.sdfConfig) {
+      const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
+      const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
+      await Bluebird.map(allCommands, func => func(), { concurrency: 5 });
+      vscode.window.showInformationMessage('Synchronization complete!');
+    }
   }
 
   /*********************/
@@ -549,34 +631,6 @@ export class NetSuiteSDF {
     }
   }
 
-  refreshConfig() {
-    this.getConfig({ force: true });
-  }
-
-  async resetPassword() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
-      return;
-    }
-
-    const _resetPassword = async () => {
-      const prompt = `Please enter your password for your ${this.activeEnvironment.name} account.`;
-      const password = await vscode.window.showInputBox({
-        prompt: prompt,
-        password: true,
-        ignoreFocusOut: true
-      });
-      this.password = password;
-    };
-
-    if (this.sdfConfig) {
-      await _resetPassword();
-    } else {
-      await this.getConfig({ force: true });
-      await _resetPassword();
-    }
-  }
-
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
     if (
@@ -661,56 +715,6 @@ export class NetSuiteSDF {
 
       this.cleanup();
       return collectedData;
-    }
-  }
-
-  async selectEnvironment() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
-      return;
-    }
-
-    const _selectEnvironment = async () => {
-      try {
-        const environments = this.sdfConfig.environments.reduce((acc, curr: Environment) => {
-          acc[curr.name] = curr;
-          return acc;
-        }, {});
-        const environmentNames = Object.keys(environments);
-        if (environmentNames.length === 1) {
-          const environmentName = environmentNames[0];
-          this.activeEnvironment = environments[environmentName];
-          this.statusBar.text = this.statusBarDefault;
-          vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
-        } else {
-          const environmentName = await vscode.window.showQuickPick(environmentNames, { ignoreFocusOut: true });
-          if (environmentName) {
-            this.activeEnvironment = environments[environmentName];
-            if (this.activeEnvironment.account === '00000000') {
-              vscode.window.showErrorMessage(
-                '.sdfcli.json account number appears to be wrong. Are you still using the blank template?'
-              );
-              this.sdfConfig = undefined;
-              this.activeEnvironment = undefined;
-              this.clearStatus();
-            } else {
-              this.statusBar.text = this.statusBarDefault;
-            }
-          }
-        }
-      } catch (e) {
-        vscode.window.showErrorMessage(
-          'Unable to parse .sdfcli.json environments. Please check repo for .sdfcli.json formatting.'
-        );
-        this.clearStatus();
-      }
-    };
-
-    if (this.sdfConfig) {
-      await _selectEnvironment();
-    } else {
-      await this.getConfig({ force: true });
-      await _selectEnvironment();
     }
   }
 

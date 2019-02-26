@@ -160,16 +160,6 @@
         "category": "SDF"
       },
       {
-        "command": "extension.importObject",
-        "title": "Import Object",
-        "category": "SDF"
-      },
-      {
-        "command": "extension.importFile",
-        "title": "Import File",
-        "category": "SDF"
-      },
-      {
         "command": "extension.importBundle",
         "title": "Import Bundle",
         "category": "SDF"
@@ -219,9 +209,10 @@
         "title": "Refresh Config",
         "category": "SDF"
       },
-      { "command": "extension.removeFolders",
+      {
+        "command": "extension.removeFolders",
         "title": "Remove folders",
-        "category": "SDF"      
+        "category": "SDF"
       },
       {
         "command": "extension.revokeToken",
