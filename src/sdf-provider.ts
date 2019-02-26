@@ -6,11 +6,12 @@ import { CustomObjects, CustomObject } from './custom-object';
 import { CLICommand } from './cli-command';
 
 export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
-
-  private _onDidChangeTreeData: vscode.EventEmitter<SDFFile | undefined> = new vscode.EventEmitter<SDFFile | undefined>();
+  private _onDidChangeTreeData: vscode.EventEmitter<SDFFile | undefined> = new vscode.EventEmitter<
+    SDFFile | undefined
+  >();
   readonly onDidChangeTreeData: vscode.Event<SDFFile | undefined> = this._onDidChangeTreeData.event;
 
-  constructor(private sdf: NetSuiteSDF) { }
+  constructor(private sdf: NetSuiteSDF) {}
 
   refresh(event?: any): void {
     console.log(event);
@@ -28,10 +29,7 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
     } else if (element) {
       return (<SDFFolder | SDFObjectFolder>element).getChildren();
     } else {
-      return [
-        this.getObjectFolders(),
-        new SDFFolder('SuiteScripts'),
-      ]
+      return [this.getObjectFolders(), new SDFFolder('SuiteScripts')];
     }
   }
 
@@ -71,72 +69,61 @@ export class SDFProvider implements vscode.TreeDataProvider<SDFFile> {
 
   private getObjectFolders() {
     const objects = new SDFFolder('Objects');
-    const objectsMap = _.reduce(CustomObjects, (acc, customObject) => {
-      const folderName = customObject._destination[0];
-      let child: SDFFolder | SDFObjectFolder;
-      if (customObject._destination.length > 1) {
-        child = folderName in acc ? acc[folderName] : new SDFFolder(folderName);
-        const grandchild = customObject._destination[1];
-        (<SDFFolder>child).children.push(new SDFObjectFolder(this.sdf, grandchild, customObject));
-      } else {
-        child = new SDFObjectFolder(this.sdf, folderName, customObject);
-      }
-      acc[folderName] = child;
-      return acc;
-    }, {});
+    const objectsMap = _.reduce(
+      CustomObjects,
+      (acc, customObject) => {
+        const folderName = customObject._destination[0];
+        let child: SDFFolder | SDFObjectFolder;
+        if (customObject._destination.length > 1) {
+          child = folderName in acc ? acc[folderName] : new SDFFolder(folderName);
+          const grandchild = customObject._destination[1];
+          (<SDFFolder>child).children.push(new SDFObjectFolder(this.sdf, grandchild, customObject));
+        } else {
+          child = new SDFObjectFolder(this.sdf, folderName, customObject);
+        }
+        acc[folderName] = child;
+        return acc;
+      },
+      {}
+    );
     objects.children = _.sortBy(Object.values(objectsMap), 'label');
     return objects;
   }
-
 }
 
 export class SDFFile extends vscode.TreeItem {
-
-  constructor(
-    public readonly label: string,
-    private path: string,
-  ) {
+  constructor(public readonly label: string, private path: string) {
     super(label, vscode.TreeItemCollapsibleState.None);
   }
 
   get tooltip(): string {
-    return `${this.label}`
+    return `${this.label}`;
   }
 
   contextValue = 'sdf-file';
-
 }
 
 export class SDFObject extends vscode.TreeItem {
-
-  constructor(
-    public readonly label: string,
-    public path: string,
-    public type: string,
-  ) {
+  constructor(public readonly label: string, public path: string, public type: string) {
     super(label, vscode.TreeItemCollapsibleState.None);
   }
 
   get tooltip(): string {
-    return `${this.label}`
+    return `${this.label}`;
   }
 
   contextValue = 'sdf-object';
-
 }
 
 export class SDFFolder extends vscode.TreeItem {
-
   children: Array<SDFFolder | SDFFile | SDFObjectFolder> = [];
 
-  constructor(
-    public label: string,
-  ) {
+  constructor(public label: string) {
     super(label, vscode.TreeItemCollapsibleState.Collapsed);
   }
 
   get tooltip(): string {
-    return `${this.label}`
+    return `${this.label}`;
   }
 
   getChildren() {
@@ -148,21 +135,15 @@ export class SDFFolder extends vscode.TreeItem {
   }
 
   contextValue = 'sdf-folder';
-
 }
 
 export class SDFObjectFolder extends vscode.TreeItem {
-
-  constructor(
-    public sdf: NetSuiteSDF,
-    public label: string,
-    public object: CustomObject,
-  ) {
+  constructor(public sdf: NetSuiteSDF, public label: string, public object: CustomObject) {
     super(label, vscode.TreeItemCollapsibleState.Collapsed);
   }
 
   get tooltip(): string {
-    return `${this.label}`
+    return `${this.label}`;
   }
 
   async getChildren() {
