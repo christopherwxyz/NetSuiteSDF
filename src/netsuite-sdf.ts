@@ -832,11 +832,10 @@ export class NetSuiteSDF {
   createPath(targetDir) {
     // Strip leading '/'
     targetDir = targetDir.substring(1);
-    const sep = path.sep;
     const initDir = this.rootPath;
     const baseDir = this.rootPath;
 
-    targetDir.split(sep).reduce((parentDir, childDir) => {
+    targetDir.split('/').reduce((parentDir, childDir) => {
       const curDir = path.resolve(baseDir, parentDir, childDir);
       try {
         fs.mkdirSync(curDir);
