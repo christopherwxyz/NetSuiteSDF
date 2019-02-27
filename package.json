@@ -257,11 +257,11 @@
           "when": "view == netsuitesdf && viewItem == sdf-object-folder"
         },
         {
-          "command": "extension.importObject",
+          "command": "extension.importObjects",
           "when": "view == netsuitesdf && viewItem == sdf-object"
         },
         {
-          "command": "extension.importFile",
+          "command": "extension.importFiles",
           "when": "view == netsuitesdf && viewItem == sdf-file"
         }
       ]
