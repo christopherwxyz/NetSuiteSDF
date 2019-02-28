@@ -370,10 +370,20 @@ export class NetSuiteSDF {
   /** Extension Commands **/
   /************************/
 
-  async addFileToDeploy() {
+  async addFileToDeploy(context?: any) {
+    if (context && context.scheme !== 'file') {
+      vscode.window.showWarningMessage(`Unknown file type '${context.scheme}' to add to deploy.xml`);
+      return;
+    }
     await this.getConfig();
     const deployPath = path.join(this.rootPath, 'deploy.xml');
-    const currentFile = vscode.window.activeTextEditor.document.fileName;
+
+    let currentFile: string;
+    if (context && context.fsPath) {
+      currentFile = context.fsPath;
+    } else {
+      currentFile = vscode.window.activeTextEditor.document.fileName;
+    }
 
     const isScript = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
     const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects'));

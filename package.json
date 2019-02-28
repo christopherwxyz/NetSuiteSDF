@@ -269,6 +269,12 @@
           "command": "extension.importFiles",
           "when": "view == netsuitesdf && viewItem == sdf-file"
         }
+      ],
+      "explorer/context": [
+        {
+          "command": "extension.addFileToDeploy",
+          "group": "z_commands"
+        }
       ]
     }
   },
