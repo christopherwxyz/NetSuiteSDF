@@ -7,6 +7,7 @@ import { ChildProcess } from 'child_process';
 
 import * as _ from 'lodash';
 import * as rimraf from 'rimraf';
+import * as xml2js from 'xml2js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/do';
@@ -42,6 +43,7 @@ export class NetSuiteSDF {
   sdfCliIsInstalled = true; // Prevents error messages while Code is testing SDFCLI is installed.
   statusBar: vscode.StatusBarItem;
   hasSdfCache: boolean;
+  xmlBuilder = new xml2js.Builder({ headless: true });
 
   constructor(private context: vscode.ExtensionContext) {
     this.checkSdfCliIsInstalled().then(() => {
@@ -368,6 +370,27 @@ export class NetSuiteSDF {
   /** Extension Commands **/
   /************************/
 
+  async addFileToDeploy() {
+    await this.getConfig();
+    const deployPath = path.join(this.rootPath, 'deploy.xml');
+    const currentFile = vscode.window.activeTextEditor.document.fileName;
+
+    const deployXmlExists = await this.fileExists(deployPath);
+    if (!deployXmlExists) {
+      this.setDefaultDeployXml();
+    }
+    const deployXml = await this.openFile(deployPath);
+    const deployJs = await this.parseXml(deployXml);
+    const files = _.get(deployJs, 'deploy.files.file', []);
+    files.push(currentFile);
+    _.set(deployJs, 'deploy.files.file', files);
+
+    const newXml = this.xmlBuilder.buildObject(deployJs);
+    fs.writeFile(deployPath, newXml, function(err) {
+      if (err) throw err;
+    });
+  }
+
   refreshConfig() {
     this.getConfig({ force: true });
   }
@@ -459,6 +482,13 @@ export class NetSuiteSDF {
       await this.getConfig({ force: true });
       await _selectEnvironment();
     }
+  }
+
+  setDefaultDeployXml() {
+    const defaultXml = `<deploy></deploy>`;
+    fs.writeFile(path.join(this.rootPath, 'deploy.xml'), defaultXml, function(err) {
+      if (err) throw err;
+    });
   }
 
   async sync() {
@@ -781,6 +811,17 @@ export class NetSuiteSDF {
           reject(err);
         }
         resolve(items);
+      });
+    });
+  }
+
+  parseXml(xml: string): Promise<{ [key: string]: any }> {
+    return new Promise((resolve, reject) => {
+      xml2js.parseString(xml, function(err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
       });
     });
   }

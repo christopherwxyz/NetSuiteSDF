@@ -150,6 +150,11 @@
         "category": "SDF"
       },
       {
+        "command": "extension.addFileToDeploy",
+        "title": "Add file to deploy.xml",
+        "category": "SDF"
+      },
+      {
         "command": "extension.deploy",
         "title": "Deploy to Account",
         "category": "SDF"
@@ -279,11 +284,13 @@
     "lodash": "^4.17.11",
     "rimraf": "^2.6.3",
     "rxjs": "^5.5.10",
-    "spawn-rx": "~2.0.12"
+    "spawn-rx": "~2.0.12",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.10.2",
+    "@types/xml2js": "^0.4.3",
     "typescript": "^2.8.1",
     "vscode": "^1.1.22"
   }

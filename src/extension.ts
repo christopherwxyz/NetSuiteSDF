@@ -26,6 +26,10 @@ export async function activate(context: vscode.ExtensionContext) {
     'extension.addDependencies',
     netsuiteSdf.addDependencies.bind(netsuiteSdf)
   );
+  let addFileToDeploy = vscode.commands.registerCommand(
+    'extension.addFileToDeploy',
+    netsuiteSdf.addFileToDeploy.bind(netsuiteSdf)
+  );
   let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
   let importBundle = vscode.commands.registerCommand(
     'extension.importBundle',
@@ -76,6 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // context.subscriptions.push(refresh);
 
   context.subscriptions.push(addDependencies);
+  context.subscriptions.push(addFileToDeploy);
   context.subscriptions.push(deploy);
   context.subscriptions.push(importBundle);
   context.subscriptions.push(importFiles);
