@@ -375,15 +375,24 @@ export class NetSuiteSDF {
     const deployPath = path.join(this.rootPath, 'deploy.xml');
     const currentFile = vscode.window.activeTextEditor.document.fileName;
 
+    const isScript = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
+    const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects'));
+
+    if (!isScript && !isObject) {
+      vscode.window.showErrorMessage('Invalid file to add to deploy.xml. File was not a Script or an Object.');
+      return;
+    }
+    const xmlPath = isScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
+
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
       this.setDefaultDeployXml();
     }
     const deployXml = await this.openFile(deployPath);
     const deployJs = await this.parseXml(deployXml);
-    const files = _.get(deployJs, 'deploy.files.file', []);
-    files.push(currentFile);
-    _.set(deployJs, 'deploy.files.file', files);
+    const elements = _.get(deployJs, xmlPath, []);
+    elements.push(currentFile);
+    _.set(deployJs, xmlPath, elements);
 
     const newXml = this.xmlBuilder.buildObject(deployJs);
     fs.writeFile(deployPath, newXml, function(err) {
