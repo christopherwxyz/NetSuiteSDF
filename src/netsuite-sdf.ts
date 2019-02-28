@@ -383,6 +383,7 @@ export class NetSuiteSDF {
       return;
     }
     const xmlPath = isScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
+    const relativePath = _.replace(currentFile, this.rootPath, '~');
 
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
@@ -391,13 +392,18 @@ export class NetSuiteSDF {
     const deployXml = await this.openFile(deployPath);
     const deployJs = await this.parseXml(deployXml);
     const elements = _.get(deployJs, xmlPath, []);
-    elements.push(currentFile);
-    _.set(deployJs, xmlPath, elements);
+    if (_.includes(elements, relativePath)) {
+      vscode.window.showInformationMessage('File/Object already exists in deploy.xml.');
+    } else {
+      elements.push(relativePath);
+      _.set(deployJs, xmlPath, elements);
 
-    const newXml = this.xmlBuilder.buildObject(deployJs);
-    fs.writeFile(deployPath, newXml, function(err) {
-      if (err) throw err;
-    });
+      const newXml = this.xmlBuilder.buildObject(deployJs);
+      fs.writeFile(deployPath, newXml, function(err) {
+        if (err) throw err;
+        vscode.window.showInformationMessage('Added File/Object to deploy.xml.');
+      });
+    }
   }
 
   refreshConfig() {
