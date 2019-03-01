@@ -43,6 +43,17 @@
   ],
   "main": "./out/extension",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "NetSuiteSDF",
+      "properties": {
+        "netsuitesdf.useQuickDeploy": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Quick Deployments (BETA)"
+        }
+      }
+    },
     "views": {
       "explorer": [
         {

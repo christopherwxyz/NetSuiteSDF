@@ -136,14 +136,19 @@ export class NetSuiteSDF {
     }
     await this.getConfig();
 
-    // TODO: Add parameter to check if they have opted in to Quick Deploy
-    await this._generateTempDeployDirectory();
+    let config = vscode.workspace.getConfiguration('netsuitesdf');
+    const useQuickDeploy = config.get('useQuickDeploy');
+    if (useQuickDeploy) {
+      await this._generateTempDeployDirectory();
 
-    await this.runCommand(CLICommand.Deploy);
+      await this.runCommand(CLICommand.Deploy);
 
-    await rimraf(this.rootPath + '/var', (err: Error) => {
-      vscode.window.showErrorMessage(err.message);
-    });
+      await rimraf(this.rootPath + '/var', (err: Error) => {
+        vscode.window.showErrorMessage(err.message);
+      });
+    } else {
+      await this.runCommand(CLICommand.Deploy);
+    }
   }
 
   importBundle() {
