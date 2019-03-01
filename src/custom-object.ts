@@ -235,7 +235,7 @@ export const CustomObjects: CustomObject[] = [
   }),
   new CustomObject({
     label: 'Saved CSV Import',
-    type: 'savedcsvimport',
+    type: 'csvimport',
     _destination: ['CSVImports'],
     detail: 'custimport',
     description: ''

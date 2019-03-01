@@ -206,7 +206,7 @@ export class NetSuiteSDF {
     }
 
     this.doAddProjectParameter = false;
-    return this.runCommand(CLICommand.ListFiles, '-folder "/SuiteScripts"');
+    return this.runCommand(CLICommand.ListFiles, '-folder /SuiteScripts');
   }
 
   listMissingDependencies() {
@@ -657,6 +657,7 @@ export class NetSuiteSDF {
       case line.includes('enter YES to continue'):
       case line.includes('Type YES to update the manifest file'):
       case line.includes('Proceed with deploy?'):
+      case line.includes('Type Yes (Y) to continue.'):
         stdinSubject.next('YES\n');
         break;
       default:
@@ -707,7 +708,7 @@ export class NetSuiteSDF {
       ];
 
       if (this.doAddProjectParameter) {
-        commandArray.push(`-p "${this.rootPath}"`);
+        commandArray.push(`-p ${this.rootPath}`);
       }
       for (let arg of args) {
         commandArray.push(arg);
