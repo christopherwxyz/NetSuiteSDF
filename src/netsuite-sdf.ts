@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
 
 import * as _ from 'lodash';
 import * as rimraf from 'rimraf';
+import * as tmp from 'tmp';
 import * as xml2js from 'xml2js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -42,6 +43,7 @@ export class NetSuiteSDF {
   sdfConfig: SDFConfig;
   sdfCliIsInstalled = true; // Prevents error messages while Code is testing SDFCLI is installed.
   statusBar: vscode.StatusBarItem;
+  tempDir: tmp.SynchrounousResult;
   hasSdfCache: boolean;
   xmlBuilder = new xml2js.Builder({ headless: true });
 
@@ -96,13 +98,52 @@ export class NetSuiteSDF {
     await this.runCommand(CLICommand.AddDependencies, '-all');
   }
 
-  deploy() {
+  async _generateTempDeployDirectory() {
+    const deployPath = path.join(this.rootPath, 'deploy.xml');
+    const deployXmlExists = await this.fileExists(deployPath);
+    if (!deployXmlExists) {
+      this.setDefaultDeployXml();
+    }
+    const deployXml = await this.openFile(deployPath);
+    const deployJs = await this.parseXml(deployXml);
+
+    const files = _.get(deployJs, 'deploy.files[0].path', []);
+    const objects = _.get(deployJs, 'deploy.objects[0].path', []);
+    const allFiles = files.concat(objects).concat(['/deploy.xml', '/manifest.xml', '/.sdf']);
+
+    this.tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false });
+    try {
+      for (let filepath of allFiles) {
+        if (_.includes(filepath, '*')) {
+          // TODO: Add warning about globs
+          continue;
+        }
+        filepath = filepath.replace('~', '');
+        const fromPath = path.join(filepath);
+        const toPath = path.join(this.tempDir.name, filepath);
+        await this.copyFile(fromPath, toPath);
+        console.log('wait');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async deploy() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
+    await this.getConfig();
 
-    this.runCommand(CLICommand.Deploy);
+    // TODO: Add parameter to check if they have opted in to Quick Deploy
+    await this._generateTempDeployDirectory();
+
+    await this.runCommand(CLICommand.Deploy);
+
+    await rimraf(this.rootPath + '/var', (err: Error) => {
+      vscode.window.showErrorMessage(err.message);
+    });
   }
 
   importBundle() {
@@ -523,11 +564,16 @@ export class NetSuiteSDF {
     }
     await this.getConfig();
     await this.removeFolders();
-    if (this.sdfConfig) {
-      const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
-      const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
-      await Bluebird.map(allCommands, func => func(), { concurrency: 5 });
-      vscode.window.showInformationMessage('Synchronization complete!');
+    try {
+      if (this.sdfConfig) {
+        const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
+        const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
+        await Bluebird.map(allCommands, func => func(), { concurrency: 5 });
+        vscode.window.showInformationMessage('Synchronization complete!');
+      }
+    } catch (e) {
+    } finally {
+      this.cleanup();
     }
   }
 
@@ -565,6 +611,10 @@ export class NetSuiteSDF {
     this.intervalId = undefined;
     this.sdfcli = undefined;
     this.doShowOutput = true;
+    if (this.tempDir && this.tempDir.name !== '') {
+      this.tempDir.removeCallback();
+    }
+    this.tempDir = undefined;
   }
 
   clearStatus() {
@@ -699,6 +749,11 @@ export class NetSuiteSDF {
         this.outputChannel.show();
       }
 
+      let workPath = this.rootPath;
+      if (this.tempDir) {
+        workPath = path.join(workPath, this.tempDir.name);
+      }
+
       const commandArray: [CLICommand, string, string, string, string] = [
         command,
         `-account ${this.activeEnvironment.account}`,
@@ -708,7 +763,7 @@ export class NetSuiteSDF {
       ];
 
       if (this.doAddProjectParameter) {
-        commandArray.push(`-p ${this.rootPath}`);
+        commandArray.push(`-p ${workPath}`);
       }
       for (let arg of args) {
         commandArray.push(arg);
@@ -717,7 +772,7 @@ export class NetSuiteSDF {
       const stdinSubject = new Subject<string>();
 
       this.sdfcli = spawn('sdfcli', commandArray, {
-        cwd: this.rootPath,
+        cwd: workPath,
         stdin: stdinSubject,
         windowsVerbatimArguments: true
       });
@@ -788,6 +843,17 @@ export class NetSuiteSDF {
   /**************/
   /*** UTILS ****/
   /**************/
+
+  async copyFile(relativeFrom: string, relativeTo: string) {
+    const toDir = relativeTo
+      .split('/')
+      .slice(0, -1)
+      .join('/');
+    this.createPath(toDir);
+    const from = path.join(this.rootPath, relativeFrom);
+    const to = path.join(this.rootPath, relativeTo);
+    return fs.copyFile(from, to);
+  }
 
   createPath(targetDir) {
     // Strip leading '/'
