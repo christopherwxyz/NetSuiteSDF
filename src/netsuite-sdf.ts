@@ -28,6 +28,7 @@ const Bluebird = require('bluebird');
 
 export class NetSuiteSDF {
   activeEnvironment: Environment;
+  addDefaultParameters = true;
   collectedData: string[] = [];
   currentObject: CustomObject;
   doAddProjectParameter = true;
@@ -96,6 +97,37 @@ export class NetSuiteSDF {
       if (err) throw err;
     });
     await this.runCommand(CLICommand.AddDependencies, '-all');
+  }
+
+  async createProject() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doSendPassword = false;
+    this.addDefaultParameters = false;
+
+    const pathPrompt = `Please enter your the parent directory to create the Project in`;
+    const outputPath = await vscode.window.showInputBox({
+      prompt: pathPrompt,
+      ignoreFocusOut: true
+    });
+    if (outputPath) {
+      const projectNamePrompt = `Please enter your project's name`;
+      const projectName = await vscode.window.showInputBox({
+        prompt: projectNamePrompt,
+        ignoreFocusOut: true
+      });
+      if (projectName) {
+        await this.runCommand(
+          CLICommand.CreateProject,
+          `-pd ${outputPath}`,
+          `-pn ${projectName}`,
+          '-t ACCOUNTCUSTOMIZATION'
+        );
+      }
+    }
   }
 
   async _generateTempDeployDirectory() {
@@ -551,7 +583,6 @@ export class NetSuiteSDF {
       await _selectEnvironment();
     } else {
       await this.getConfig({ force: true });
-      await _selectEnvironment();
     }
   }
 
@@ -620,6 +651,7 @@ export class NetSuiteSDF {
       this.tempDir.removeCallback();
     }
     this.tempDir = undefined;
+    this.addDefaultParameters = false;
   }
 
   clearStatus() {
@@ -759,13 +791,15 @@ export class NetSuiteSDF {
         workPath = path.join(workPath, this.tempDir.name);
       }
 
-      const commandArray: [CLICommand, string, string, string, string] = [
-        command,
-        `-account ${this.activeEnvironment.account}`,
-        `-email ${this.activeEnvironment.email}`,
-        `-role ${this.activeEnvironment.role}`,
-        `-url ${this.activeEnvironment.url}`
-      ];
+      const commandArray: string[] = [command];
+      if (this.addDefaultParameters) {
+        commandArray.push(
+          `-account ${this.activeEnvironment.account}`,
+          `-email ${this.activeEnvironment.email}`,
+          `-role ${this.activeEnvironment.role}`,
+          `-url ${this.activeEnvironment.url}`
+        );
+      }
 
       if (this.doAddProjectParameter) {
         commandArray.push(`-p ${workPath}`);

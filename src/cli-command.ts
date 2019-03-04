@@ -1,5 +1,6 @@
 export enum CLICommand {
   AddDependencies = 'adddependencies',
+  CreateProject = 'createproject',
   Deploy = 'deploy',
   ImportBundle = 'importbundle',
   ImportFiles = 'importfiles',
