@@ -41,7 +41,7 @@
     "onCommand:extension.updateCustomRecordsWithInstances",
     "onCommand:extension.validate"
   ],
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -295,11 +295,14 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
     "bluebird": "^3.5.3",
@@ -309,7 +312,6 @@
     "rxjs": "^5.5.10",
     "spawn-rx": "~2.0.12",
     "tmp": "0.0.33",
-    "vscode": "^1.1.30",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
@@ -318,7 +320,10 @@
     "@types/node": "~11.9.6",
     "@types/tmp": "0.0.34",
     "@types/xml2js": "^0.4.3",
+    "ts-loader": "^5.3.3",
     "typescript": "^2.8.1",
-    "vscode": "^1.1.22"
+    "vscode": "^1.1.22",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   }
 }
