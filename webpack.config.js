@@ -42,8 +42,8 @@ const config = {
                 module: 'commonjs',
                 target: 'es6',
                 outDir: 'out',
-                lib: ['es6', 'es2016.array.include', 'es2017'],
-                sourceMap: false,
+                lib: ['es6', 'es2016.array.include', 'es2017.object'],
+                sourceMap: true,
                 rootDir: 'src'
               }
             }

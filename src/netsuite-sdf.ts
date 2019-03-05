@@ -435,6 +435,16 @@ export class NetSuiteSDF {
     }
   }
 
+  async uploadFolders(context?: any) {
+    if (context && context.scheme !== 'folder') {
+      vscode.window.showWarningMessage(`${context.fsPath} is not a folder.`);
+      return;
+    }
+
+    const files = vscode.workspace.findFiles('*.*');
+    console.log(files);
+  }
+
   validate() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
@@ -651,7 +661,7 @@ export class NetSuiteSDF {
       this.tempDir.removeCallback();
     }
     this.tempDir = undefined;
-    this.addDefaultParameters = false;
+    this.addDefaultParameters = true;
   }
 
   clearStatus() {
@@ -791,14 +801,14 @@ export class NetSuiteSDF {
         workPath = path.join(workPath, this.tempDir.name);
       }
 
-      const commandArray: string[] = [command];
+      let commandArray: string[] = [command];
       if (this.addDefaultParameters) {
-        commandArray.push(
+        commandArray = commandArray.concat([
           `-account ${this.activeEnvironment.account}`,
           `-email ${this.activeEnvironment.email}`,
           `-role ${this.activeEnvironment.role}`,
           `-url ${this.activeEnvironment.url}`
-        );
+        ]);
       }
 
       if (this.doAddProjectParameter) {

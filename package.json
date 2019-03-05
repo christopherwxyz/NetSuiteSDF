@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "https://github.com/mark-keaton/NetSuiteSDF",
   "engines": {
-    "vscode": "*"
+    "vscode": "^1.31.1"
   },
   "categories": [
     "Other"
@@ -258,6 +258,11 @@
       {
         "command": "extension.updateCustomRecordWithInstances",
         "title": "Update Custom Record with Instances",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.uploadFolders",
+        "title": "Upload folders to /FileCabinet/SuiteScripts",
         "category": "SDF"
       },
       {
