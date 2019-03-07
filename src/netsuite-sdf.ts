@@ -443,9 +443,8 @@ export class NetSuiteSDF {
     await this.getConfig();
 
     const stripPath = (fsPath: string) =>
-      '/' +
       fsPath
-        .replace(path.join(this.rootPath, 'FileCabinet/SuiteScripts/'), '')
+        .replace(path.join(this.rootPath, 'FileCabinet'), '')
         .split('/')
         .slice(0, -1)
         .join('/');
@@ -460,6 +459,26 @@ export class NetSuiteSDF {
       .filter(path => path !== '/')
       .sort()
       .value();
+    if (folders.length === 0) {
+      vscode.window.showErrorMessage('No folders found in FileCabinet/SuiteScripts to upload');
+      return;
+    }
+
+    const selectedFolders = await vscode.window.showQuickPick(folders, {
+      canPickMany: true,
+      ignoreFocusOut: true
+    });
+    if (_.includes(selectedFolders, '/SuiteScripts')) {
+      const doContinue = await vscode.window.showQuickPick(['Yes', 'No'], {
+        placeHolder: 'Are you sure you want to upload your entire SuiteScripts directory?',
+        ignoreFocusOut: true
+      });
+      if (doContinue === 'No') {
+        console.log('User clicked no');
+        return;
+      }
+    }
+    console.log(selectedFolders);
   }
 
   validate() {
