@@ -358,7 +358,7 @@ export class NetSuiteSDF {
 
     await this.getConfig();
     if (this.sdfConfig) {
-      const objects = await this.runCommand(CLICommand.ListObjects, `-type ${object.type}`);
+      const objects: string[] = await this.runCommand(CLICommand.ListObjects, `-type ${object.type}`);
       if (objects && objects[0] !== 'No custom objects found.') {
         vscode.window.showInformationMessage('Synchronizing ' + object.label);
 
@@ -440,9 +440,26 @@ export class NetSuiteSDF {
       vscode.window.showWarningMessage(`${context.fsPath} is not a folder.`);
       return;
     }
+    await this.getConfig();
 
-    const files = vscode.workspace.findFiles('*.*');
-    console.log(files);
+    const stripPath = (fsPath: string) =>
+      '/' +
+      fsPath
+        .replace(path.join(this.rootPath, 'FileCabinet/SuiteScripts/'), '')
+        .split('/')
+        .slice(0, -1)
+        .join('/');
+
+    const files = await vscode.workspace.findFiles('FileCabinet/SuiteScripts/**/*.*');
+    const foldersObj = _(files).reduce(
+      (acc: { [key: string]: true }, uri: vscode.Uri) => ({ ...acc, [stripPath(uri.fsPath)]: true }),
+      {}
+    );
+    const folders = _(foldersObj)
+      .keys()
+      .filter(path => path !== '/')
+      .sort()
+      .value();
   }
 
   validate() {
