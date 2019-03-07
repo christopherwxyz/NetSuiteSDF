@@ -441,6 +441,7 @@ export class NetSuiteSDF {
       return;
     }
     await this.getConfig();
+    this.doAddProjectParameter = true;
 
     const stripPath = (fsPath: string) =>
       fsPath
@@ -474,11 +475,12 @@ export class NetSuiteSDF {
         ignoreFocusOut: true
       });
       if (doContinue === 'No') {
-        console.log('User clicked no');
         return;
       }
     }
-    console.log(selectedFolders);
+    // const cleanedFolders = _.map(selectedFolders, folder => `"${folder}"`);
+    const folderString = selectedFolders.join(' ');
+    this.runCommand(CLICommand.UploadFolders, `-paths ${folderString}`);
   }
 
   validate() {

@@ -14,5 +14,6 @@ export enum CLICommand {
   RevokeToken = 'revoketoken',
   Update = 'update',
   UpdateCustomRecordsWithInstances = 'updatecustomrecordwithinstances',
+  UploadFolders = 'uploadfolders',
   Validate = 'validate'
 }
