@@ -610,6 +610,17 @@ export class NetSuiteSDF {
     }
     await this.getConfig();
     await this.removeFolders();
+
+    const prompt = "Warning! Syncing to NetSuite will delete File Cabinet and Object contents. Type OK to proceed.";
+    const answer = await vscode.window.showInputBox({
+      prompt: prompt,
+      ignoreFocusOut: true
+    });
+    if (answer === 'OK') {
+    } else {
+      this.outputChannel.append('Cancelling sync.\n');
+      return; 
+    }
     try {
       if (this.sdfConfig) {
         const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
