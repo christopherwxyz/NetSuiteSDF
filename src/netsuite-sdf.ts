@@ -194,6 +194,9 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.ImportBundle);
   }
 
+  // TODO
+  // importConfiguration
+
   async importFiles() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
@@ -435,53 +438,55 @@ export class NetSuiteSDF {
     }
   }
 
-  async uploadFolders(context?: any) {
-    if (context && context.scheme !== 'folder') {
-      vscode.window.showWarningMessage(`${context.fsPath} is not a folder.`);
-      return;
-    }
-    await this.getConfig();
-    this.doAddProjectParameter = true;
+  // For 2019.1
+  //
+  // async uploadFolders(context?: any) {
+  //   if (context && context.scheme !== 'folder') {
+  //     vscode.window.showWarningMessage(`${context.fsPath} is not a folder.`);
+  //     return;
+  //   }
+  //   await this.getConfig();
+  //   this.doAddProjectParameter = true;
 
-    const stripPath = (fsPath: string) =>
-      fsPath
-        .replace(path.join(this.rootPath, 'FileCabinet'), '')
-        .split('/')
-        .slice(0, -1)
-        .join('/');
+  //   const stripPath = (fsPath: string) =>
+  //     fsPath
+  //       .replace(path.join(this.rootPath, 'FileCabinet'), '')
+  //       .split('/')
+  //       .slice(0, -1)
+  //       .join('/');
 
-    const files = await vscode.workspace.findFiles('FileCabinet/SuiteScripts/**/*.*');
-    const foldersObj = _(files).reduce(
-      (acc: { [key: string]: true }, uri: vscode.Uri) => ({ ...acc, [stripPath(uri.fsPath)]: true }),
-      {}
-    );
-    const folders = _(foldersObj)
-      .keys()
-      .filter(path => path !== '/')
-      .sort()
-      .value();
-    if (folders.length === 0) {
-      vscode.window.showErrorMessage('No folders found in FileCabinet/SuiteScripts to upload');
-      return;
-    }
+  //   const files = await vscode.workspace.findFiles('FileCabinet/SuiteScripts/**/*.*');
+  //   const foldersObj = _(files).reduce(
+  //     (acc: { [key: string]: true }, uri: vscode.Uri) => ({ ...acc, [stripPath(uri.fsPath)]: true }),
+  //     {}
+  //   );
+  //   const folders = _(foldersObj)
+  //     .keys()
+  //     .filter(path => path !== '/')
+  //     .sort()
+  //     .value();
+  //   if (folders.length === 0) {
+  //     vscode.window.showErrorMessage('No folders found in FileCabinet/SuiteScripts to upload');
+  //     return;
+  //   }
 
-    const selectedFolders = await vscode.window.showQuickPick(folders, {
-      canPickMany: true,
-      ignoreFocusOut: true
-    });
-    if (_.includes(selectedFolders, '/SuiteScripts')) {
-      const doContinue = await vscode.window.showQuickPick(['Yes', 'No'], {
-        placeHolder: 'Are you sure you want to upload your entire SuiteScripts directory?',
-        ignoreFocusOut: true
-      });
-      if (doContinue === 'No') {
-        return;
-      }
-    }
-    // const cleanedFolders = _.map(selectedFolders, folder => `"${folder}"`);
-    const folderString = selectedFolders.join(' ');
-    this.runCommand(CLICommand.UploadFolders, `-paths ${folderString}`);
-  }
+  //   const selectedFolders = await vscode.window.showQuickPick(folders, {
+  //     canPickMany: true,
+  //     ignoreFocusOut: true
+  //   });
+  //   if (_.includes(selectedFolders, '/SuiteScripts')) {
+  //     const doContinue = await vscode.window.showQuickPick(['Yes', 'No'], {
+  //       placeHolder: 'Are you sure you want to upload your entire SuiteScripts directory?',
+  //       ignoreFocusOut: true
+  //     });
+  //     if (doContinue === 'No') {
+  //       return;
+  //     }
+  //   }
+  //   // const cleanedFolders = _.map(selectedFolders, folder => `"${folder}"`);
+  //   const folderString = selectedFolders.join(' ');
+  //   this.runCommand(CLICommand.UploadFolders, `-paths ${folderString}`);
+  // }
 
   validate() {
     if (!this.sdfCliIsInstalled) {

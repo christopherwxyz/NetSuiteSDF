@@ -64,6 +64,13 @@ export const CustomObjects: CustomObject[] = [
     detail: 'customscript',
     description: ''
   }),
+  // new CustomObject({
+  //   label: 'CMS Content Type',
+  //   type: 'cmscontenttype',
+  //   _destination: ['CMS', 'ContentType'],
+  //   detail: 'custcontenttype',
+  //   description: ''
+  // }),
   new CustomObject({
     label: 'CRM Custom Fields',
     type: 'crmcustomfield',
@@ -254,6 +261,13 @@ export const CustomObjects: CustomObject[] = [
     detail: 'customscript',
     description: ''
   }),
+  // new CustomObject({
+  //   label: 'SDF Installation Script',
+  //   type: '',
+  //   _destination: ['Scripts', 'SDFInstallation'],
+  //   detail: 'customscript',
+  //   description: ''
+  // }),
   new CustomObject({
     label: 'SSP Applications',
     type: 'sspapplication',

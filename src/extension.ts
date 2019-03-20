@@ -72,10 +72,10 @@ export async function activate(context: vscode.ExtensionContext) {
     'extension.updateCustomRecordWithInstances',
     netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
   );
-  let uploadFolders = vscode.commands.registerCommand(
-    'extension.uploadFolders',
-    netsuiteSdf.uploadFolders.bind(netsuiteSdf)
-  );
+  // let uploadFolders = vscode.commands.registerCommand(
+  //   'extension.uploadFolders',
+  //   netsuiteSdf.uploadFolders.bind(netsuiteSdf)
+  // );
   let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
   context.subscriptions.push(importFolder);
@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(sync);
   context.subscriptions.push(update);
   context.subscriptions.push(updateCustomRecordWithInstances);
-  context.subscriptions.push(uploadFolders);
+  // context.subscriptions.push(uploadFolders);
   context.subscriptions.push(validate);
 }
 

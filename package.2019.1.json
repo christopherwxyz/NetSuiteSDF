@@ -261,6 +261,11 @@
         "category": "SDF"
       },
       {
+        "command": "extension.uploadFolders",
+        "title": "Upload folders to /FileCabinet/SuiteScripts",
+        "category": "SDF"
+      },
+      {
         "command": "extension.validate",
         "title": "Validate Project",
         "category": "SDF"
