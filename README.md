@@ -10,6 +10,7 @@ This is a port of the functionality provided by [tjtyrrell](https://github.com/t
 
 ## Features
 
+- Currently updated to work with 2018.2.1 (2019.1 in the works)
 - Wraps SDF CLI commands
 - Environment (Sandbox, Production, etc.) selector
 - Output window integrated with VS Code
@@ -20,8 +21,8 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 
 ### SDF CLI Commands
 
-| _Command_                       | _Implemented_          |
-| ------------------------------- | ---------------------- |
+| _Command_                       | _Implemented_          | _Shortcut_ |
+| ------------------------------- | ---------------------- | ---------- |
 | adddependencies                 | ✔                      |
 | deploy                          | ✔                      |
 | importbundle                    |                        |
@@ -52,13 +53,42 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | sync              | Grabs all available customizations from NetSuite that is normally possible by the plugin.       |
 | remove folders    | Removes all created folders from the current directory. Used in conjunction with sync.          |
 
+### Hotkeys
+
+_Note: All hotkeys are preceded by Ctrl-; on Windows or Cmd-; on Mac._
+For example, if I wanted to run the command `addDependencies` on a Mac, I would press Cmd-;, then press a.
+`<p>` below stands for that OS-specific prefix. These commands are case sensitive.
+
+| _Command_                       | _Shortcut_ |
+| ------------------------------- | ---------- |
+| addDependencies                 | `<p> a`    |
+| addFileToDeploy                 | `<p> +`    |
+| deploy                          | `<p> d`    |
+| importBundle                    | `<p> d`    |
+| importFiles                     | `<p> F`    |
+| importObjects                   | `<p> O`    |
+| issueToken                      | `<p> t`    |
+| listBundles                     | `<p> b`    |
+| listConfiguration               | `<p> c`    |
+| listFiles                       | `<p> f`    |
+| listMissingDependencies         | `<p> m`    |
+| listObjects                     | `<p> o`    |
+| preview                         | `<p> p`    |
+| refreshConfig                   | `<p> r`    |
+| revokeToken                     | `<p> R`    |
+| saveToken                       | `<p> T`    |
+| selectEnvironment               | `<p> s`    |
+| update                          | `<p> u`    |
+| updateCustomRecordWithInstances | `<p> U`    |
+| validate                        | `<p> v`    |
+| resetPassword                   | `<p> P`    |
+
 ### ToDo
 
 | _Command_   | _Description_                                                                       |
 | ----------- | ----------------------------------------------------------------------------------- |
 | New Project | Will generate SDF project file structure in the same manner as sdfcli-createproject |
 | Update .sdf | Automatically update .sdf with active environment information                       |
-| _HOTKEYS_   | Add hotkeys                                                                         |
 
 ## Installation
 
