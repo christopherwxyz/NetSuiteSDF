@@ -29,14 +29,15 @@ All commands can be found with the `SDF` prefix in the Command Palette (Win: Ctr
 | importfiles                     | ✔                      |
 | importobjects                   | ✔                      |
 | issuetoken                      | ✔                      |
-| listbundles                     |                        |
-| listconfiguration               |                        |
+| listbundles                     | ✔                      |
+| listconfiguration               | ✔                      |
 | listfiles                       | ✔                      |
 | listmissingdependencies         | ✔                      |
 | listObjects                     | ✔                      |
 | preview                         | ✔                      |
 | project                         | (Handled by extension) |
 | revoketoken                     | ✔                      |
+| savetoken                       | ✔                      |
 | update                          | ✔                      |
 | updatecustomrecordwithinstances | ✔                      |
 | validate                        | ✔                      |

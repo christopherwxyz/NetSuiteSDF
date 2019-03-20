@@ -9,9 +9,7 @@
   "engines": {
     "vscode": "^1.31.1"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "icon": "img/icon.png",
   "galleryBanner": {
     "color": "#C80000",
@@ -27,6 +25,7 @@
     "onCommand:extension.importObjects",
     "onCommand:extension.issueToken",
     "onCommand:extension.listBundles",
+    "onCommand:extension.listConfiguration",
     "onCommand:extension.listFiles",
     "onCommand:extension.listMissingDependencies",
     "onCommand:extension.listObjects",
@@ -35,6 +34,7 @@
     "onCommand:extension.removeFolders",
     "onCommand:extension.resetPassword",
     "onCommand:extension.revokeToken",
+    "onCommand:extension.saveToken",
     "onCommand:extension.selectEnvironment",
     "onCommand:extension.sync",
     "onCommand:extension.update",
@@ -104,6 +104,11 @@
         "mac": "cmd+; b"
       },
       {
+        "command": "extension.listConfiguration",
+        "key": "ctrl+; c",
+        "mac": "cmd+; c"
+      },
+      {
         "command": "extension.listFiles",
         "key": "ctrl+; f",
         "mac": "cmd+; f"
@@ -130,6 +135,11 @@
       },
       {
         "command": "extension.revokeToken",
+        "key": "ctrl+; shift+r",
+        "mac": "cmd+; shift+r"
+      },
+      {
+        "command": "extension.saveToken",
         "key": "ctrl+; shift+t",
         "mac": "cmd+; shift+t"
       },
@@ -206,6 +216,11 @@
         "category": "SDF"
       },
       {
+        "command": "extension.listConfiguration",
+        "title": "List Configuration",
+        "category": "SDF"
+      },
+      {
         "command": "extension.listFiles",
         "title": "List Files",
         "category": "SDF"
@@ -238,6 +253,11 @@
       {
         "command": "extension.revokeToken",
         "title": "Revoke Token",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.saveToken",
+        "title": "Save Token",
         "category": "SDF"
       },
       {

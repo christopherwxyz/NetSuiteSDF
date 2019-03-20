@@ -42,6 +42,10 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   let issueToken = vscode.commands.registerCommand('extension.issueToken', netsuiteSdf.issueToken.bind(netsuiteSdf));
   let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles.bind(netsuiteSdf));
+  let listConfiguration = vscode.commands.registerCommand(
+    'extension.listConfiguration',
+    netsuiteSdf.listConfiguration.bind(netsuiteSdf)
+  );
   let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles.bind(netsuiteSdf));
   let listMissingDependencies = vscode.commands.registerCommand(
     'extension.listMissingDependencies',
@@ -61,7 +65,8 @@ export async function activate(context: vscode.ExtensionContext) {
     'extension.resetPassword',
     netsuiteSdf.resetPassword.bind(netsuiteSdf)
   );
-  let revokeToken = vscode.commands.registerCommand('extension.revokeToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
+  let revokeToken = vscode.commands.registerCommand('extension.saveToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
+  let saveToken = vscode.commands.registerCommand('extension.saveToken', netsuiteSdf.saveToken.bind(netsuiteSdf));
   let selectEnvironment = vscode.commands.registerCommand(
     'extension.selectEnvironment',
     netsuiteSdf.selectEnvironment.bind(netsuiteSdf)
@@ -91,6 +96,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(importObjects);
   context.subscriptions.push(issueToken);
   context.subscriptions.push(listBundles);
+  context.subscriptions.push(listConfiguration);
   context.subscriptions.push(listFiles);
   context.subscriptions.push(listMissingDependencies);
   context.subscriptions.push(listObjects);
@@ -99,6 +105,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(removeFolders);
   context.subscriptions.push(resetPassword);
   context.subscriptions.push(revokeToken);
+  context.subscriptions.push(saveToken);
   context.subscriptions.push(selectEnvironment);
   context.subscriptions.push(sync);
   context.subscriptions.push(update);

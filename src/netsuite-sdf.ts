@@ -280,6 +280,16 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.ListBundles);
   }
 
+  listConfiguration() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    this.doAddProjectParameter = false;
+    this.runCommand(CLICommand.ListConfiguration);
+  }
+
   listFiles() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
@@ -337,6 +347,28 @@ export class NetSuiteSDF {
 
     this.doAddProjectParameter = false;
     this.runCommand(CLICommand.RevokeToken);
+  }
+
+  async saveToken() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      return;
+    }
+
+    const tokenKey = await vscode.window.showInputBox({
+      prompt: 'Please enter your token key associated with your SuiteCloud IDE & CLI integration:',
+      ignoreFocusOut: true
+    });
+    if (tokenKey) {
+      const tokenSecret = await vscode.window.showInputBox({
+        prompt: 'Please enter your token secret associated with your SuiteCloud IDE & CLI integration:',
+        ignoreFocusOut: true
+      });
+      if (tokenSecret) {
+        this.doAddProjectParameter = false;
+        this.runCommand(CLICommand.SaveToken, `--tokenkey ${tokenKey}`, `--tokensecret ${tokenSecret}`);
+      }
+    }
   }
 
   async getFiles() {
