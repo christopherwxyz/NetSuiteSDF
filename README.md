@@ -91,6 +91,8 @@ Enable this feature in VS Code settings. Currently it is opt-in, as it is a beta
 
 If enabled, when a `Deploy` is triggered, the files and objects listed in the `deploy.xml` will be copied to a subdirectory along with the `manifest.xml`, and the deploy will be triggered from there.
 
+To facilitate more rapid development, there is a command to add a file directly to your `deploy.xml`. Either through selecting it in the File Browser, right-clicking, and selecting `Add File to Deploy.xml`, or by running the command while the file is being edited to add it.
+
 Pros:
 
 - Avoids the node_modules issue
