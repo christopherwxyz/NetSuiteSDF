@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
     'extension.resetPassword',
     netsuiteSdf.resetPassword.bind(netsuiteSdf)
   );
-  let revokeToken = vscode.commands.registerCommand('extension.saveToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
+  let revokeToken = vscode.commands.registerCommand('extension.revokeToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
   let saveToken = vscode.commands.registerCommand('extension.saveToken', netsuiteSdf.saveToken.bind(netsuiteSdf));
   let selectEnvironment = vscode.commands.registerCommand(
     'extension.selectEnvironment',

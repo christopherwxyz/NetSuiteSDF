@@ -366,7 +366,7 @@ export class NetSuiteSDF {
       });
       if (tokenSecret) {
         this.doAddProjectParameter = false;
-        this.runCommand(CLICommand.SaveToken, `--tokenkey ${tokenKey}`, `--tokensecret ${tokenSecret}`);
+        this.runCommand(CLICommand.SaveToken, `-tokenkey ${tokenKey}`, `-tokensecret ${tokenSecret}`);
       }
     }
   }
