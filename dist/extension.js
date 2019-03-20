@@ -42388,8 +42388,6 @@ class NetSuiteSDF {
                 vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
                 return;
             }
-            yield this.getConfig();
-            yield this.removeFolders();
             const prompt = "Warning! Syncing to NetSuite will delete File Cabinet and Object contents. Type OK to proceed.";
             const answer = yield vscode.window.showInputBox({
                 prompt: prompt,
@@ -42401,6 +42399,8 @@ class NetSuiteSDF {
                 this.outputChannel.append('Cancelling sync.\n');
                 return;
             }
+            yield this.getConfig();
+            yield this.removeFolders();
             try {
                 if (this.sdfConfig) {
                     const objectCommands = _.map(custom_object_1.CustomObjects, (object) => this.getObjectFunc(object));
