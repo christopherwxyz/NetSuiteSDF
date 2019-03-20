@@ -14,6 +14,8 @@ This is a port of the functionality provided by [tjtyrrell](https://github.com/t
 - Wraps SDF CLI commands
 - Environment (Sandbox, Production, etc.) selector
 - Output window integrated with VS Code
+- _Now webpacked to speed up VS Code load time_
+- (BETA) Quick Deploy option available in Extension Preferences
 
 ## Status
 
@@ -82,6 +84,21 @@ For example, if I wanted to run the command `addDependencies` on a Mac, I would 
 | updateCustomRecordWithInstances | `<p> U`    |
 | validate                        | `<p> v`    |
 | resetPassword                   | `<p> P`    |
+
+### (BETA) Quick Deploy
+
+Enable this feature in VS Code settings. Currently it is opt-in, as it is a beta feature.
+
+If enabled, when a `Deploy` is triggered, the files and objects listed in the `deploy.xml` will be copied to a subdirectory along with the `manifest.xml`, and the deploy will be triggered from there.
+
+Pros:
+
+- Avoids the node_modules issue
+- Allows for larger SDF projects
+- Reduction in deploy time from 8-10 minutes down to 8-10 seconds
+  Cons:
+- Untested on Windows
+- Does not work with globs `(SuiteScripts/*)` in deploy.xml
 
 ### ToDo
 
