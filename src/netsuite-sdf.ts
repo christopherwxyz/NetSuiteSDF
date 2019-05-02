@@ -222,7 +222,7 @@ export class NetSuiteSDF {
   }
 
   async _importFiles(files: string[]) {
-    const cleanedFiles = _.map(files, file => `"${file}"`);
+    const cleanedFiles = _.map(files, file => `${file}`);
     const fileString = cleanedFiles.join(' ');
     this.runCommand(CLICommand.ImportFiles, `-paths ${fileString}`);
   }
@@ -760,6 +760,7 @@ export class NetSuiteSDF {
         this.rootPath = workspaceFolders[0].uri.fsPath;
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
+        vscode.window.showInformationMessage('sdfTokenPath: '+sdfTokenPath);
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
 
         if (sdfCacheExists) {
@@ -894,6 +895,8 @@ export class NetSuiteSDF {
       }
 
       const stdinSubject = new Subject<string>();
+
+      vscode.window.showInformationMessage('commandArray: '+commandArray);
 
       this.sdfcli = spawn('sdfcli', commandArray, {
         cwd: workPath,
