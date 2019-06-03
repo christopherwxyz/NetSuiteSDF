@@ -760,7 +760,6 @@ export class NetSuiteSDF {
         this.rootPath = workspaceFolders[0].uri.fsPath;
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
-        vscode.window.showInformationMessage('sdfTokenPath: '+sdfTokenPath);
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
 
         if (sdfCacheExists) {
@@ -895,8 +894,6 @@ export class NetSuiteSDF {
       }
 
       const stdinSubject = new Subject<string>();
-
-      vscode.window.showInformationMessage('commandArray: '+commandArray);
 
       this.sdfcli = spawn('sdfcli', commandArray, {
         cwd: workPath,
