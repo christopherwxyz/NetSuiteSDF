@@ -222,7 +222,7 @@ export class NetSuiteSDF {
   }
 
   async _importFiles(files: string[]) {
-    const cleanedFiles = _.map(files, file => `"${file}"`);
+    const cleanedFiles = _.map(files, file => `${file}`);
     const fileString = cleanedFiles.join(' ');
     this.runCommand(CLICommand.ImportFiles, `-paths ${fileString}`);
   }
