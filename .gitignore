@@ -1,7 +1,7 @@
 out
 node_modules
 .vscode-test/
-.vsix
+*.vsix
 *.log
 package-lock.json
 .DS_Store
