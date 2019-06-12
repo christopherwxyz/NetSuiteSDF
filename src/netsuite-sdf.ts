@@ -386,7 +386,7 @@ export class NetSuiteSDF {
 
   getObjectFunc = (object: CustomObject) => async () => {
     //Saved Searches should not be supported at this time.
-    if (object.type === 'savedsearch') return;
+    if (object.type === 'savedsearch' || object.type === 'csvimport') return;
 
     this.doAddProjectParameter = false;
     this.doReturnData = true;

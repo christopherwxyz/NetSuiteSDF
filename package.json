@@ -2,12 +2,12 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "publisher": "markkeaton",
   "license": "MIT",
   "repository": "https://github.com/mark-keaton/NetSuiteSDF",
   "engines": {
-    "vscode": "^1.31.1"
+    "vscode": "^1.35.0"
   },
   "categories": [
     "Other"
@@ -329,11 +329,14 @@
     "@types/lodash": "^4.14.122",
     "bluebird": "^3.5.3",
     "fs-extra": "^7.0.1",
+    "fstream": "^1.0.12",
     "lodash": "^4.17.11",
     "rimraf": "^2.6.3",
     "rxjs": "^5.5.10",
     "spawn-rx": "~2.0.12",
+    "tar": "^4.4.10",
     "tmp": "0.0.33",
+    "vscode": "^1.1.34",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
@@ -344,7 +347,6 @@
     "@types/xml2js": "^0.4.3",
     "ts-loader": "^5.3.3",
     "typescript": "^3.5.1",
-    "vscode": "^1.1.34",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   }
