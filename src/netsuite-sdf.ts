@@ -556,7 +556,7 @@ export class NetSuiteSDF {
       return;
     }
     const xmlPath = isScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
-    const relativePath = _.replace(currentFile, this.rootPath, '~');
+    const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, "/");
 
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
