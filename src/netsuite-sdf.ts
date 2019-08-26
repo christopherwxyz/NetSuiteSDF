@@ -254,9 +254,12 @@ export class NetSuiteSDF {
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
       CLICommand.ImportObjects,
-      `-scriptid`, scriptIdString,
-      `-type`, `${scriptType}`,
-      `-destinationfolder`, `${destination}`
+      `-scriptid`,
+      scriptIdString,
+      `-type`,
+      `${scriptType}`,
+      `-destinationfolder`,
+      `${destination}`
     );
   }
 
@@ -556,7 +559,7 @@ export class NetSuiteSDF {
       return;
     }
     const xmlPath = isScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
-    const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, "/");
+    const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, '/');
 
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
@@ -890,19 +893,23 @@ export class NetSuiteSDF {
       let commandArray: string[] = [command];
       if (this.addDefaultParameters) {
         commandArray = commandArray.concat([
-          `-account`, `${this.activeEnvironment.account}`,
-          `-email`, `${this.activeEnvironment.email}`,
-          `-role`, `${this.activeEnvironment.role}`,
-          `-url`, `${this.activeEnvironment.url}`
+          `-account`,
+          `${this.activeEnvironment.account}`,
+          `-email`,
+          `${this.activeEnvironment.email}`,
+          `-role`,
+          `${this.activeEnvironment.role}`,
+          `-url`,
+          `${this.activeEnvironment.url}`
         ]);
       }
 
       if (this.doAddProjectParameter) {
-        commandArray.push(`-p`,`${workPath}`);
+        commandArray.push(`-p`, `${workPath}`);
       }
       for (let arg of args) {
         let argArray = arg.split(' ');
-        argArray.map(a => (commandArray.push(`${a}`)));
+        argArray.map(a => commandArray.push(`${a}`));
       }
 
       const stdinSubject = new Subject<string>();
