@@ -224,7 +224,7 @@ export class NetSuiteSDF {
   async _importFiles(files: string[]) {
     const cleanedFiles = _.map(files, file => `${file}`);
     const fileString = cleanedFiles.join(' ');
-    this.runCommand(CLICommand.ImportFiles, `-paths ${fileString}`);
+    this.runCommand(CLICommand.ImportFiles, `-paths`, `${fileString}`);
   }
 
   async importObjects(context?: any) {
@@ -254,9 +254,9 @@ export class NetSuiteSDF {
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
       CLICommand.ImportObjects,
-      `-scriptid ${scriptIdString}`,
-      `-type ${scriptType}`,
-      `-destinationfolder ${destination}`
+      `-scriptid`, `${scriptIdString}`,
+      `-type`, `${scriptType}`,
+      `-destinationfolder`, `${destination}`
     );
   }
 
@@ -297,7 +297,7 @@ export class NetSuiteSDF {
     }
 
     this.doAddProjectParameter = false;
-    return this.runCommand(CLICommand.ListFiles, '-folder /SuiteScripts');
+    return this.runCommand(CLICommand.ListFiles, `-folder`, `/SuiteScripts`);
   }
 
   listMissingDependencies() {
@@ -325,7 +325,7 @@ export class NetSuiteSDF {
         ignoreFocusOut: true
       });
       if (this.currentObject) {
-        return this.runCommand(CLICommand.ListObjects, `-type ${this.currentObject.type}`);
+        return this.runCommand(CLICommand.ListObjects, `-type`, `${this.currentObject.type}`);
       }
     }
   }
@@ -366,7 +366,7 @@ export class NetSuiteSDF {
       });
       if (tokenSecret) {
         this.doAddProjectParameter = false;
-        this.runCommand(CLICommand.SaveToken, `-tokenkey ${tokenKey}`, `-tokensecret ${tokenSecret}`);
+        this.runCommand(CLICommand.SaveToken, `-tokenkey`, `${tokenKey}`, `-tokensecret`, `${tokenSecret}`);
       }
     }
   }
@@ -393,7 +393,7 @@ export class NetSuiteSDF {
 
     await this.getConfig();
     if (this.sdfConfig) {
-      const objects: string[] = await this.runCommand(CLICommand.ListObjects, `-type ${object.type}`);
+      const objects: string[] = await this.runCommand(CLICommand.ListObjects, `-type`, `${object.type}`);
       if (objects && objects[0] !== 'No custom objects found.') {
         vscode.window.showInformationMessage('Synchronizing ' + object.label);
 
@@ -436,7 +436,7 @@ export class NetSuiteSDF {
           const selectionStr = selectedFile
             .map(file => file.scriptid.substring(0, file.scriptid.indexOf('.')))
             .join(' ');
-          this.runCommand(CLICommand.Update, `-scriptid ${selectionStr}`);
+          this.runCommand(CLICommand.Update, `-scriptid`, `${selectionStr}`);
         }
       }
     }
@@ -460,7 +460,7 @@ export class NetSuiteSDF {
           ignoreFocusOut: true
         });
         if (objectId) {
-          this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `-scriptid ${objectId}`);
+          this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `-scriptid`, `${objectId}`);
         }
       }
     } else {
@@ -890,18 +890,18 @@ export class NetSuiteSDF {
       let commandArray: string[] = [command];
       if (this.addDefaultParameters) {
         commandArray = commandArray.concat([
-          `-account ${this.activeEnvironment.account}`,
-          `-email ${this.activeEnvironment.email}`,
-          `-role ${this.activeEnvironment.role}`,
-          `-url ${this.activeEnvironment.url}`
+          `-account`, `${this.activeEnvironment.account}`,
+          `-email`, `${this.activeEnvironment.email}`,
+          `-role`, `${this.activeEnvironment.role}`,
+          `-url`, `${this.activeEnvironment.url}`
         ]);
       }
 
       if (this.doAddProjectParameter) {
-        commandArray.push(`-p ${workPath}`);
+        commandArray.push(`-p`,`${workPath}`);
       }
       for (let arg of args) {
-        commandArray.push(arg);
+        commandArray.push(`${arg}`);
       }
 
       const stdinSubject = new Subject<string>();
