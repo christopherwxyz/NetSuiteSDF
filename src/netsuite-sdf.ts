@@ -224,7 +224,7 @@ export class NetSuiteSDF {
   async _importFiles(files: string[]) {
     const cleanedFiles = _.map(files, file => `${file}`);
     const fileString = cleanedFiles.join(' ');
-    this.runCommand(CLICommand.ImportFiles, `-paths`, `${fileString}`);
+    return this.runCommand(CLICommand.ImportFiles, `-paths`, `${fileString}`);
   }
 
   async importObjects(context?: any) {
@@ -254,7 +254,7 @@ export class NetSuiteSDF {
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
       CLICommand.ImportObjects,
-      `-scriptid`, `${scriptIdString}`,
+      `-scriptid`, scriptIdString,
       `-type`, `${scriptType}`,
       `-destinationfolder`, `${destination}`
     );
@@ -901,7 +901,8 @@ export class NetSuiteSDF {
         commandArray.push(`-p`,`${workPath}`);
       }
       for (let arg of args) {
-        commandArray.push(`${arg}`);
+        let argArray = arg.split(' ');
+        argArray.map(a => (commandArray.push(`${a}`)));
       }
 
       const stdinSubject = new Subject<string>();
