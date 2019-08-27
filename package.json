@@ -50,8 +50,8 @@
       "properties": {
         "netsuitesdf.useQuickDeploy": {
           "type": "boolean",
-          "default": false,
-          "description": "Enable Quick Deployments (BETA)"
+          "default": true,
+          "description": "Enable Quick Deployments"
         }
       }
     },

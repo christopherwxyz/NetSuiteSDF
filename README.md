@@ -1,5 +1,9 @@
 # NetSuiteSDF Extension
 
+## Notice
+
+Beginning with 2019.2, you will need to reinstall the plugin from https://github.com/christopherwxyz/NetSuiteSDF/ due to a change in publisher tokens.
+
 ## Introduction
 
 This is a Visual Studio Code wrapper around the NetSuite SDF command-line interface. It also provides a series of defaults for the SDF CLI to make utilizing the CLI more user-friendly.
@@ -85,7 +89,7 @@ For example, if I wanted to run the command `addDependencies` on a Mac, I would 
 | validate                        | `<p> v`    |
 | resetPassword                   | `<p> P`    |
 
-### (BETA) Quick Deploy
+### Quick Deploy
 
 Enable this feature in VS Code settings. Currently it is opt-in, as it is a beta feature.
 
@@ -98,7 +102,9 @@ Pros:
 - Avoids the node_modules issue
 - Allows for larger SDF projects
 - Reduction in deploy time from 8-10 minutes down to 8-10 seconds
-  Cons:
+
+Cons:
+
 - Untested on Windows
 - Does not work with globs `(SuiteScripts/*)` in deploy.xml
 
