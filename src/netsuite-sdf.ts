@@ -142,6 +142,7 @@ export class NetSuiteSDF {
     const files = _.get(deployJs, 'deploy.files[0].path', []);
     const objects = _.get(deployJs, 'deploy.objects[0].path', []);
     const allFiles = files.concat(objects).concat(['/deploy.xml', '/manifest.xml', '/.sdf']);
+    console.log('All File Paths', allFiles);
 
     this.tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false });
     try {
