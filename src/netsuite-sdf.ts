@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as util from 'util';
 import { chdir } from 'process';
 import { ChildProcess } from 'child_process';
 
 import * as _ from 'lodash';
+import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as tmp from 'tmp';
 import * as xml2js from 'xml2js';
@@ -25,6 +27,7 @@ import { CLICommand } from './cli-command';
 import { CustomObjects, CustomObject } from './custom-object';
 
 const Bluebird = require('bluebird');
+const globAsync = util.promisify(glob);
 
 export class NetSuiteSDF {
   activeEnvironment: Environment;
@@ -141,21 +144,15 @@ export class NetSuiteSDF {
 
     const files = _.get(deployJs, 'deploy.files[0].path', []);
     const objects = _.get(deployJs, 'deploy.objects[0].path', []);
-    const allFiles = files.concat(objects).concat(['/deploy.xml', '/manifest.xml', '/.sdf']);
-    console.log('All File Paths', allFiles);
+    const allFilePatterns = files.concat(objects).concat(['/deploy.xml', '/manifest.xml', '/.sdf']);
+    const allFilePaths = await this.getFilePaths(allFilePatterns);
 
     this.tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false });
     try {
-      for (let filepath of allFiles) {
-        if (_.includes(filepath, '*')) {
-          // TODO: Add warning about globs
-          continue;
-        }
-        filepath = filepath.replace('~', '');
+      for (let filepath of allFilePaths) {
         const fromPath = path.join(filepath);
         const toPath = path.join(this.tempDir.name, filepath);
         await this.copyFile(fromPath, toPath);
-        console.log('wait');
       }
     } catch (e) {
       console.log(e);
@@ -1017,6 +1014,26 @@ export class NetSuiteSDF {
 
       return curDir;
     }, initDir);
+  }
+
+  async getFilePaths(filePatterns: string[]): Promise<string[]> {
+    const globPromises = filePatterns.map((filePattern) => {
+      filePattern = filePattern.replace('~', '');
+      filePattern = filePattern.replace('*', '**'); // NetSuite's * glob pattern functions the same as a traditional ** pattern
+      return globAsync(path.join(this.rootPath, filePattern), { nodir: true });
+    });
+    const matchArr = await Promise.all(globPromises);
+    const filePaths: string[] = matchArr.reduce((filePathAccum: string[], matches) => {
+      for (const match of matches) {
+        // Make sure there are no duplicates
+        if (filePathAccum.indexOf(match) === -1) {
+          filePathAccum.push(match);
+        }
+      }
+      return filePathAccum;
+    }, [])
+    const relativeFilePaths = filePaths.map((fullPath) => `${path.sep}${path.relative(this.rootPath, fullPath)}`);
+    return relativeFilePaths;
   }
 
   fileExists(path: string): Promise<boolean> {
