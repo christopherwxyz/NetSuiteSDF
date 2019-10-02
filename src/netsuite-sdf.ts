@@ -3,8 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as util from 'util';
-import { chdir } from 'process';
-import { ChildProcess } from 'child_process';
 
 import * as _ from 'lodash';
 import * as glob from 'glob';
