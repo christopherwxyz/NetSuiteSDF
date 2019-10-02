@@ -544,7 +544,7 @@ export class NetSuiteSDF {
 
     let currentFile: string;
     if (context && context.fsPath) {
-      currentFile = context.fsPath;
+      currentFile = fs.lstatSync(context.fsPath).isDirectory() ? `${context.fsPath}${path.sep}*` : context.fsPath;
     } else {
       currentFile = vscode.window.activeTextEditor.document.fileName;
     }
