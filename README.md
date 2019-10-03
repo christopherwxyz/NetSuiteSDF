@@ -106,7 +106,6 @@ Pros:
 Cons:
 
 - Untested on Windows
-- Does not work with globs `(SuiteScripts/*)` in deploy.xml
 
 ### ToDo
 
