@@ -2,7 +2,7 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "publisher": "christopherwxyz",
   "license": "MIT",
   "repository": "https://github.com/christopherwxyz/NetSuiteSDF",
@@ -326,10 +326,10 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.122",
     "bluebird": "^3.5.3",
     "fs-extra": "^7.0.1",
     "fstream": "^1.0.12",
+    "glob": "^7.1.4",
     "lodash": "^4.17.11",
     "rimraf": "^2.6.3",
     "rxjs": "^5.5.10",
@@ -340,6 +340,8 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^7.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/lodash": "^4.14.122",
     "@types/mocha": "^2.2.42",
     "@types/node": "^12.0.4",
     "@types/tmp": "0.0.34",
