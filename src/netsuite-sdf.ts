@@ -547,14 +547,63 @@ export class NetSuiteSDF {
       currentFile = vscode.window.activeTextEditor.document.fileName;
     }
 
-    const isScript = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
-    const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects'));
+    let config = vscode.workspace.getConfiguration('netsuitesdf');
+    const addMatchingJSWhenAddingTSToDeployXML = config.get('addMatchingJavascriptWhenAddingTypescriptToDeployXML');
 
-    if (!isScript && !isObject) {
-      vscode.window.showErrorMessage('Invalid file to add to deploy.xml. File was not a Script or an Object.');
-      return;
+    let isJavaScript = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts')) && _.includes(currentFile, '.js');
+    const isTypeScript = _.includes(currentFile, '.ts');
+    const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects')) && _.includes(currentFile, '.xml');
+    let matchedJavaScriptFile: string;
+
+    if (!isJavaScript && !isObject) {
+      if (isTypeScript && addMatchingJSWhenAddingTSToDeployXML) {
+        const matchedJavaScriptFiles: string[] = [];
+        const currentFileName = path.basename(currentFile);
+
+        const getFiles = async (dir: string): Promise<string[]> => {
+          const subdirs = await util.promisify(fs.readdir)(dir) as string[];
+          const files = await Promise.all(subdirs.map(async (subdir) => {
+            const res = path.resolve(dir, subdir);
+            return (await fs.stat(res)).isDirectory() ? getFiles(res) : res;
+          }));
+          return Array.prototype.concat.apply([], files);
+        }
+
+        const files: string[] = await getFiles(path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
+        for (const file of files) {
+          const fileName = path.basename(file);
+          if (fileName.replace(/\.[^/.]+$/, '') === currentFileName.replace(/\.[^/.]+$/, '')) {
+            matchedJavaScriptFiles.push(file);
+          }
+        }
+
+        if (matchedJavaScriptFiles.length) {
+          isJavaScript = true;
+          const currentFileParentDir = path.basename(path.dirname(currentFile));
+          for (const file of matchedJavaScriptFiles) {
+            const fileParentDir = path.basename(path.dirname(file));
+            if (fileParentDir === currentFileParentDir) {
+              matchedJavaScriptFile = file;
+              break;
+            }
+          }
+          if (!matchedJavaScriptFile && matchedJavaScriptFiles.length === 1) matchedJavaScriptFile = matchedJavaScriptFiles[0];
+          if (matchedJavaScriptFile) currentFile = matchedJavaScriptFile;
+          else {
+            vscode.window.showErrorMessage('No matching compiled JavaScript file found in FileCabinet/SuiteScripts/**.');
+            return;
+          }
+        } else {
+          vscode.window.showErrorMessage('No matching compiled JavaScript file found in FileCabinet/SuiteScripts/**.');
+          return;
+        }
+      } else {
+        vscode.window.showErrorMessage('Invalid file to add to deploy.xml. File is not a Script or an Object.');
+        return;
+      }
     }
-    const xmlPath = isScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
+
+    const xmlPath = isJavaScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
     const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, '/');
 
     const deployXmlExists = await this.fileExists(deployPath);
@@ -565,7 +614,7 @@ export class NetSuiteSDF {
     const deployJs = await this.parseXml(deployXml);
     const elements = _.get(deployJs, xmlPath, []);
     if (_.includes(elements, relativePath)) {
-      vscode.window.showInformationMessage('File/Object already exists in deploy.xml.');
+      vscode.window.showInformationMessage(`${isObject ? 'Object' : 'File'} already exists in deploy.xml.`);
     } else {
       elements.push(relativePath);
       _.set(deployJs, xmlPath, elements);
@@ -573,7 +622,7 @@ export class NetSuiteSDF {
       const newXml = this.xmlBuilder.buildObject(deployJs);
       fs.writeFile(deployPath, newXml, function(err) {
         if (err) throw err;
-        vscode.window.showInformationMessage('Added File/Object to deploy.xml.');
+        vscode.window.showInformationMessage(`Added ${matchedJavaScriptFile ? 'matching compiled JavaScript' : ''} ${isObject ? 'object' : 'file'} to deploy.xml.`);
       });
     }
   }
