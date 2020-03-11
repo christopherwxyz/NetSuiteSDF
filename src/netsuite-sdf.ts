@@ -532,7 +532,7 @@ export class NetSuiteSDF {
   /** Extension Commands **/
   /************************/
 
-  async resetDeploy(context?: any) {
+  async createResetDeploy(context?: any) {
     await this.getConfig();
     this.setDefaultDeployXml();
     vscode.window.showInformationMessage('Reset deploy.xml.');
