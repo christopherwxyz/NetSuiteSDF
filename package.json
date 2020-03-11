@@ -324,7 +324,7 @@
         },
         {
           "command": "extension.addFileToDeploy",
-          "group": "z_commands@2"
+          "group": "z_commands@3"
         }
       ]
     }
