@@ -315,7 +315,7 @@
       "explorer/context": [
         {
           "command": "extension.addFileToDeploy",
-          "group": "z_commands"
+          "group": "z_commands@3"
         }
       ]
     }
