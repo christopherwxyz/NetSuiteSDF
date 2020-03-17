@@ -550,12 +550,13 @@ export class NetSuiteSDF {
     let config = vscode.workspace.getConfiguration('netsuitesdf');
     const addMatchingJSWhenAddingTSToDeployXML = config.get('addMatchingJavascriptWhenAddingTypescriptToDeployXML');
 
-    let isJavaScript = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts')) && _.includes(currentFile, '.js');
+    const isFileInFileCabinet = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
+    let isJavaScript = isFileInFileCabinet && _.includes(currentFile, '.js');
     const isTypeScript = _.includes(currentFile, '.ts');
     const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects')) && _.includes(currentFile, '.xml');
     let matchedJavaScriptFile: string;
 
-    if (!isJavaScript && !isObject) {
+    if (!isFileInFileCabinet && !isJavaScript && !isObject) {
       if (isTypeScript && addMatchingJSWhenAddingTSToDeployXML) {
         const matchedJavaScriptFiles: string[] = [];
         const currentFileName = path.basename(currentFile);
@@ -603,7 +604,7 @@ export class NetSuiteSDF {
       }
     }
 
-    const xmlPath = isJavaScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
+    const xmlPath = isFileInFileCabinet || isJavaScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
     const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, '/');
 
     const deployXmlExists = await this.fileExists(deployPath);
