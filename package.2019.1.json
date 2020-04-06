@@ -51,6 +51,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable Quick Deployments (BETA)"
+        },
+        "netsuitesdf.addMatchingJavascriptWhenAddingTypescriptToDeployXML": {
+          "type": "boolean",
+          "default": true,
+          "description": "When adding a TypeScript file to deploy.xml, its matching compiled JavaScript file will be added in its place."
         }
       }
     },
@@ -314,7 +319,7 @@
       "explorer/context": [
         {
           "command": "extension.addFileToDeploy",
-          "group": "z_commands"
+          "group": "z_commands@3"
         }
       ]
     }
