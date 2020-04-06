@@ -532,6 +532,12 @@ export class NetSuiteSDF {
   /** Extension Commands **/
   /************************/
 
+  async createResetDeploy(context?: any) {
+    await this.getConfig();
+    this.setDefaultDeployXml();
+    vscode.window.showInformationMessage('Reset deploy.xml.');
+  }
+
   async addFileToDeploy(context?: any) {
     if (context && context.scheme !== 'file') {
       vscode.window.showWarningMessage(`Unknown file type '${context.scheme}' to add to deploy.xml`);

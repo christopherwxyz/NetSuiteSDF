@@ -74,6 +74,11 @@
         "mac": "cmd+; a"
       },
       {
+        "command": "extension.createResetDeploy",
+        "key": "ctrl+; shift+-",
+        "mac": "cmd+; shift+-"
+      },
+      {
         "command": "extension.addFileToDeploy",
         "key": "ctrl+; shift+=",
         "mac": "cmd+; shift+="
@@ -178,6 +183,11 @@
       {
         "command": "extension.addDependencies",
         "title": "Add Dependencies to Manifest",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.createResetDeploy",
+        "title": "Create/Reset deploy.xml",
         "category": "SDF"
       },
       {
@@ -317,6 +327,10 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "extension.createResetDeploy",
+          "group": "z_commands@1"
+        },
         {
           "command": "extension.addFileToDeploy",
           "group": "z_commands@3"
