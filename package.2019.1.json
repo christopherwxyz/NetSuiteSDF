@@ -56,6 +56,11 @@
           "type": "boolean",
           "default": true,
           "description": "When adding a TypeScript file to deploy.xml, its matching compiled JavaScript file will be added in its place."
+        },
+        "netsuitesdf.onBackupAutoCreateNewDeployXML": {
+          "type": "boolean",
+          "default": true,
+          "description": "When performing a backup of deploy.xml, automatically create a new, empty deploy.xml."
         }
       }
     },
@@ -188,6 +193,11 @@
       {
         "command": "extension.createResetDeploy",
         "title": "Create/Reset deploy.xml",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.backupRestoreDeploy",
+        "title": "Backup/Restore deploy.xml",
         "category": "SDF"
       },
       {
@@ -330,6 +340,11 @@
         {
           "command": "extension.createResetDeploy",
           "group": "z_commands@1"
+        },
+        {
+          "when": "resourceLangId == xml && resourceFilename =~ /(.+\\.)?deploy.xml/",
+          "command": "extension.backupRestoreDeploy",
+          "group": "z_commands@2"
         },
         {
           "command": "extension.addFileToDeploy",
