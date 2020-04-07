@@ -538,6 +538,60 @@ export class NetSuiteSDF {
     vscode.window.showInformationMessage('Reset deploy.xml.');
   }
 
+  async backupRestoreDeploy(context?: any) {
+    if (context && context.scheme !== 'file') {
+      vscode.window.showWarningMessage(`Unknown file type '${context.scheme}' to backup/restore.`);
+      return;
+    }
+    await this.getConfig();
+
+    let currentFile: string;
+    if (context && context.fsPath) {
+      currentFile = fs.lstatSync(context.fsPath).isDirectory() ? `${context.fsPath}${path.sep}*` : context.fsPath;
+    } else {
+      currentFile = vscode.window.activeTextEditor.document.fileName;
+    }
+
+    const currentFileName = path.basename(currentFile);
+    const isDeployXML = _.includes(currentFileName, 'deploy.xml');
+    if (!isDeployXML) {
+      vscode.window.showErrorMessage('File does not appear to be a valid deploy.xml file.');
+      return;
+    }
+
+    let config = vscode.workspace.getConfiguration('netsuitesdf');
+    const onBackupAutoCreateNewDeployXML = config.get('onBackupAutoCreateNewDeployXML');
+
+    if (currentFileName === 'deploy.xml') {
+      const prompt = "Enter filename prefix (i.e. PREFIX.deploy.xml). Entering no value will use current date and time.";
+      let filenamePrefix = await vscode.window.showInputBox({
+        prompt: prompt,
+        ignoreFocusOut: true
+      });
+      const now = new Date();
+      filenamePrefix = filenamePrefix
+        || `${now.toISOString().slice(0, 10).replace(/-/g, '')}_${('0' + now.getHours()).slice(-2)}${('0' + now.getMinutes()).slice(-2)}${('0' + now.getSeconds()).slice(-2)}`;
+      await fs.rename(path.join(this.rootPath, 'deploy.xml'), path.join(this.rootPath, `${filenamePrefix}.deploy.xml`));
+      vscode.window.showInformationMessage(`Backed up deploy.xml to ${filenamePrefix}.deploy.xml`);
+      
+      if (onBackupAutoCreateNewDeployXML) await this.createResetDeploy(context);
+    } else {
+      let answer: string;
+      const deployXMLExists = await fs.pathExists(path.join(this.rootPath, 'deploy.xml'));
+      if (deployXMLExists) {
+        const prompt = 'Deploy.xml already exists. Type OK to overwrite the existing file.';
+        answer = await vscode.window.showInputBox({
+          prompt: prompt,
+          ignoreFocusOut: true
+        });
+      } else answer = 'OK';
+      if (answer === 'OK') {
+        await fs.rename(currentFile, path.join(this.rootPath, 'deploy.xml'));
+        vscode.window.showInformationMessage(`Restored ${currentFileName} to deploy.xml`);
+      }
+    }
+  }
+
   async addFileToDeploy(context?: any) {
     if (context && context.scheme !== 'file') {
       vscode.window.showWarningMessage(`Unknown file type '${context.scheme}' to add to deploy.xml`);
