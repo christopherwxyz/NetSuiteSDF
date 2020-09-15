@@ -2,7 +2,7 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "0.8.2",
+  "version": "2020.2.1",
   "publisher": "christopherwxyz",
   "license": "MIT",
   "repository": "https://github.com/christopherwxyz/NetSuiteSDF",
@@ -12,7 +12,7 @@
   "categories": [
     "Other"
   ],
-  "icon": "img/icon.png",
+  "icon": "icon.png",
   "galleryBanner": {
     "color": "#C80000",
     "theme": "dark"
@@ -361,16 +361,17 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.122",
-    "bluebird": "^3.5.3",
+    "bluebird": "^3.7.2",
     "fs-extra": "^7.0.1",
     "fstream": "^1.0.12",
-    "lodash": "^4.17.11",
-    "rimraf": "^2.6.3",
-    "rxjs": "^5.5.10",
+    "lodash": "^4.17.20",
+    "rimraf": "^2.7.1",
+    "rxjs": "^6.6.3",
+    "rxjs-compat": "^6.6.3",
     "spawn-rx": "~2.0.12",
-    "tar": "^4.4.10",
+    "tar": "^4.4.13",
     "tmp": "0.0.33",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/fs-extra": "^7.0.0",
@@ -379,9 +380,9 @@
     "@types/tmp": "0.0.34",
     "@types/xml2js": "^0.4.3",
     "ts-loader": "^5.3.3",
-    "typescript": "^3.5.1",
+    "typescript": "^3.9.7",
     "vscode": "^1.1.34",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }

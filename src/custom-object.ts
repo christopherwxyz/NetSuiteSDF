@@ -23,179 +23,200 @@ export class CustomObject implements ICustomObject {
 
 export const CustomObjects: CustomObject[] = [
   new CustomObject({
+    label: 'Address Form',
+    type: 'addressform',
+    _destination: ['Forms', 'AddressForms'],
+    detail: 'customscript',
+    description: '',
+  }),
+  new CustomObject({
     label: 'Advanced PDF Template',
     type: 'advancedpdftemplate',
     _destination: ['Templates', 'AdvancedPDFs'],
     detail: 'custtmpl',
-    description: ''
+    description: '',
+  }),
+  new CustomObject({
+    label: 'Bank Statement Parser Plugin',
+    type: 'bankstatementparserplugin',
+    _destination: ['BankStatementParserPlugin'],
+    detail: 'customscript',
+    description: '',
   }),
   new CustomObject({
     label: 'Bundle Installation Script',
     type: 'bundleinstallationscript',
     _destination: ['BundleInstallation'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Centers',
     type: 'center',
     _destination: ['CentersAndTabs', 'Centers'],
     detail: 'custcenter',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Center Categories',
     type: 'centercategory',
     _destination: ['CentersAndTabs', 'Categories'],
     detail: 'custcentercategory',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Center Tabs',
     type: 'centertab',
     _destination: ['CentersAndTabs', 'Tab'],
     detail: 'custcentertab',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Client Scripts',
     type: 'clientscript',
     _destination: ['Scripts', 'Client'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
-  // new CustomObject({
-  //   label: 'CMS Content Type',
-  //   type: 'cmscontenttype',
-  //   _destination: ['CMS', 'ContentType'],
-  //   detail: 'custcontenttype',
-  //   description: ''
-  // }),
+  new CustomObject({
+    label: 'CMS Content Type',
+    type: 'cmscontenttype',
+    _destination: ['CMS', 'ContentType'],
+    detail: 'custcontenttype',
+    description: '',
+  }),
   new CustomObject({
     label: 'CRM Custom Fields',
     type: 'crmcustomfield',
     _destination: ['Fields', 'CRM'],
     detail: 'custevent',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Custom Plugins',
     type: 'customglplugin',
     _destination: ['Plugins', 'Custom'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Custom Lists',
     type: 'customlist',
     _destination: ['Lists'],
     detail: 'customlist',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Custom Records',
     type: 'customrecordtype',
     _destination: ['Records'],
     detail: 'customrecord',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Custom Segment',
     type: 'customsegment',
     _destination: ['CustomSegments'],
     detail: 'cseg',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Custom Transactions',
     type: 'customtransactiontype',
     _destination: ['CustomTransactions'],
     detail: 'customtransaction',
-    description: ''
+    description: '',
+  }),
+  new CustomObject({
+    label: 'Dataset',
+    type: 'dataset',
+    _destination: ['Dataset'],
+    detail: 'custdataset',
+    description: '',
   }),
   new CustomObject({
     label: 'Email Capture Plugins',
     type: 'emailcaptureplugin',
     _destination: ['Plugins', 'Email'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Email Template',
     type: 'emailtemplate',
     _destination: ['Templates', 'Email'],
     detail: 'custemailtmpl',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Entity Custom Fields',
     type: 'entitycustomfield',
     _destination: ['Fields', 'Entity'],
     detail: 'custentity',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Entity Forms',
     type: 'entryForm',
     _destination: ['Forms', 'EntryForm'],
     detail: 'custform',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Item Custom Fields',
     type: 'itemcustomfield',
     _destination: ['Fields', 'Item'],
     detail: 'custitem',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Item Number Custom Fields',
     type: 'itemnumbercustomfield',
     _destination: ['Fields', 'ItemNumber'],
     detail: 'custitem',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Item Option Custom Fields',
     type: 'itemoptioncustomfield',
     _destination: ['Fields', 'ItemOption'],
     detail: 'custitemoption',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'KPI Scorecard',
     type: 'kpiscorecard',
     _destination: ['KPIScorecards'],
     detail: 'custkpiscorecard',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Map Reduce Script',
     type: 'mapreducescript',
     _destination: ['Scripts', 'MapReduce'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Mass Update Script',
     type: 'massupdatescript',
     _destination: ['Scripts', 'MassUpdate'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Other Custom Field',
     type: 'othercustomfield',
     _destination: ['Fields', 'Other'],
     detail: 'custrecord',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Plugin Implementation',
     type: 'pluginimplementation',
     _destination: ['PluginImplementations'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
 
   new CustomObject({
@@ -203,139 +224,153 @@ export const CustomObjects: CustomObject[] = [
     type: 'plugintype',
     _destination: ['PluginTypes'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Portlets',
     type: 'portlet',
     _destination: ['Scripts', 'Portlet'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Promotions Plugins',
     type: 'promotionsplugin',
     _destination: ['Plugins', 'Promotions'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Publish Dashboards',
     type: 'publisheddashboard',
     _destination: ['PublishDashboards'],
     detail: 'custpubdashboard',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Restlets',
     type: 'restlet',
     _destination: ['Scripts', 'Restlet'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Roles',
     type: 'role',
     _destination: ['Roles'],
     detail: 'customrole',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Saved CSV Import',
     type: 'csvimport',
     _destination: ['CSVImports'],
     detail: 'custimport',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Saved Searches',
     type: 'savedsearch',
     _destination: ['SavedSearches'],
     detail: 'customsearch',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Scheduled Scripts',
     type: 'scheduledscript',
     _destination: ['Scripts', 'Scheduled'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
-  // new CustomObject({
-  //   label: 'SDF Installation Script',
-  //   type: '',
-  //   _destination: ['Scripts', 'SDFInstallation'],
-  //   detail: 'customscript',
-  //   description: ''
-  // }),
+  new CustomObject({
+    label: 'SDF Installation Script',
+    type: 'sdfinstallationscript',
+    _destination: ['Scripts', 'SDFInstallation'],
+    detail: 'customscript',
+    description: '',
+  }),
   new CustomObject({
     label: 'SSP Applications',
     type: 'sspapplication',
     _destination: ['SSPApplications'],
     detail: 'webapp',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Sublists',
     type: 'sublist',
     _destination: ['Sublists'],
     detail: 'custsublist',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'SubTabs',
     type: 'subtab',
     _destination: ['CentersAndTabs', 'SubTab'],
     detail: 'custtab',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Suitelet',
     type: 'suitelet',
     _destination: ['Scripts', 'Suitelet'],
     detail: 'customscript',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Transaction Forms',
     type: 'transactionForm',
     _destination: ['Forms', 'TransactionForm'],
     detail: 'custform',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Transaction Body Custom Field',
     type: 'transactionbodycustomfield',
     _destination: ['Fields', 'TransactionBody'],
     detail: 'transactionbodycustomfield',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Transaction Column Custom Field',
     type: 'transactioncolumncustomfield',
     _destination: ['Fields', 'TransactionColumn'],
     detail: 'custcol',
-    description: ''
+    description: '',
+  }),
+  new CustomObject({
+    label: 'Translation Collection',
+    type: 'translationcollection',
+    _destination: ['TranslationCollection'],
+    detail: 'custcollection',
+    description: '',
   }),
   new CustomObject({
     label: 'User Event Script',
     type: 'usereventscript',
     _destination: ['Scripts', 'UserEvent'],
     detail: 'customscript',
-    description: ''
+    description: '',
+  }),
+  new CustomObject({
+    label: 'Workbooks',
+    type: 'workbook',
+    _destination: ['Workbooks'],
+    detail: 'custworkbook',
+    description: '',
   }),
   new CustomObject({
     label: 'Workflows',
     type: 'workflow',
     _destination: ['Workflows'],
     detail: 'customworkflow',
-    description: ''
+    description: '',
   }),
   new CustomObject({
     label: 'Workflow Action Scripts',
     type: 'workflowactionscript',
     _destination: ['Scripts', 'WorkflowAction'],
     detail: 'customscript',
-    description: ''
-  })
+    description: '',
+  }),
 ];
