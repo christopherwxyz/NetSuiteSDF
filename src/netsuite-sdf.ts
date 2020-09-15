@@ -63,6 +63,11 @@ export class NetSuiteSDF {
     this.statusBar.tooltip = 'Click here to select your NetSuite environment';
     this.statusBar.command = 'extension.selectEnvironment';
     this.statusBar.show();
+    vscode.window.showWarningMessage(
+      'Beginning with NetSuite Release 2020.2, you will need to ' +
+        'install the latest version of the sdfcli. ' +
+        'See: https://3482428.app.netsuite.com/app/help/helpcenter.nl?fid=section_1489072409.html'
+    );
   }
 
   get statusBarDefault() {
