@@ -411,21 +411,12 @@ export class NetSuiteSDF {
     //Saved Searches should not be supported at this time.
     if (object.type === 'savedsearch' || object.type === 'csvimport') return;
 
-    this.doAddProjectParameter = false;
+    this.doAddProjectParameter = true;
     this.doReturnData = true;
 
     await this.getConfig();
     if (this.sdfConfig) {
-      const objects: string[] = await this.runCommand(CLICommand.ListObjects, `-type`, `${object.type}`);
-      if (objects && objects[0] !== 'No custom objects found.') {
-        vscode.window.showInformationMessage('Synchronizing ' + object.label);
-
-        const objectsChunked = _.chunk(objects, 10);
-
-        for (let i = 0; i < objectsChunked.length; i++) {
-          await this._importObjects(object.type, objectsChunked[i], object.destination);
-        }
-      }
+      await this._importObjects(object.type, ['ALL'], object.destination);
     }
   };
 
