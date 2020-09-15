@@ -4,4 +4,5 @@ export interface Environment {
   url: string;
   role: number;
   email: string;
+  authid: string;
 }

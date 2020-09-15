@@ -9,8 +9,7 @@ import * as glob from 'glob';
 import * as rimraf from 'rimraf';
 import * as tmp from 'tmp';
 import * as xml2js from 'xml2js';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs/Rx';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -41,7 +40,7 @@ export class NetSuiteSDF {
   password: string;
   rootPath: string;
   savedStatus: string;
-  sdfcli: Observable<string>;
+  sdfcli: any;
   sdfConfig: SDFConfig;
   sdfCliIsInstalled = true; // Prevents error messages while Code is testing SDFCLI is installed.
   statusBar: vscode.StatusBarItem;
@@ -94,7 +93,7 @@ export class NetSuiteSDF {
       <frameworkversion>1.0</frameworkversion>
     </manifest>
     `;
-    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function(err) {
+    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function (err) {
       if (err) throw err;
     });
     await this.runCommand(CLICommand.AddDependencies, '-all');
@@ -112,13 +111,13 @@ export class NetSuiteSDF {
     const pathPrompt = `Please enter your the parent directory to create the Project in`;
     const outputPath = await vscode.window.showInputBox({
       prompt: pathPrompt,
-      ignoreFocusOut: true
+      ignoreFocusOut: true,
     });
     if (outputPath) {
       const projectNamePrompt = `Please enter your project's name`;
       const projectName = await vscode.window.showInputBox({
         prompt: projectNamePrompt,
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
       if (projectName) {
         await this.runCommand(
@@ -204,11 +203,11 @@ export class NetSuiteSDF {
 
     const collectedData = await this.listFiles();
     if (collectedData) {
-      const filteredData = collectedData.filter(data => data.indexOf('SuiteScripts') >= 0);
+      const filteredData = collectedData.filter((data) => data.indexOf('SuiteScripts') >= 0);
       if (filteredData.length > 0) {
         const selectedFiles = await vscode.window.showQuickPick(filteredData, {
           canPickMany: true,
-          ignoreFocusOut: true
+          ignoreFocusOut: true,
         });
         if (selectedFiles && selectedFiles.length > 0) {
           this._importFiles(selectedFiles);
@@ -218,7 +217,7 @@ export class NetSuiteSDF {
   }
 
   async _importFiles(files: string[]) {
-    const cleanedFiles = _.map(files, file => `${file}`);
+    const cleanedFiles = _.map(files, (file) => `${file}`);
     const fileString = cleanedFiles.join(' ');
     return this.runCommand(CLICommand.ImportFiles, `-paths`, `${fileString}`);
   }
@@ -231,11 +230,11 @@ export class NetSuiteSDF {
 
     const collectedData = await this.listObjects();
     if (collectedData) {
-      const filteredData = collectedData.filter(data => data.indexOf('cust') >= 0);
+      const filteredData = collectedData.filter((data) => data.indexOf('cust') >= 0);
       if (filteredData.length > 0) {
         const selectedObjects = await vscode.window.showQuickPick(filteredData, {
           canPickMany: true,
-          ignoreFocusOut: true
+          ignoreFocusOut: true,
         });
         if (selectedObjects && selectedObjects.length > 0) {
           this.createPath(this.currentObject.destination);
@@ -246,7 +245,7 @@ export class NetSuiteSDF {
   }
 
   async _importObjects(scriptType: string, scriptIds: string[], destination: string) {
-    await this.createPath(destination);
+    this.createPath(destination);
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
       CLICommand.ImportObjects,
@@ -321,7 +320,7 @@ export class NetSuiteSDF {
     await this.getConfig();
     if (this.sdfConfig) {
       this.currentObject = await vscode.window.showQuickPick(CustomObjects, {
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
       if (this.currentObject) {
         return this.runCommand(CLICommand.ListObjects, `-type`, `${this.currentObject.type}`);
@@ -353,19 +352,39 @@ export class NetSuiteSDF {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
+    const authid = await vscode.window.showInputBox({
+      prompt: 'Please enter a unique authid to tie your token keys and secrets.',
+      ignoreFocusOut: true,
+    });
+
+    const account = await vscode.window.showInputBox({
+      prompt: 'Please enter your account associated with your token keys and secrets.',
+      ignoreFocusOut: true,
+    });
 
     const tokenKey = await vscode.window.showInputBox({
       prompt: 'Please enter your token key associated with your SuiteCloud IDE & CLI integration:',
-      ignoreFocusOut: true
+      ignoreFocusOut: true,
     });
     if (tokenKey) {
       const tokenSecret = await vscode.window.showInputBox({
         prompt: 'Please enter your token secret associated with your SuiteCloud IDE & CLI integration:',
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
       if (tokenSecret) {
         this.doAddProjectParameter = false;
-        this.runCommand(CLICommand.SaveToken, `-tokenid`, `${tokenKey}`, `-tokensecret`, `${tokenSecret}`);
+        this.runCommand(
+          CLICommand.SaveToken,
+          `-account`,
+          `${account}`,
+          `-authid`,
+          `${authid}`,
+          `-savetoken`,
+          `-tokenid`,
+          `${tokenKey}`,
+          `-tokensecret`,
+          `${tokenSecret}`
+        );
       }
     }
   }
@@ -419,13 +438,13 @@ export class NetSuiteSDF {
       const filePathList = await this.getXMLFileList(['Objects'], this.rootPath);
 
       if (filePathList.length > 0) {
-        const shortNames = filePathList.map(file => file.path.substr(file.path.indexOf('Objects') + 8));
+        const shortNames = filePathList.map((file) => file.path.substr(file.path.indexOf('Objects') + 8));
         const selectionArr = await vscode.window.showQuickPick(shortNames, {
-          canPickMany: true
+          canPickMany: true,
         });
 
         if (selectionArr && selectionArr.length > 0) {
-          const selectedFile = filePathList.filter(file => {
+          const selectedFile = filePathList.filter((file) => {
             for (const selection of selectionArr) {
               if (file.path.indexOf(selection) >= 0) {
                 return true;
@@ -433,7 +452,7 @@ export class NetSuiteSDF {
             }
           });
           const selectionStr = selectedFile
-            .map(file => file.scriptid.substring(0, file.scriptid.indexOf('.')))
+            .map((file) => file.scriptid.substring(0, file.scriptid.indexOf('.')))
             .join(' ');
           this.runCommand(CLICommand.Update, `-scriptid`, `${selectionStr}`);
         }
@@ -456,7 +475,7 @@ export class NetSuiteSDF {
 
       if (fileList) {
         const objectId = await vscode.window.showQuickPick(fileList, {
-          ignoreFocusOut: true
+          ignoreFocusOut: true,
         });
         if (objectId) {
           this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `-scriptid`, `${objectId}`);
@@ -468,56 +487,6 @@ export class NetSuiteSDF {
       );
     }
   }
-
-  // For 2019.1
-  //
-  // async uploadFolders(context?: any) {
-  //   if (context && context.scheme !== 'folder') {
-  //     vscode.window.showWarningMessage(`${context.fsPath} is not a folder.`);
-  //     return;
-  //   }
-  //   await this.getConfig();
-  //   this.doAddProjectParameter = true;
-
-  //   const stripPath = (fsPath: string) =>
-  //     fsPath
-  //       .replace(path.join(this.rootPath, 'FileCabinet'), '')
-  //       .split('/')
-  //       .slice(0, -1)
-  //       .join('/');
-
-  //   const files = await vscode.workspace.findFiles('FileCabinet/SuiteScripts/**/*.*');
-  //   const foldersObj = _(files).reduce(
-  //     (acc: { [key: string]: true }, uri: vscode.Uri) => ({ ...acc, [stripPath(uri.fsPath)]: true }),
-  //     {}
-  //   );
-  //   const folders = _(foldersObj)
-  //     .keys()
-  //     .filter(path => path !== '/')
-  //     .sort()
-  //     .value();
-  //   if (folders.length === 0) {
-  //     vscode.window.showErrorMessage('No folders found in FileCabinet/SuiteScripts to upload');
-  //     return;
-  //   }
-
-  //   const selectedFolders = await vscode.window.showQuickPick(folders, {
-  //     canPickMany: true,
-  //     ignoreFocusOut: true
-  //   });
-  //   if (_.includes(selectedFolders, '/SuiteScripts')) {
-  //     const doContinue = await vscode.window.showQuickPick(['Yes', 'No'], {
-  //       placeHolder: 'Are you sure you want to upload your entire SuiteScripts directory?',
-  //       ignoreFocusOut: true
-  //     });
-  //     if (doContinue === 'No') {
-  //       return;
-  //     }
-  //   }
-  //   // const cleanedFolders = _.map(selectedFolders, folder => `"${folder}"`);
-  //   const folderString = selectedFolders.join(' ');
-  //   this.runCommand(CLICommand.UploadFolders, `-paths ${folderString}`);
-  // }
 
   validate() {
     if (!this.sdfCliIsInstalled) {
@@ -563,17 +532,21 @@ export class NetSuiteSDF {
     const onBackupAutoCreateNewDeployXML = config.get('onBackupAutoCreateNewDeployXML');
 
     if (currentFileName === 'deploy.xml') {
-      const prompt = "Enter filename prefix (i.e. PREFIX.deploy.xml). Entering no value will use current date and time.";
+      const prompt =
+        'Enter filename prefix (i.e. PREFIX.deploy.xml). Entering no value will use current date and time.';
       let filenamePrefix = await vscode.window.showInputBox({
         prompt: prompt,
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
       const now = new Date();
-      filenamePrefix = filenamePrefix
-        || `${now.toISOString().slice(0, 10).replace(/-/g, '')}_${('0' + now.getHours()).slice(-2)}${('0' + now.getMinutes()).slice(-2)}${('0' + now.getSeconds()).slice(-2)}`;
+      filenamePrefix =
+        filenamePrefix ||
+        `${now.toISOString().slice(0, 10).replace(/-/g, '')}_${('0' + now.getHours()).slice(-2)}${(
+          '0' + now.getMinutes()
+        ).slice(-2)}${('0' + now.getSeconds()).slice(-2)}`;
       await fs.rename(path.join(this.rootPath, 'deploy.xml'), path.join(this.rootPath, `${filenamePrefix}.deploy.xml`));
       vscode.window.showInformationMessage(`Backed up deploy.xml to ${filenamePrefix}.deploy.xml`);
-      
+
       if (onBackupAutoCreateNewDeployXML) await this.createResetDeploy(context);
     } else {
       let answer: string;
@@ -582,7 +555,7 @@ export class NetSuiteSDF {
         const prompt = 'Deploy.xml already exists. Type OK to overwrite the existing file.';
         answer = await vscode.window.showInputBox({
           prompt: prompt,
-          ignoreFocusOut: true
+          ignoreFocusOut: true,
         });
       } else answer = 'OK';
       if (answer === 'OK') {
@@ -622,13 +595,15 @@ export class NetSuiteSDF {
         const currentFileName = path.basename(currentFile);
 
         const getFiles = async (dir: string): Promise<string[]> => {
-          const subdirs = await util.promisify(fs.readdir)(dir) as string[];
-          const files = await Promise.all(subdirs.map(async (subdir) => {
-            const res = path.resolve(dir, subdir);
-            return (await fs.stat(res)).isDirectory() ? getFiles(res) : res;
-          }));
+          const subdirs = (await util.promisify(fs.readdir)(dir)) as string[];
+          await Promise.all(
+            subdirs.map(async (subdir) => {
+              const res = path.resolve(dir, subdir);
+              return (await fs.stat(res)).isDirectory() ? getFiles(res) : res;
+            })
+          );
           return Array.prototype.concat.apply([], files);
-        }
+        };
 
         const files: string[] = await getFiles(path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
         for (const file of files) {
@@ -648,10 +623,13 @@ export class NetSuiteSDF {
               break;
             }
           }
-          if (!matchedJavaScriptFile && matchedJavaScriptFiles.length === 1) matchedJavaScriptFile = matchedJavaScriptFiles[0];
+          if (!matchedJavaScriptFile && matchedJavaScriptFiles.length === 1)
+            matchedJavaScriptFile = matchedJavaScriptFiles[0];
           if (matchedJavaScriptFile) currentFile = matchedJavaScriptFile;
           else {
-            vscode.window.showErrorMessage('No matching compiled JavaScript file found in FileCabinet/SuiteScripts/**.');
+            vscode.window.showErrorMessage(
+              'No matching compiled JavaScript file found in FileCabinet/SuiteScripts/**.'
+            );
             return;
           }
         } else {
@@ -681,9 +659,13 @@ export class NetSuiteSDF {
       _.set(deployJs, xmlPath, elements);
 
       const newXml = this.xmlBuilder.buildObject(deployJs);
-      fs.writeFile(deployPath, newXml, function(err) {
+      fs.writeFile(deployPath, newXml, function (err) {
         if (err) throw err;
-        vscode.window.showInformationMessage(`Added ${matchedJavaScriptFile ? 'matching compiled JavaScript' : ''} ${isObject ? 'object' : 'file'} to deploy.xml.`);
+        vscode.window.showInformationMessage(
+          `Added ${matchedJavaScriptFile ? 'matching compiled JavaScript' : ''} ${
+            isObject ? 'object' : 'file'
+          } to deploy.xml.`
+        );
       });
     }
   }
@@ -718,7 +700,7 @@ export class NetSuiteSDF {
       const password = await vscode.window.showInputBox({
         prompt: prompt,
         password: true,
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
       this.password = password;
     };
@@ -782,7 +764,7 @@ export class NetSuiteSDF {
 
   setDefaultDeployXml() {
     const defaultXml = `<deploy></deploy>`;
-    fs.writeFile(path.join(this.rootPath, 'deploy.xml'), defaultXml, function(err) {
+    fs.writeFile(path.join(this.rootPath, 'deploy.xml'), defaultXml, function (err) {
       if (err) throw err;
     });
   }
@@ -795,9 +777,10 @@ export class NetSuiteSDF {
     const prompt = 'Warning! Syncing to NetSuite will delete File Cabinet and Object contents. Type OK to proceed.';
     const answer = await vscode.window.showInputBox({
       prompt: prompt,
-      ignoreFocusOut: true
+      ignoreFocusOut: true,
     });
     if (answer === 'OK') {
+      vscode.window.showInformationMessage('Beginning sync.');
     } else {
       this.outputChannel.append('Cancelling sync.\n');
       return;
@@ -809,7 +792,7 @@ export class NetSuiteSDF {
       if (this.sdfConfig) {
         const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
         const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
-        await Bluebird.map(allCommands, func => func(), { concurrency: 5 });
+        await Bluebird.map(allCommands, (func) => func(), { concurrency: 5 });
         vscode.window.showInformationMessage('Synchronization complete!');
       }
     } catch (e) {
@@ -825,7 +808,7 @@ export class NetSuiteSDF {
   async checkSdfCliIsInstalled() {
     try {
       // Don't like this. There must be a better way.
-      const thread = await spawn('sdfcli').toPromise();
+      await spawn('sdfcli').toPromise();
       this.sdfCliIsInstalled = true;
     } catch (e) {
       this.sdfCliIsInstalled = false;
@@ -936,7 +919,7 @@ export class NetSuiteSDF {
         const prompt = "Please type 'Deploy' to deploy to production.";
         const answer = await vscode.window.showInputBox({
           prompt: prompt,
-          ignoreFocusOut: true
+          ignoreFocusOut: true,
         });
         if (answer === 'Deploy') {
           stdinSubject.next('YES\n');
@@ -963,8 +946,10 @@ export class NetSuiteSDF {
         break;
       case line.includes('does not exist.'):
         vscode.window.showErrorMessage('Custom record does not exist for updating. Please Import Object first.');
+        break;
       case line.includes('Installation COMPLETE'):
         vscode.window.showInformationMessage('Installation of deployment was completed.');
+        break;
       default:
         break;
     }
@@ -999,14 +984,14 @@ export class NetSuiteSDF {
       let commandArray: string[] = [command];
       if (this.addDefaultParameters) {
         commandArray = commandArray.concat([
-          `-account`,
-          `${this.activeEnvironment.account}`,
-          `-email`,
-          `${this.activeEnvironment.email}`,
-          `-role`,
-          `${this.activeEnvironment.role}`,
-          `-url`,
-          `${this.activeEnvironment.url}`
+          /**
+           * As of 2020.2, this plugin will no longer support
+           * username and password for authentication.
+           * Please use the sdfcli manageauth -savetoken option
+           * to add accounts to your environment.
+           */
+          `-authid`,
+          `${this.activeEnvironment.authid}`,
         ]);
       }
 
@@ -1015,7 +1000,7 @@ export class NetSuiteSDF {
       }
       for (let arg of args) {
         let argArray = arg.split(' ');
-        argArray.map(a => commandArray.push(`${a}`));
+        argArray.map((a) => commandArray.push(`${a}`));
       }
 
       const stdinSubject = new Subject<string>();
@@ -1023,22 +1008,22 @@ export class NetSuiteSDF {
       this.sdfcli = spawn('sdfcli', commandArray, {
         cwd: workPath,
         stdin: stdinSubject,
-        windowsVerbatimArguments: true
+        windowsVerbatimArguments: true,
       });
 
       this.showStatus();
 
-      let streamWrapper = Observable.create(observer => {
+      let streamWrapper: Observable<any> = new Observable((observer) => {
         let acc = '';
 
         return this.sdfcli.subscribe(
-          value => {
+          (value) => {
             acc = acc + value;
             let lines = acc.split('\n');
 
             // Check if the last line is a password entry line - this is only an issue with Object and File imports
             const endingPhrases = ['Enter password:'];
-            const endingLine = lines.filter(line => {
+            const endingLine = lines.filter((line) => {
               for (let phrase of endingPhrases) {
                 return line === phrase;
               }
@@ -1048,18 +1033,18 @@ export class NetSuiteSDF {
             }
             acc = endingLine.length > 0 ? '' : lines[lines.length - 1];
           },
-          error => observer.error(error),
+          (error) => observer.error(error),
           () => observer.complete()
         );
       });
 
       const collectedData = await streamWrapper
-        .map(line => this.handlePassword(line, command, stdinSubject))
-        .do(line => (this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null))
-        .do(line => this.handleStdIn(line, command, stdinSubject))
-        .do(line => this.handleStdOut(line, command))
+        .map((line) => this.handlePassword(line, command, stdinSubject))
+        .do((line) => (this.doShowOutput ? this.outputChannel.append(`${line}\n`) : null))
+        .do((line) => this.handleStdIn(line, command, stdinSubject))
+        .do((line) => this.handleStdOut(line, command))
         .filter(
-          line =>
+          (line) =>
             !(
               !line ||
               line.startsWith('[INFO]') ||
@@ -1068,10 +1053,10 @@ export class NetSuiteSDF {
               line.startsWith('Using ')
             )
         )
-        .map(line => this.mapCommandOutput(command, line))
+        .map((line) => this.mapCommandOutput(command, line))
         .reduce((acc: string[], curr: string) => acc.concat([curr]), [])
         .toPromise()
-        .catch(err => this.cleanup());
+        .catch((err) => this.cleanup());
 
       this.cleanup();
       return collectedData;
@@ -1094,10 +1079,7 @@ export class NetSuiteSDF {
   /**************/
 
   async copyFile(relativeFrom: string, relativeTo: string) {
-    const toDir = relativeTo
-      .split('/')
-      .slice(0, -1)
-      .join('/');
+    const toDir = relativeTo.split('/').slice(0, -1).join('/');
     this.createPath(toDir);
     const from = path.join(this.rootPath, relativeFrom);
     const to = path.join(this.rootPath, relativeTo);
@@ -1139,24 +1121,24 @@ export class NetSuiteSDF {
         }
       }
       return filePathAccum;
-    }, [])
+    }, []);
     const relativeFilePaths = filePaths.map((fullPath) => `${path.sep}${path.relative(this.rootPath, fullPath)}`);
     return relativeFilePaths;
   }
 
-  fileExists(path: string): Promise<boolean> {
+  fileExists(p: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       try {
-        fs.exists(path, exists => resolve(exists));
+        fs.exists(p, (exists) => resolve(exists));
       } catch (e) {
         reject(e);
       }
     });
   }
 
-  openFile(path: string): Promise<any> {
+  openFile(p: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      fs.readFile(path, (err, data) => {
+      fs.readFile(p, (err, data) => {
         if (err) {
           reject(err);
         }
@@ -1165,9 +1147,9 @@ export class NetSuiteSDF {
     });
   }
 
-  ls(path: string): Promise<string[]> {
+  ls(p: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      fs.readdir(path, (err, items) => {
+      fs.readdir(p, (err, items) => {
         if (err) {
           reject(err);
         }
@@ -1178,7 +1160,7 @@ export class NetSuiteSDF {
 
   parseXml(xml: string): Promise<{ [key: string]: any }> {
     return new Promise((resolve, reject) => {
-      xml2js.parseString(xml, function(err, result) {
+      xml2js.parseString(xml, function (err, result) {
         if (err) {
           reject(err);
         }
@@ -1202,7 +1184,7 @@ export class NetSuiteSDF {
               if (fileName.slice(fileName.length - 4) === '.xml') {
                 fileList.push({
                   path: path.join(root, folder, fileName),
-                  scriptid: fileName
+                  scriptid: fileName,
                 });
               }
             }
