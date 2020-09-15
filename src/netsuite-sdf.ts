@@ -396,6 +396,7 @@ export class NetSuiteSDF {
 
   async getFiles() {
     await this.getConfig();
+    this.doAddProjectParameter = true;
     if (this.sdfConfig) {
       const files = await this.listFiles();
       if (files) {
@@ -407,18 +408,24 @@ export class NetSuiteSDF {
     }
   }
 
-  getObjectFunc = (object: CustomObject) => async () => {
-    //Saved Searches should not be supported at this time.
-    if (object.type === 'savedsearch' || object.type === 'csvimport') return;
+  async getObjectFunc(object: CustomObject) {
+    await this.getConfig();
+    // Ephermeral data customizations should not be supported at this time.
+    if (
+      object.type === 'savedsearch' ||
+      object.type === 'csvimport' ||
+      object.type === 'dataset' ||
+      object.type === 'workbook'
+    )
+      return;
 
     this.doAddProjectParameter = true;
-    this.doReturnData = true;
-
-    await this.getConfig();
     if (this.sdfConfig) {
       await this._importObjects(object.type, ['ALL'], object.destination);
+    } else {
+      return;
     }
-  };
+  }
 
   async update() {
     if (!this.sdfCliIsInstalled) {
@@ -786,9 +793,10 @@ export class NetSuiteSDF {
     await this.removeFolders();
     try {
       if (this.sdfConfig) {
+        await Bluebird.map([this.getFiles.bind(this)], (func) => func(), { concurrency: 5 });
         const objectCommands = _.map(CustomObjects, (object: CustomObject) => this.getObjectFunc(object));
-        const allCommands = [this.getFiles.bind(this)].concat(objectCommands);
-        await Bluebird.map(allCommands, (func) => func(), { concurrency: 5 });
+        await Bluebird.map([objectCommands], (func) => func(), { concurrency: 5 });
+
         vscode.window.showInformationMessage('Synchronization complete!');
       }
     } catch (e) {
@@ -962,11 +970,7 @@ export class NetSuiteSDF {
 
   async runCommand(command: CLICommand, ...args): Promise<any> {
     await this.getConfig();
-    if (
-      this.sdfConfig &&
-      this.activeEnvironment
-      // (this.password || this.hasSdfCache) // No need if using tokens
-    ) {
+    if (this.sdfConfig && this.activeEnvironment) {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (this.doShowOutput) {
         this.outputChannel.show();
