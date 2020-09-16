@@ -89,6 +89,7 @@ export class NetSuiteSDF {
     }
 
     this.doSendPassword = false;
+    this.addDefaultParameters = false;
 
     await this.getConfig();
     const projectName = this.sdfConfig.projectName || 'PROJECT_NAME_MISSING';
