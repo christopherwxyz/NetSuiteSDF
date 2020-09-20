@@ -2,7 +2,28 @@
 
 ## Notice
 
-Beginning with 2019.2, you will need to reinstall the plugin from https://github.com/christopherwxyz/NetSuiteSDF/ due to a change in publisher tokens.
+Beginning with 2020.2, you will need to upgrade your sdfcli version. You can use homebrew to do this, or follow the NetSuite help docs. 
+
+You will also need to upgrade to Java 11. This project officially supports Amazon Corretto (https://corretto.aws/) instead of OpenJDK or the official Java SDK.
+
+Also starting with 2020.2, this project no longer supports username and password authentication for the plugin. You will need to use the save token option in the command palette to setup your environments. Make sure to add `authid` in your `.sdfcli.json` config file.
+
+Here's a sample .sdfcli.json:
+
+```{
+  "projectName": "SDF",
+  "environments": [
+    {
+      "name": "SANDBOX 1",
+      "account": "123456_SB1",
+      "url": "system.netsuite.com",
+      "role": 3,
+      "email": "your@email.com",
+      "authid": "DEV - ADMINISTRATOR"
+    }
+  ]
+}
+```
 
 ## Introduction
 
@@ -14,12 +35,12 @@ This is a port of the functionality provided by [tjtyrrell](https://github.com/t
 
 ## Features
 
-- Currently updated to work with 2018.2.1 (2019.1 in the works)
+- Currently updated to work with 2020.2.
 - Wraps SDF CLI commands
 - Environment (Sandbox, Production, etc.) selector
 - Output window integrated with VS Code
 - _Now webpacked to speed up VS Code load time_
-- (BETA) Quick Deploy option available in Extension Preferences
+- Quick Deploy option available in Extension Preferences
 
 ## Status
 
@@ -140,7 +161,7 @@ brew uninstall sdfcli
 Install SDFSDK:
 
 ```bash
-brew cask install caskroom/versions/java8 # Unless you already have Java 8 installed.
+brew cask install corretto
 brew install limebox/netsuite/sdfsdk
 ```
 
