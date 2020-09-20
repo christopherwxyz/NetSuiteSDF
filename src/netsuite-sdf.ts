@@ -600,13 +600,13 @@ export class NetSuiteSDF {
 
         const getFiles = async (dir: string): Promise<string[]> => {
           const subdirs = (await util.promisify(fs.readdir)(dir)) as string[];
-          await Promise.all(
+          const f = await Promise.all(
             subdirs.map(async (subdir) => {
               const res = path.resolve(dir, subdir);
               return (await fs.stat(res)).isDirectory() ? getFiles(res) : res;
             })
           );
-          return Array.prototype.concat.apply([], files);
+          return Array.prototype.concat.apply([], f);
         };
 
         const files: string[] = await getFiles(path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
