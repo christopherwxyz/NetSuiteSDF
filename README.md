@@ -10,7 +10,8 @@ Also starting with 2020.2, this project no longer supports username and password
 
 Here's a sample .sdfcli.json:
 
-```{
+```
+{
   "projectName": "SDF",
   "environments": [
     {
