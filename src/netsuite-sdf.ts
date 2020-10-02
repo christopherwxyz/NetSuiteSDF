@@ -379,6 +379,7 @@ export class NetSuiteSDF {
       });
       if (tokenSecret) {
         this.doAddProjectParameter = false;
+        this.addDefaultParameters = false;
         this.runCommand(
           CLICommand.SaveToken,
           `-account`,
