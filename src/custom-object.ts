@@ -163,6 +163,13 @@ export const CustomObjects: CustomObject[] = [
     description: '',
   }),
   new CustomObject({
+    label: 'Financial Layouts',
+    type: 'financiallayout',
+    _destination: ['Reports', 'FinancialLayout'],
+    detail: 'customlayout',
+    description: '',
+  }),
+  new CustomObject({
     label: 'Item Custom Fields',
     type: 'itemcustomfield',
     _destination: ['Fields', 'Item'],
@@ -252,6 +259,13 @@ export const CustomObjects: CustomObject[] = [
     type: 'restlet',
     _destination: ['Scripts', 'Restlet'],
     detail: 'customscript',
+    description: '',
+  }),
+  new CustomObject({
+    label: 'Report Definitions',
+    type: 'reportdefinition',
+    _destination: ['Reports', 'ReportDefinition'],
+    detail: 'customreport',
     description: '',
   }),
   new CustomObject({
