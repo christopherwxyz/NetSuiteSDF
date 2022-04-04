@@ -417,6 +417,8 @@ export class NetSuiteSDF {
       object.type === 'savedsearch' ||
       object.type === 'csvimport' ||
       object.type === 'dataset' ||
+      object.type === 'financiallayout' ||
+      object.type === 'reportdefinition' ||
       object.type === 'workbook'
     )
       return;
