@@ -419,6 +419,7 @@ export class NetSuiteSDF {
       object.type === 'dataset' ||
       object.type === 'financiallayout' ||
       object.type === 'reportdefinition' ||
+      object.type === 'translationcollection' ||
       object.type === 'workbook'
     )
       return;
