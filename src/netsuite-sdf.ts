@@ -537,7 +537,8 @@ export class NetSuiteSDF {
     }
 
     let config = vscode.workspace.getConfiguration('netsuitesdf');
-    const onBackupAutoCreateNewDeployXML = config.get('onBackupAutoCreateNewDeployXML');
+    const onBackupResetDeployXML = config.get('onBackupResetDeployXML');
+    const onRestoreDeleteBackupDeployXML = config.get('onRestoreDeleteBackupDeployXML');
 
     if (currentFileName === 'deploy.xml') {
       const prompt =
@@ -552,10 +553,11 @@ export class NetSuiteSDF {
         `${now.toISOString().slice(0, 10).replace(/-/g, '')}_${('0' + now.getHours()).slice(-2)}${(
           '0' + now.getMinutes()
         ).slice(-2)}${('0' + now.getSeconds()).slice(-2)}`;
-      await fs.rename(path.join(this.rootPath, 'deploy.xml'), path.join(this.rootPath, `${filenamePrefix}.deploy.xml`));
+      await fs.copyFile(path.join(this.rootPath, 'deploy.xml'), path.join(this.rootPath, `${filenamePrefix}.deploy.xml`));
+      if (onBackupResetDeployXML) {
+        await this.createResetDeploy(context);
+      }
       vscode.window.showInformationMessage(`Backed up deploy.xml to ${filenamePrefix}.deploy.xml`);
-
-      if (onBackupAutoCreateNewDeployXML) await this.createResetDeploy(context);
     } else {
       let answer: string;
       const deployXMLExists = await fs.pathExists(path.join(this.rootPath, 'deploy.xml'));
@@ -567,7 +569,10 @@ export class NetSuiteSDF {
         });
       } else answer = 'OK';
       if (answer === 'OK') {
-        await fs.rename(currentFile, path.join(this.rootPath, 'deploy.xml'));
+        await fs.copyFile(currentFile, path.join(this.rootPath, 'deploy.xml'));
+        if (onRestoreDeleteBackupDeployXML) {
+          await fs.remove(currentFile);
+        }
         vscode.window.showInformationMessage(`Restored ${currentFileName} to deploy.xml`);
       }
     }
