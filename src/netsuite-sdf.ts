@@ -26,6 +26,7 @@ import { CustomObjects, CustomObject } from './custom-object';
 
 const Bluebird = require('bluebird');
 const globAsync = util.promisify(glob);
+const errorMessage = "'suitecloud' not found in path. Is @oracle/suitecloud-cli installed?";
 
 export class NetSuiteSDF {
   activeEnvironment: Environment;
@@ -65,11 +66,6 @@ export class NetSuiteSDF {
     this.statusBar.tooltip = 'Click here to select your NetSuite environment';
     this.statusBar.command = 'extension.selectEnvironment';
     this.statusBar.show();
-    vscode.window.showWarningMessage(
-      'Beginning with NetSuite Release 2020.2, you will need to ' +
-      'install the latest version of the sdfcli. ' +
-      'See: https://3482428.app.netsuite.com/app/help/helpcenter.nl?fid=section_1489072409.html'
-    );
   }
 
   get statusBarDefault() {
@@ -86,7 +82,7 @@ export class NetSuiteSDF {
 
   async addDependencies() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -109,7 +105,7 @@ export class NetSuiteSDF {
 
   async createProject() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -175,7 +171,7 @@ export class NetSuiteSDF {
 
   async deploy() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
     await this.getConfig();
@@ -197,7 +193,7 @@ export class NetSuiteSDF {
 
   importBundle() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -211,7 +207,7 @@ export class NetSuiteSDF {
 
   async importFiles() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -241,7 +237,7 @@ export class NetSuiteSDF {
 
   async importObjects(context?: any) {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -277,7 +273,7 @@ export class NetSuiteSDF {
 
   issueToken() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -287,7 +283,7 @@ export class NetSuiteSDF {
 
   listBundles() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -297,7 +293,7 @@ export class NetSuiteSDF {
 
   listConfiguration() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -307,7 +303,7 @@ export class NetSuiteSDF {
 
   listFiles() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -318,7 +314,7 @@ export class NetSuiteSDF {
 
   listMissingDependencies() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -328,7 +324,7 @@ export class NetSuiteSDF {
 
   async listObjects() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -348,7 +344,7 @@ export class NetSuiteSDF {
 
   preview() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -357,7 +353,7 @@ export class NetSuiteSDF {
 
   async revokeToken() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
     const authid = await vscode.window.showInputBox({
@@ -377,7 +373,7 @@ export class NetSuiteSDF {
 
   async saveToken() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
     const authid = await vscode.window.showInputBox({
@@ -463,7 +459,7 @@ export class NetSuiteSDF {
 
   async update() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -499,7 +495,7 @@ export class NetSuiteSDF {
 
   async updateCustomRecordWithInstances() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -527,7 +523,7 @@ export class NetSuiteSDF {
 
   validate() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -732,7 +728,7 @@ export class NetSuiteSDF {
 
   async resetPassword() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -756,7 +752,7 @@ export class NetSuiteSDF {
 
   async selectEnvironment() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
@@ -812,7 +808,7 @@ export class NetSuiteSDF {
 
   async sync() {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
     const prompt = 'Warning! Syncing to NetSuite will delete File Cabinet and Object contents. Type OK to proceed.';
@@ -849,17 +845,20 @@ export class NetSuiteSDF {
 
   async checkSdfCliIsInstalled() {
     try {
-      // Don't like this. There must be a better way.
       commandExists('suitecloud', function (err, commandExists) {
         if (commandExists) {
-          console.log("SDF exists");
+          this.sdfCliIsInstalled = true;
         } else {
-          console.log(err);
+          throw err;
         }
       });
-      this.sdfCliIsInstalled = true;
     } catch (e) {
       this.sdfCliIsInstalled = false;
+      vscode.window.showWarningMessage(
+        `NOTICE: The NetSuiteSDF extension no longer uses sdfcli. 
+        Instead, it uses suitecloud-cli. So you will need to install this separately.
+        See: https://www.npmjs.com/package/@oracle/suitecloud-cli`
+      );
       if (e.code === 'ENOENT') {
         vscode.window.showErrorMessage("'sdfcli' not found in path! Check repo for install directions.");
       } else {
@@ -901,7 +900,7 @@ export class NetSuiteSDF {
 
   async getConfig({ force = false }: { force?: boolean } = {}) {
     if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
+      vscode.window.showErrorMessage(errorMessage);
       return;
     }
 
