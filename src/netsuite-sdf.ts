@@ -16,6 +16,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
 import { spawn } from 'spawn-rx';
+import * as commandExists from 'command-exists';
 
 import { Environment } from './environment';
 import { SDFConfig } from './sdf-config';
@@ -39,6 +40,7 @@ export class NetSuiteSDF {
   outputChannel: vscode.OutputChannel;
   password: string;
   rootPath: string;
+  srcPath: string;
   savedStatus: string;
   sdfcli: any;
   sdfConfig: SDFConfig;
@@ -65,8 +67,8 @@ export class NetSuiteSDF {
     this.statusBar.show();
     vscode.window.showWarningMessage(
       'Beginning with NetSuite Release 2020.2, you will need to ' +
-        'install the latest version of the sdfcli. ' +
-        'See: https://3482428.app.netsuite.com/app/help/helpcenter.nl?fid=section_1489072409.html'
+      'install the latest version of the sdfcli. ' +
+      'See: https://3482428.app.netsuite.com/app/help/helpcenter.nl?fid=section_1489072409.html'
     );
   }
 
@@ -113,26 +115,35 @@ export class NetSuiteSDF {
 
     this.doSendPassword = false;
     this.addDefaultParameters = false;
+    this.doAddProjectParameter = false;
 
-    const pathPrompt = `Please enter your the parent directory to create the Project in`;
-    const outputPath = await vscode.window.showInputBox({
-      prompt: pathPrompt,
+    const projectNamePrompt = `Please enter your project's name`;
+    const projectName = await vscode.window.showInputBox({
+      prompt: projectNamePrompt,
       ignoreFocusOut: true,
     });
-    if (outputPath) {
-      const projectNamePrompt = `Please enter your project's name`;
-      const projectName = await vscode.window.showInputBox({
-        prompt: projectNamePrompt,
-        ignoreFocusOut: true,
-      });
-      if (projectName) {
-        await this.runCommand(
-          CLICommand.CreateProject,
-          `-pd ${outputPath}`,
-          `-pn ${projectName}`,
-          '-t ACCOUNTCUSTOMIZATION'
-        );
-      }
+
+    const projectIdPrompt = `Please enter your project's ID`;
+    const projectId = await vscode.window.showInputBox({
+      prompt: projectIdPrompt,
+      ignoreFocusOut: true,
+    });
+
+    const publisherPrompt = `Please enter your publisher name`;
+    const publisherId = await vscode.window.showInputBox({
+      prompt: publisherPrompt,
+      ignoreFocusOut: true,
+    });
+
+    if (projectName) {
+      await this.runCommand(
+        CLICommand.CreateProject,
+        `--projectid ${projectId}`,
+        `--projectname ${projectName}`,
+        `--publisherid ${publisherId}`,
+        `--projectversion 0.0.1`,
+        '--type ACCOUNTCUSTOMIZATION'
+      );
     }
   }
 
@@ -301,7 +312,8 @@ export class NetSuiteSDF {
     }
 
     this.doAddProjectParameter = false;
-    return this.runCommand(CLICommand.ListFiles, `-folder`, `/SuiteScripts`);
+    this.addDefaultParameters = false;
+    return this.runCommand(CLICommand.ListFiles, `--folder`, `/SuiteScripts`);
   }
 
   listMissingDependencies() {
@@ -343,14 +355,24 @@ export class NetSuiteSDF {
     this.runCommand(CLICommand.Preview);
   }
 
-  revokeToken() {
+  async revokeToken() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage("'sdfcli' not found in path. Please restart VS Code if you installed it.");
       return;
     }
+    const authid = await vscode.window.showInputBox({
+      prompt: 'Please enter an authid to remove its token keys and secrets.',
+      ignoreFocusOut: true,
+    });
 
-    this.doAddProjectParameter = false;
-    this.runCommand(CLICommand.RevokeToken);
+    if (authid) {
+      this.doAddProjectParameter = false;
+      this.runCommand(
+        CLICommand.RevokeToken,
+        `--authid`,
+        `${authid}`,
+      );
+    }
   }
 
   async saveToken() {
@@ -368,6 +390,11 @@ export class NetSuiteSDF {
       ignoreFocusOut: true,
     });
 
+    const accountUrl = await vscode.window.showInputBox({
+      prompt: `Specifies the NetSuite domain of the account you want to use. You only need to specify the NetSuite domain if you are not using a production account.`,
+      ignoreFocusOut: true,
+    });
+
     const tokenKey = await vscode.window.showInputBox({
       prompt: 'Please enter your token key associated with your SuiteCloud IDE & CLI integration:',
       ignoreFocusOut: true,
@@ -382,15 +409,17 @@ export class NetSuiteSDF {
         this.addDefaultParameters = false;
         this.runCommand(
           CLICommand.SaveToken,
-          `-account`,
+          `--account`,
           `${account}`,
-          `-authid`,
+          `--authid`,
           `${authid}`,
-          `-savetoken`,
-          `-tokenid`,
+          // `-savetoken`,
+          `--tokenid`,
           `${tokenKey}`,
-          `-tokensecret`,
-          `${tokenSecret}`
+          `--tokensecret`,
+          `${tokenSecret}`,
+          `--url`,
+          `${accountUrl}`
         );
       }
     }
@@ -675,8 +704,7 @@ export class NetSuiteSDF {
       fs.writeFile(deployPath, newXml, function (err) {
         if (err) throw err;
         vscode.window.showInformationMessage(
-          `Added ${matchedJavaScriptFile ? 'matching compiled JavaScript' : ''} ${
-            isObject ? 'object' : 'file'
+          `Added ${matchedJavaScriptFile ? 'matching compiled JavaScript' : ''} ${isObject ? 'object' : 'file'
           } to deploy.xml.`
         );
       });
@@ -822,7 +850,13 @@ export class NetSuiteSDF {
   async checkSdfCliIsInstalled() {
     try {
       // Don't like this. There must be a better way.
-      await spawn('suitecloud').toPromise();
+      commandExists('suitecloud', function (err, commandExists) {
+        if (commandExists) {
+          console.log("SDF exists");
+        } else {
+          console.log(err);
+        }
+      });
       this.sdfCliIsInstalled = true;
     } catch (e) {
       this.sdfCliIsInstalled = false;
@@ -875,6 +909,8 @@ export class NetSuiteSDF {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.fsPath;
+        this.srcPath = this.rootPath + '/src'
+        console.log(this.rootPath);
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
@@ -1000,6 +1036,8 @@ export class NetSuiteSDF {
            * Please use the sdfcli manageauth -savetoken option
            * to add accounts to your environment.
            */
+
+          // TODO: REFACTOR TO SWITCH TO SELECTED ENV!!!
           `-authid`,
           `${this.activeEnvironment.authid}`,
         ]);

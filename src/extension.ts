@@ -16,11 +16,9 @@ export async function activate(context: vscode.ExtensionContext) {
   let importFolderFunc = _importObjectFolder(netsuiteSdf);
   let importObjectFunc = _importObject(netsuiteSdf);
   let importFileFunc = _importFile(netsuiteSdf);
-  // let refreshFunc = _refresh(sdfProvider);
   let importFolder = vscode.commands.registerCommand('extension.importFolder', importFolderFunc);
   let importObject = vscode.commands.registerCommand('extension.importObject', importObjectFunc);
   let importFile = vscode.commands.registerCommand('extension.importFile', importFileFunc);
-  // let refresh = vscode.commands.registerCommand('extension.refresh', refreshFunc);
 
   let addDependencies = vscode.commands.registerCommand(
     'extension.addDependencies',
@@ -37,6 +35,10 @@ export async function activate(context: vscode.ExtensionContext) {
   let addFileToDeploy = vscode.commands.registerCommand(
     'extension.addFileToDeploy',
     netsuiteSdf.addFileToDeploy.bind(netsuiteSdf)
+  );
+  let createProject = vscode.commands.registerCommand(
+    'extension.createProject',
+    netsuiteSdf.createProject.bind(netsuiteSdf)
   );
   let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
   let importBundle = vscode.commands.registerCommand(
@@ -85,10 +87,6 @@ export async function activate(context: vscode.ExtensionContext) {
     'extension.updateCustomRecordWithInstances',
     netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
   );
-  // let uploadFolders = vscode.commands.registerCommand(
-  //   'extension.uploadFolders',
-  //   netsuiteSdf.uploadFolders.bind(netsuiteSdf)
-  // );
   let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
   context.subscriptions.push(importFolder);
@@ -96,6 +94,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(importFile);
   // context.subscriptions.push(refresh);
 
+  context.subscriptions.push(createProject);
   context.subscriptions.push(addDependencies);
   context.subscriptions.push(createResetDeploy);
   context.subscriptions.push(backupRestoreDeploy);
@@ -125,4 +124,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

@@ -12,8 +12,8 @@ export enum CLICommand {
   ListMissingDependencies = 'listmissingdependencies',
   ListObjects = 'object:list', // 2022.2
   Preview = 'preview',
-  RevokeToken = 'revoketoken',
-  SaveToken = 'authenticate',
+  RevokeToken = 'account:manageauth',
+  SaveToken = 'account:savetoken', // 2022.2
   Update = 'update',
   UpdateCustomRecordsWithInstances = 'updatecustomrecordwithinstances',
   // UploadFolders = 'uploadfolders',

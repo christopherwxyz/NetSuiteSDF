@@ -21,6 +21,7 @@
     "workspaceContains:**/.sdf",
     "workspaceContains:**/.sdfcli.json",
     "onCommand:extension.addDependencies",
+    "onCommand:extension.createProject",
     "onCommand:extension.deploy",
     "onCommand:extension.importBundle",
     "onCommand:extension.importFiles",
@@ -197,6 +198,11 @@
         "category": "SDF"
       },
       {
+        "command": "extension.createProject",
+        "title": "Create a new NetSuite SuiteCloud Project",
+        "category": "SDF"
+      },
+      {
         "command": "extension.createResetDeploy",
         "title": "Create/Reset deploy.xml",
         "category": "SDF"
@@ -367,6 +373,7 @@
   "dependencies": {
     "@types/lodash": "^4.14.122",
     "bluebird": "^3.7.2",
+    "command-exists": "^1.2.9",
     "fs-extra": "^7.0.1",
     "fstream": "^1.0.12",
     "lodash": "^4.17.20",
@@ -380,6 +387,7 @@
   },
   "devDependencies": {
     "@oracle/suitecloud-cli": "^1.6.1",
+    "@types/command-exists": "^1.2.0",
     "@types/fs-extra": "^7.0.0",
     "@types/mocha": "^2.2.42",
     "@types/node": "^12.0.4",
