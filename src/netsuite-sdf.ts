@@ -97,7 +97,7 @@ export class NetSuiteSDF {
       <frameworkversion>1.0</frameworkversion>
     </manifest>
     `;
-    fs.writeFile(path.join(this.rootPath, 'manifest.xml'), defaultXml, function (err) {
+    fs.writeFile(path.join(this.srcPath, 'manifest.xml'), defaultXml, function (err) {
       if (err) throw err;
     });
     await this.runCommand(CLICommand.AddDependencies, '-all');
@@ -144,7 +144,7 @@ export class NetSuiteSDF {
   }
 
   async _generateTempDeployDirectory() {
-    const deployPath = path.join(this.rootPath, 'deploy.xml');
+    const deployPath = path.join(this.srcPath, 'deploy.xml');
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
       this.setDefaultDeployXml();
@@ -183,7 +183,7 @@ export class NetSuiteSDF {
 
       await this.runCommand(CLICommand.Deploy);
 
-      await rimraf(this.rootPath + '/var', (err: Error) => {
+      await rimraf(this.srcPath + '/var', (err: Error) => {
         vscode.window.showErrorMessage(err.message);
       });
     } else {
@@ -232,7 +232,7 @@ export class NetSuiteSDF {
   async _importFiles(files: string[]) {
     const cleanedFiles = _.map(files, (file) => `${file}`);
     const fileString = cleanedFiles.join(' ');
-    return this.runCommand(CLICommand.ImportFiles, `-paths`, `${fileString}`);
+    return this.runCommand(CLICommand.ImportFiles, `--paths`, `${fileString}`);
   }
 
   async importObjects(context?: any) {
@@ -262,11 +262,11 @@ export class NetSuiteSDF {
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
       CLICommand.ImportObjects,
-      `-scriptid`,
+      `--scriptid`,
       scriptIdString,
-      `-type`,
+      `--type`,
       `${scriptType}`,
-      `-destinationfolder`,
+      `--destinationfolder`,
       `${destination}`
     );
   }
@@ -464,11 +464,11 @@ export class NetSuiteSDF {
     }
 
     await this.getConfig();
-    const objectsRecordPath = path.join(this.rootPath, 'Objects');
+    const objectsRecordPath = path.join(this.srcPath, 'Objects');
     const pathExists = await this.fileExists(objectsRecordPath);
 
     if (pathExists) {
-      const filePathList = await this.getXMLFileList(['Objects'], this.rootPath);
+      const filePathList = await this.getXMLFileList(['Objects'], this.srcPath);
 
       if (filePathList.length > 0) {
         const shortNames = filePathList.map((file) => file.path.substr(file.path.indexOf('Objects') + 8));
@@ -500,7 +500,7 @@ export class NetSuiteSDF {
     }
 
     await this.getConfig();
-    const customRecordPath = path.join(this.rootPath, '/Objects/Records');
+    const customRecordPath = path.join(this.srcPath, '/Objects/Records');
     const pathExists = await this.fileExists(customRecordPath);
     if (pathExists) {
       const rawFileList = await this.ls(customRecordPath);
@@ -578,14 +578,14 @@ export class NetSuiteSDF {
         `${now.toISOString().slice(0, 10).replace(/-/g, '')}_${('0' + now.getHours()).slice(-2)}${(
           '0' + now.getMinutes()
         ).slice(-2)}${('0' + now.getSeconds()).slice(-2)}`;
-      await fs.copyFile(path.join(this.rootPath, 'deploy.xml'), path.join(this.rootPath, `${filenamePrefix}.deploy.xml`));
+      await fs.copyFile(path.join(this.srcPath, 'deploy.xml'), path.join(this.srcPath, `${filenamePrefix}.deploy.xml`));
       if (onBackupResetDeployXML) {
         await this.createResetDeploy(context);
       }
       vscode.window.showInformationMessage(`Backed up deploy.xml to ${filenamePrefix}.deploy.xml`);
     } else {
       let answer: string;
-      const deployXMLExists = await fs.pathExists(path.join(this.rootPath, 'deploy.xml'));
+      const deployXMLExists = await fs.pathExists(path.join(this.srcPath, 'deploy.xml'));
       if (deployXMLExists) {
         const prompt = 'Deploy.xml already exists. Type OK to overwrite the existing file.';
         answer = await vscode.window.showInputBox({
@@ -594,7 +594,7 @@ export class NetSuiteSDF {
         });
       } else answer = 'OK';
       if (answer === 'OK') {
-        await fs.copyFile(currentFile, path.join(this.rootPath, 'deploy.xml'));
+        await fs.copyFile(currentFile, path.join(this.srcPath, 'deploy.xml'));
         if (onRestoreDeleteBackupDeployXML) {
           await fs.remove(currentFile);
         }
@@ -609,7 +609,7 @@ export class NetSuiteSDF {
       return;
     }
     await this.getConfig();
-    const deployPath = path.join(this.rootPath, 'deploy.xml');
+    const deployPath = path.join(this.srcPath, 'deploy.xml');
 
     let currentFile: string;
     if (context && context.fsPath) {
@@ -621,10 +621,10 @@ export class NetSuiteSDF {
     let config = vscode.workspace.getConfiguration('netsuitesdf');
     const addMatchingJSWhenAddingTSToDeployXML = config.get('addMatchingJavascriptWhenAddingTypescriptToDeployXML');
 
-    const isFileInFileCabinet = _.includes(currentFile, path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
+    const isFileInFileCabinet = _.includes(currentFile, path.join(this.srcPath, '/FileCabinet/SuiteScripts'));
     let isJavaScript = isFileInFileCabinet && _.includes(currentFile, '.js');
     const isTypeScript = _.includes(currentFile, '.ts');
-    const isObject = _.includes(currentFile, path.join(this.rootPath, '/Objects')) && _.includes(currentFile, '.xml');
+    const isObject = _.includes(currentFile, path.join(this.srcPath, '/Objects')) && _.includes(currentFile, '.xml');
     let matchedJavaScriptFile: string;
 
     if (!isFileInFileCabinet && !isJavaScript && !isObject) {
@@ -643,7 +643,7 @@ export class NetSuiteSDF {
           return Array.prototype.concat.apply([], f);
         };
 
-        const files: string[] = await getFiles(path.join(this.rootPath, '/FileCabinet/SuiteScripts'));
+        const files: string[] = await getFiles(path.join(this.srcPath, '/FileCabinet/SuiteScripts'));
         for (const file of files) {
           const fileName = path.basename(file);
           if (fileName.replace(/\.[^/.]+$/, '') === currentFileName.replace(/\.[^/.]+$/, '')) {
@@ -681,7 +681,7 @@ export class NetSuiteSDF {
     }
 
     const xmlPath = isFileInFileCabinet || isJavaScript ? 'deploy.files[0].path' : 'deploy.objects[0].path';
-    const relativePath = _.replace(currentFile, this.rootPath, '~').replace(/\\/gi, '/');
+    const relativePath = _.replace(currentFile, this.srcPath, '~').replace(/\\/gi, '/');
 
     const deployXmlExists = await this.fileExists(deployPath);
     if (!deployXmlExists) {
@@ -715,12 +715,12 @@ export class NetSuiteSDF {
     await this.getConfig();
 
     if (this.sdfConfig) {
-      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/Objects/');
-      await rimraf(this.rootPath + '/Objects/*', (err: Error) => {
+      vscode.window.showInformationMessage('Emptying: ' + this.srcPath + '/Objects/');
+      await rimraf(this.srcPath + '/Objects/*', (err: Error) => {
         vscode.window.showErrorMessage(err.message);
       });
-      vscode.window.showInformationMessage('Emptying: ' + this.rootPath + '/FileCabinet/SuiteScripts/');
-      await rimraf(this.rootPath + '/FileCabinet/SuiteScripts/*', (err: Error) => {
+      vscode.window.showInformationMessage('Emptying: ' + this.srcPath + '/FileCabinet/SuiteScripts/');
+      await rimraf(this.srcPath + '/FileCabinet/SuiteScripts/*', (err: Error) => {
         vscode.window.showErrorMessage(err.message);
       });
     }
@@ -801,7 +801,7 @@ export class NetSuiteSDF {
 
   setDefaultDeployXml() {
     const defaultXml = `<deploy></deploy>`;
-    fs.writeFile(path.join(this.rootPath, 'deploy.xml'), defaultXml, function (err) {
+    fs.writeFile(path.join(this.srcPath, 'deploy.xml'), defaultXml, function (err) {
       if (err) throw err;
     });
   }
@@ -856,7 +856,7 @@ export class NetSuiteSDF {
       this.sdfCliIsInstalled = false;
       vscode.window.showWarningMessage(
         `NOTICE: The NetSuiteSDF extension no longer uses sdfcli. 
-        Instead, it uses suitecloud-cli. So you will need to install this separately.
+        Instead, it uses suitecloud-cli. You will need to install this separately.
         See: https://www.npmjs.com/package/@oracle/suitecloud-cli`
       );
       if (e.code === 'ENOENT') {
@@ -909,7 +909,6 @@ export class NetSuiteSDF {
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.fsPath;
         this.srcPath = this.rootPath + '/src'
-        console.log(this.rootPath);
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
@@ -1028,22 +1027,15 @@ export class NetSuiteSDF {
 
       let commandArray: string[] = [command];
       if (this.addDefaultParameters) {
-        commandArray = commandArray.concat([
-          /**
-           * As of 2020.2, this plugin will no longer support
-           * username and password for authentication.
-           * Please use the sdfcli manageauth -savetoken option
-           * to add accounts to your environment.
-           */
-
-          // TODO: REFACTOR TO SWITCH TO SELECTED ENV!!!
+        // TODO: REFACTOR TO SWITCH TO SELECTED ENV!!!
+        /* commandArray = commandArray.concat([
           `-authid`,
           `${this.activeEnvironment.authid}`,
-        ]);
+        ]); */
       }
 
       if (this.doAddProjectParameter) {
-        commandArray.push(`-p`, `${workPath}`);
+        // commandArray.push(`-p`, `${workPath}`);
       }
       for (let arg of args) {
         let argArray = arg.split(' ');
@@ -1128,16 +1120,16 @@ export class NetSuiteSDF {
   async copyFile(relativeFrom: string, relativeTo: string) {
     const toDir = relativeTo.split('/').slice(0, -1).join('/');
     this.createPath(toDir);
-    const from = path.join(this.rootPath, relativeFrom);
-    const to = path.join(this.rootPath, relativeTo);
+    const from = path.join(this.srcPath, relativeFrom);
+    const to = path.join(this.srcPath, relativeTo);
     return fs.copyFile(from, to);
   }
 
   createPath(targetDir) {
     // Strip leading '/'
     targetDir = targetDir.substring(1);
-    const initDir = this.rootPath;
-    const baseDir = this.rootPath;
+    const initDir = this.srcPath;
+    const baseDir = this.srcPath;
 
     targetDir.split('/').reduce((parentDir, childDir) => {
       const curDir = path.resolve(baseDir, parentDir, childDir);
@@ -1157,7 +1149,7 @@ export class NetSuiteSDF {
     const globPromises = filePatterns.map((filePattern) => {
       filePattern = filePattern.replace('~', '');
       filePattern = filePattern.replace('*', '**'); // NetSuite's * glob pattern functions the same as a traditional ** pattern
-      return globAsync(path.join(this.rootPath, filePattern), { nodir: true });
+      return globAsync(path.join(this.srcPath, filePattern), { nodir: true });
     });
     const matchArr = await Promise.all(globPromises);
     const filePaths: string[] = matchArr.reduce((filePathAccum: string[], matches) => {
@@ -1169,7 +1161,7 @@ export class NetSuiteSDF {
       }
       return filePathAccum;
     }, []);
-    const relativeFilePaths = filePaths.map((fullPath) => `${path.sep}${path.relative(this.rootPath, fullPath)}`);
+    const relativeFilePaths = filePaths.map((fullPath) => `${path.sep}${path.relative(this.srcPath, fullPath)}`);
     return relativeFilePaths;
   }
 
