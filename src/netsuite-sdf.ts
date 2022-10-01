@@ -822,7 +822,7 @@ export class NetSuiteSDF {
   async checkSdfCliIsInstalled() {
     try {
       // Don't like this. There must be a better way.
-      await spawn('sdfcli').toPromise();
+      await spawn('suitecloud').toPromise();
       this.sdfCliIsInstalled = true;
     } catch (e) {
       this.sdfCliIsInstalled = false;
@@ -1015,7 +1015,7 @@ export class NetSuiteSDF {
 
       const stdinSubject = new Subject<string>();
 
-      this.sdfcli = spawn('sdfcli', commandArray, {
+      this.sdfcli = spawn('suitecloud', commandArray, {
         cwd: workPath,
         stdin: stdinSubject,
         windowsVerbatimArguments: true,

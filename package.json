@@ -2,7 +2,7 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "2022.9.30",
+  "version": "2022.10.1",
   "publisher": "christopherwxyz",
   "license": "MIT",
   "repository": "https://github.com/christopherwxyz/NetSuiteSDF",
@@ -379,6 +379,7 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "@oracle/suitecloud-cli": "^1.6.1",
     "@types/fs-extra": "^7.0.0",
     "@types/mocha": "^2.2.42",
     "@types/node": "^12.0.4",

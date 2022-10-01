@@ -1,21 +1,21 @@
 export enum CLICommand {
-  AddDependencies = 'adddependencies',
-  CreateProject = 'createproject',
-  Deploy = 'deploy',
+  AddDependencies = 'project:adddependencies', // 2022.2
+  CreateProject = 'project:create', // 2022.2
+  Deploy = 'project:deploy', // 2022.2
   ImportBundle = 'importbundle',
-  ImportFiles = 'importfiles',
-  ImportObjects = 'importobjects',
+  ImportFiles = 'file:import', // 2022.2
+  ImportObjects = 'object:import', // 2022.2
   IssueToken = 'issuetoken',
   ListBundles = 'listbundles',
   ListConfiguration = 'listconfiguration',
-  ListFiles = 'listfiles',
+  ListFiles = 'file:list', // 2022.2
   ListMissingDependencies = 'listmissingdependencies',
-  ListObjects = 'listobjects',
+  ListObjects = 'object:list', // 2022.2
   Preview = 'preview',
   RevokeToken = 'revoketoken',
   SaveToken = 'authenticate',
   Update = 'update',
   UpdateCustomRecordsWithInstances = 'updatecustomrecordwithinstances',
   // UploadFolders = 'uploadfolders',
-  Validate = 'validate'
+  Validate = 'project:validate' // 2022.2
 }
