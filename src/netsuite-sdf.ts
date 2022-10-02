@@ -111,7 +111,6 @@ export class NetSuiteSDF {
 
     this.doSendPassword = false;
     this.addDefaultParameters = false;
-    this.doAddProjectParameter = false;
 
     const projectNamePrompt = `Please enter your project's name`;
     const projectName = await vscode.window.showInputBox({
@@ -198,7 +197,6 @@ export class NetSuiteSDF {
     }
 
     // TODO?
-    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ImportBundle);
   }
 
@@ -211,7 +209,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.doReturnData = true;
 
     const collectedData = await this.listFiles();
@@ -277,7 +274,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.IssueToken);
   }
 
@@ -287,7 +283,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ListBundles);
   }
 
@@ -297,7 +292,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.runCommand(CLICommand.ListConfiguration);
   }
 
@@ -307,7 +301,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.addDefaultParameters = false;
     return this.runCommand(CLICommand.ListFiles, `--folder`, `/SuiteScripts`);
   }
@@ -328,7 +321,6 @@ export class NetSuiteSDF {
       return;
     }
 
-    this.doAddProjectParameter = false;
     this.doReturnData = true;
 
     await this.getConfig();
@@ -362,7 +354,6 @@ export class NetSuiteSDF {
     });
 
     if (authid) {
-      this.doAddProjectParameter = false;
       this.runCommand(
         CLICommand.RevokeToken,
         `--authid`,
@@ -401,7 +392,6 @@ export class NetSuiteSDF {
         ignoreFocusOut: true,
       });
       if (tokenSecret) {
-        this.doAddProjectParameter = false;
         this.addDefaultParameters = false;
         this.runCommand(
           CLICommand.SaveToken,
@@ -423,7 +413,6 @@ export class NetSuiteSDF {
 
   async getFiles() {
     await this.getConfig();
-    this.doAddProjectParameter = true;
     if (this.sdfConfig) {
       const files = await this.listFiles();
       if (files) {
@@ -449,7 +438,6 @@ export class NetSuiteSDF {
     )
       return;
 
-    this.doAddProjectParameter = true;
     if (this.sdfConfig) {
       await this._importObjects(object.type, ['ALL'], object.destination);
     } else {
@@ -876,7 +864,6 @@ export class NetSuiteSDF {
     clearInterval(this.intervalId);
     this.clearStatus();
 
-    this.doAddProjectParameter = true;
     this.doReturnData = false;
     this.doSendPassword = true;
     this.intervalId = undefined;
