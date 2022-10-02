@@ -15,7 +15,7 @@ export enum CLICommand {
   RevokeToken = 'account:manageauth',
   SaveToken = 'account:savetoken', // 2022.2
   Update = 'update',
-  UpdateCustomRecordsWithInstances = 'updatecustomrecordwithinstances',
+  UpdateCustomRecordsWithInstances = 'object:update', // 2022.2
   // UploadFolders = 'uploadfolders',
   Validate = 'project:validate' // 2022.2
 }

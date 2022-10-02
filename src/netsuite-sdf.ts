@@ -227,9 +227,8 @@ export class NetSuiteSDF {
   }
 
   async _importFiles(files: string[]) {
-    const cleanedFiles = _.map(files, (file) => `${file}`);
-    const fileString = cleanedFiles.join(' ');
-    return this.runCommand(CLICommand.ImportFiles, `--paths`, `${fileString}`);
+    const cleanedFiles = _.map(files, (file) => file.replace(/[() ]/g, '\\$0')).join(' ');
+    return this.runCommand(CLICommand.ImportFiles, `--paths`, `${cleanedFiles}`);
   }
 
   async importObjects(context?: any) {
@@ -237,7 +236,6 @@ export class NetSuiteSDF {
       vscode.window.showErrorMessage(errorMessage);
       return;
     }
-
     const collectedData = await this.listObjects();
     if (collectedData) {
       const filteredData = collectedData.filter((data) => data.indexOf('cust') >= 0);
@@ -248,13 +246,13 @@ export class NetSuiteSDF {
         });
         if (selectedObjects && selectedObjects.length > 0) {
           this.createPath(this.currentObject.destination);
-          this._importObjects(this.currentObject.type, selectedObjects, this.currentObject.destination);
+          this._importObjects(this.currentObject.type, selectedObjects, this.currentObject.destination, true);
         }
       }
     }
   }
 
-  async _importObjects(scriptType: string, scriptIds: string[], destination: string) {
+  async _importObjects(scriptType: string, scriptIds: string[], destination: string, excludefiles: boolean) {
     this.createPath(destination);
     const scriptIdString = scriptIds.join(' ');
     return this.runCommand(
@@ -264,7 +262,8 @@ export class NetSuiteSDF {
       `--type`,
       `${scriptType}`,
       `--destinationfolder`,
-      `${destination}`
+      `${destination}`,
+      `${excludefiles ? '--excludefiles' : ''}`
     );
   }
 
@@ -329,7 +328,7 @@ export class NetSuiteSDF {
         ignoreFocusOut: true,
       });
       if (this.currentObject) {
-        return this.runCommand(CLICommand.ListObjects, `-type`, `${this.currentObject.type}`);
+        return this.runCommand(CLICommand.ListObjects, `--type`, `${this.currentObject.type}`);
       }
     }
   }
@@ -439,7 +438,7 @@ export class NetSuiteSDF {
       return;
 
     if (this.sdfConfig) {
-      await this._importObjects(object.type, ['ALL'], object.destination);
+      await this._importObjects(object.type, ['ALL'], object.destination, true);
     } else {
       return;
     }
@@ -475,7 +474,7 @@ export class NetSuiteSDF {
           const selectionStr = selectedFile
             .map((file) => file.scriptid.substring(0, file.scriptid.indexOf('.')))
             .join(' ');
-          this.runCommand(CLICommand.Update, `-scriptid`, `${selectionStr}`);
+          this.runCommand(CLICommand.Update, `--scriptid`, `${selectionStr}`);
         }
       }
     }
@@ -499,7 +498,7 @@ export class NetSuiteSDF {
           ignoreFocusOut: true,
         });
         if (objectId) {
-          this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `-scriptid`, `${objectId}`);
+          this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `--scriptid`, `${objectId}`, `--includeinstances`);
         }
       }
     } else {
@@ -1021,15 +1020,14 @@ export class NetSuiteSDF {
         ]); */
       }
 
-      if (this.doAddProjectParameter) {
-        // commandArray.push(`-p`, `${workPath}`);
-      }
       for (let arg of args) {
         let argArray = arg.split(' ');
         argArray.map((a) => commandArray.push(`${a}`));
       }
 
       const stdinSubject = new Subject<string>();
+
+      console.log(commandArray);
 
       this.sdfcli = spawn('suitecloud', commandArray, {
         cwd: workPath,
@@ -1045,6 +1043,7 @@ export class NetSuiteSDF {
         return this.sdfcli.subscribe(
           (value) => {
             acc = acc + value;
+            acc = acc.replace('[2K[1G', ''); // Remove weird pretext thing that shows up in output.
             let lines = acc.split('\n');
 
             // Check if the last line is a password entry line - this is only an issue with Object and File imports
