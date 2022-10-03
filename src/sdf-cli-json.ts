@@ -3,6 +3,7 @@ export const SdfCliJson = `{
   "environments": [
     {
       "name": "Sandbox",
+      "package": "folder-name-sandbox",
       "account": "00000000",
       "url": "system.sandbox.netsuite.com",
       "role": 3,
@@ -10,6 +11,7 @@ export const SdfCliJson = `{
     },
     {
       "name": "Production",
+      "package": "folder-name-prod",
       "account": "00000000",
       "url": "system.netsuite.com",
       "role": 3,
