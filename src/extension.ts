@@ -41,28 +41,28 @@ export async function activate(context: vscode.ExtensionContext) {
     netsuiteSdf.createProject.bind(netsuiteSdf)
   );
   let deploy = vscode.commands.registerCommand('extension.deploy', netsuiteSdf.deploy.bind(netsuiteSdf));
-  let importBundle = vscode.commands.registerCommand(
-    'extension.importBundle',
-    netsuiteSdf.importBundle.bind(netsuiteSdf)
-  );
+  // let importBundle = vscode.commands.registerCommand(
+  //   'extension.importBundle',
+  //   netsuiteSdf.importBundle.bind(netsuiteSdf)
+  // );
   let importFiles = vscode.commands.registerCommand('extension.importFiles', netsuiteSdf.importFiles.bind(netsuiteSdf));
   let importObjects = vscode.commands.registerCommand(
     'extension.importObjects',
     netsuiteSdf.importObjects.bind(netsuiteSdf)
   );
-  let issueToken = vscode.commands.registerCommand('extension.issueToken', netsuiteSdf.issueToken.bind(netsuiteSdf));
-  let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles.bind(netsuiteSdf));
-  let listConfiguration = vscode.commands.registerCommand(
-    'extension.listConfiguration',
-    netsuiteSdf.listConfiguration.bind(netsuiteSdf)
-  );
+  // let issueToken = vscode.commands.registerCommand('extension.issueToken', netsuiteSdf.issueToken.bind(netsuiteSdf));
+  // let listBundles = vscode.commands.registerCommand('extension.listBundles', netsuiteSdf.listBundles.bind(netsuiteSdf));
+  // let listConfiguration = vscode.commands.registerCommand(
+  //   'extension.listConfiguration',
+  //   netsuiteSdf.listConfiguration.bind(netsuiteSdf)
+  // );
   let listFiles = vscode.commands.registerCommand('extension.listFiles', netsuiteSdf.listFiles.bind(netsuiteSdf));
-  let listMissingDependencies = vscode.commands.registerCommand(
-    'extension.listMissingDependencies',
-    netsuiteSdf.listMissingDependencies.bind(netsuiteSdf)
-  );
+  // let listMissingDependencies = vscode.commands.registerCommand(
+  //   'extension.listMissingDependencies',
+  //   netsuiteSdf.listMissingDependencies.bind(netsuiteSdf)
+  // );
   let listObjects = vscode.commands.registerCommand('extension.listObjects', netsuiteSdf.listObjects.bind(netsuiteSdf));
-  let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
+  // let preview = vscode.commands.registerCommand('extension.preview', netsuiteSdf.preview.bind(netsuiteSdf));
   let refreshConfig = vscode.commands.registerCommand(
     'extension.refreshConfig',
     netsuiteSdf.refreshConfig.bind(netsuiteSdf)
@@ -70,10 +70,6 @@ export async function activate(context: vscode.ExtensionContext) {
   let removeFolders = vscode.commands.registerCommand(
     'extension.removeFolders',
     netsuiteSdf.removeFolders.bind(netsuiteSdf)
-  );
-  let resetPassword = vscode.commands.registerCommand(
-    'extension.resetPassword',
-    netsuiteSdf.resetPassword.bind(netsuiteSdf)
   );
   let revokeToken = vscode.commands.registerCommand('extension.revokeToken', netsuiteSdf.revokeToken.bind(netsuiteSdf));
   let saveToken = vscode.commands.registerCommand('extension.saveToken', netsuiteSdf.saveToken.bind(netsuiteSdf));
@@ -83,10 +79,10 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   let sync = vscode.commands.registerCommand('extension.sync', netsuiteSdf.sync.bind(netsuiteSdf));
   let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
-  let updateCustomRecordWithInstances = vscode.commands.registerCommand(
-    'extension.updateCustomRecordWithInstances',
-    netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
-  );
+  // let updateCustomRecordWithInstances = vscode.commands.registerCommand(
+  //   'extension.updateCustomRecordWithInstances',
+  //   netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
+  // );
   let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
   context.subscriptions.push(importFolder);
@@ -100,25 +96,24 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(backupRestoreDeploy);
   context.subscriptions.push(addFileToDeploy);
   context.subscriptions.push(deploy);
-  context.subscriptions.push(importBundle);
+  // context.subscriptions.push(importBundle);
   context.subscriptions.push(importFiles);
   context.subscriptions.push(importObjects);
-  context.subscriptions.push(issueToken);
-  context.subscriptions.push(listBundles);
-  context.subscriptions.push(listConfiguration);
+  // context.subscriptions.push(issueToken);
+  // context.subscriptions.push(listBundles);
+  // context.subscriptions.push(listConfiguration);
   context.subscriptions.push(listFiles);
-  context.subscriptions.push(listMissingDependencies);
+  // context.subscriptions.push(listMissingDependencies);
   context.subscriptions.push(listObjects);
-  context.subscriptions.push(preview);
+  // context.subscriptions.push(preview);
   context.subscriptions.push(refreshConfig);
   context.subscriptions.push(removeFolders);
-  context.subscriptions.push(resetPassword);
-  context.subscriptions.push(revokeToken);
+  // context.subscriptions.push(revokeToken);
   context.subscriptions.push(saveToken);
   context.subscriptions.push(selectEnvironment);
   context.subscriptions.push(sync);
   context.subscriptions.push(update);
-  context.subscriptions.push(updateCustomRecordWithInstances);
+  // context.subscriptions.push(updateCustomRecordWithInstances);
   // context.subscriptions.push(uploadFolders);
   context.subscriptions.push(validate);
 }

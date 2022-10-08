@@ -39,6 +39,7 @@ export class NetSuiteSDF {
   doShowOutput = true;
   intervalId;
   outputChannel: vscode.OutputChannel;
+  package: string;
   password: string;
   rootPath: string;
   srcPath: string;
@@ -190,19 +191,6 @@ export class NetSuiteSDF {
     }
   }
 
-  importBundle() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    // TODO?
-    this.runCommand(CLICommand.ImportBundle);
-  }
-
-  // TODO
-  // importConfiguration
-
   async importFiles() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(errorMessage);
@@ -267,33 +255,6 @@ export class NetSuiteSDF {
     );
   }
 
-  issueToken() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    this.runCommand(CLICommand.IssueToken);
-  }
-
-  listBundles() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    this.runCommand(CLICommand.ListBundles);
-  }
-
-  listConfiguration() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    this.runCommand(CLICommand.ListConfiguration);
-  }
-
   listFiles() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(errorMessage);
@@ -302,16 +263,6 @@ export class NetSuiteSDF {
 
     this.addDefaultParameters = false;
     return this.runCommand(CLICommand.ListFiles, `--folder`, `/SuiteScripts`);
-  }
-
-  listMissingDependencies() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    this.doSendPassword = false;
-    this.runCommand(CLICommand.ListMissingDependencies);
   }
 
   async listObjects() {
@@ -331,15 +282,6 @@ export class NetSuiteSDF {
         return this.runCommand(CLICommand.ListObjects, `--type`, `${this.currentObject.type}`);
       }
     }
-  }
-
-  preview() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
-
-    this.runCommand(CLICommand.Preview);
   }
 
   async revokeToken() {
@@ -480,33 +422,33 @@ export class NetSuiteSDF {
     }
   }
 
-  async updateCustomRecordWithInstances() {
-    if (!this.sdfCliIsInstalled) {
-      vscode.window.showErrorMessage(errorMessage);
-      return;
-    }
+  // async updateCustomRecordWithInstances() {
+  //   if (!this.sdfCliIsInstalled) {
+  //     vscode.window.showErrorMessage(errorMessage);
+  //     return;
+  //   }
 
-    await this.getConfig();
-    const customRecordPath = path.join(this.srcPath, '/Objects/Records');
-    const pathExists = await this.fileExists(customRecordPath);
-    if (pathExists) {
-      const rawFileList = await this.ls(customRecordPath);
-      const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
+  //   await this.getConfig();
+  //   const customRecordPath = path.join(this.srcPath, '/Objects/Records');
+  //   const pathExists = await this.fileExists(customRecordPath);
+  //   if (pathExists) {
+  //     const rawFileList = await this.ls(customRecordPath);
+  //     const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
 
-      if (fileList) {
-        const objectId = await vscode.window.showQuickPick(fileList, {
-          ignoreFocusOut: true,
-        });
-        if (objectId) {
-          this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `--scriptid`, `${objectId}`, `--includeinstances`);
-        }
-      }
-    } else {
-      vscode.window.showErrorMessage(
-        'No custom records found in /Objects/Records. Import Objects before updating with custom records.'
-      );
-    }
-  }
+  //     if (fileList) {
+  //       const objectId = await vscode.window.showQuickPick(fileList, {
+  //         ignoreFocusOut: true,
+  //       });
+  //       if (objectId) {
+  //         this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `--scriptid`, `${objectId}`, `--includeinstances`);
+  //       }
+  //     }
+  //   } else {
+  //     vscode.window.showErrorMessage(
+  //       'No custom records found in /Objects/Records. Import Objects before updating with custom records.'
+  //     );
+  //   }
+  // }
 
   validate() {
     if (!this.sdfCliIsInstalled) {
@@ -699,8 +641,6 @@ export class NetSuiteSDF {
   }
 
   async removeFolders() {
-    await this.getConfig();
-
     if (this.sdfConfig) {
       vscode.window.showInformationMessage('Emptying: ' + this.srcPath + '/Objects/');
       await rimraf(this.srcPath + '/Objects/*', (err: Error) => {
@@ -754,6 +694,8 @@ export class NetSuiteSDF {
           const environmentName = environmentNames[0];
           this.activeEnvironment = environments[environmentName];
           this.statusBar.text = this.statusBarDefault;
+          this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
+          console.log(this.srcPath);
           vscode.window.showInformationMessage(`Found only one environment. Using ${environmentName}`);
         } else {
           const environmentName = await vscode.window.showQuickPick(environmentNames, { ignoreFocusOut: true });
@@ -798,6 +740,8 @@ export class NetSuiteSDF {
       vscode.window.showErrorMessage(errorMessage);
       return;
     }
+    await this.getConfig({ force: true });
+
     const prompt = 'Warning! Syncing to NetSuite will delete File Cabinet and Object contents. Type OK to proceed.';
     const answer = await vscode.window.showInputBox({
       prompt: prompt,
@@ -809,8 +753,10 @@ export class NetSuiteSDF {
       this.outputChannel.append('Cancelling sync.\n');
       return;
     }
+    console.log(process.cwd());
+    // Sanity check
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
 
-    await this.getConfig();
     await this.removeFolders();
     try {
       if (this.sdfConfig) {
@@ -894,7 +840,6 @@ export class NetSuiteSDF {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (workspaceFolders) {
         this.rootPath = workspaceFolders[0].uri.fsPath;
-        this.srcPath = this.rootPath + '/src'
 
         const sdfTokenPath = path.join(this.rootPath, '.clicache');
         const sdfCacheExists = await this.fileExists(sdfTokenPath);
@@ -943,12 +888,6 @@ export class NetSuiteSDF {
 
   async handleStdIn(line: string, command: CLICommand, stdinSubject: Subject<string>) {
     switch (true) {
-      case line.includes('Using user credentials.') && this.doSendPassword:
-        if (!this.password) {
-          await this.resetPassword();
-        }
-        stdinSubject.next(`${this.password}\n`);
-        break;
       case line.includes('WARNING! You are deploying to a Production account, enter YES to continue'):
         const prompt = "Please type 'Deploy' to deploy to production.";
         const answer = await vscode.window.showInputBox({
@@ -1006,7 +945,7 @@ export class NetSuiteSDF {
         this.outputChannel.show();
       }
 
-      let workPath = this.rootPath;
+      let workPath = `${this.rootPath}/${this.activeEnvironment.package}`;
       if (this.tempDir) {
         workPath = path.join(workPath, this.tempDir.name);
       }
@@ -1027,8 +966,7 @@ export class NetSuiteSDF {
 
       const stdinSubject = new Subject<string>();
 
-      console.log(commandArray);
-
+      console.log(commandArray.toString());
       this.sdfcli = spawn('suitecloud', commandArray, {
         cwd: workPath,
         stdin: stdinSubject,

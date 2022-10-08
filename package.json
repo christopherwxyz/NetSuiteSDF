@@ -12,7 +12,7 @@
   "categories": [
     "Other"
   ],
-  "icon": "icon.png",
+  "icon": "https://github.com/christopherwxyz/NetSuiteSDF/blob/master/icon.png",
   "galleryBanner": {
     "color": "#C80000",
     "theme": "dark"
@@ -20,16 +20,14 @@
   "activationEvents": [
     "workspaceContains:**/.sdf",
     "workspaceContains:**/.sdfcli.json",
+    "workspaceContains:**/**/.sdf",
+    "workspaceContains:**/**/.sdfcli.json",
     "onCommand:extension.addDependencies",
     "onCommand:extension.createProject",
     "onCommand:extension.deploy",
-    "onCommand:extension.importBundle",
     "onCommand:extension.importFiles",
     "onCommand:extension.importObjects",
-    "onCommand:extension.issueToken",
-    "onCommand:extension.listBundles",
     "onCommand:extension.listFiles",
-    "onCommand:extension.listMissingDependencies",
     "onCommand:extension.listObjects",
     "onCommand:extension.preview",
     "onCommand:extension.refreshConfig",
@@ -40,7 +38,6 @@
     "onCommand:extension.selectEnvironment",
     "onCommand:extension.sync",
     "onCommand:extension.update",
-    "onCommand:extension.updateCustomRecordsWithInstances",
     "onCommand:extension.validate"
   ],
   "main": "./dist/extension",
@@ -101,11 +98,6 @@
         "mac": "cmd+; d"
       },
       {
-        "command": "extension.importBundle",
-        "key": "ctrl+; shift+b",
-        "mac": "cmd+; shift+b"
-      },
-      {
         "command": "extension.importFiles",
         "key": "ctrl+; shift+f",
         "mac": "cmd+; shift+f"
@@ -116,29 +108,9 @@
         "mac": "cmd+; shift+o"
       },
       {
-        "command": "extension.issueToken",
-        "key": "ctrl+; t",
-        "mac": "cmd+; t"
-      },
-      {
-        "command": "extension.listBundles",
-        "key": "ctrl+; b",
-        "mac": "cmd+; b"
-      },
-      {
-        "command": "extension.listConfiguration",
-        "key": "ctrl+; c",
-        "mac": "cmd+; c"
-      },
-      {
         "command": "extension.listFiles",
         "key": "ctrl+; f",
         "mac": "cmd+; f"
-      },
-      {
-        "command": "extension.listMissingDependencies",
-        "key": "ctrl+; m",
-        "mac": "cmd+; m"
       },
       {
         "command": "extension.listObjects",
@@ -146,19 +118,9 @@
         "mac": "cmd+; o"
       },
       {
-        "command": "extension.preview",
-        "key": "ctrl+; p",
-        "mac": "cmd+; p"
-      },
-      {
         "command": "extension.refreshConfig",
         "key": "ctrl+; r",
         "mac": "cmd+; r"
-      },
-      {
-        "command": "extension.revokeToken",
-        "key": "ctrl+; shift+r",
-        "mac": "cmd+; shift+r"
       },
       {
         "command": "extension.saveToken",
@@ -176,19 +138,9 @@
         "mac": "cmd+; u"
       },
       {
-        "command": "extension.updateCustomRecordWithInstances",
-        "key": "ctrl+; shift+u",
-        "mac": "cmd+; shift+u"
-      },
-      {
         "command": "extension.validate",
         "key": "ctrl+; v",
         "mac": "cmd+; v"
-      },
-      {
-        "command": "extension.resetPassword",
-        "key": "ctrl+; shift+p",
-        "mac": "cmd+; shift+p"
       }
     ],
     "commands": [
@@ -228,11 +180,6 @@
         "category": "SDF"
       },
       {
-        "command": "extension.importBundle",
-        "title": "Import Bundle",
-        "category": "SDF"
-      },
-      {
         "command": "extension.importFiles",
         "title": "Import Files",
         "category": "SDF"
@@ -248,23 +195,8 @@
         "category": "SDF"
       },
       {
-        "command": "extension.listBundles",
-        "title": "List Bundles",
-        "category": "SDF"
-      },
-      {
-        "command": "extension.listConfiguration",
-        "title": "List Configuration",
-        "category": "SDF"
-      },
-      {
         "command": "extension.listFiles",
         "title": "List Files",
-        "category": "SDF"
-      },
-      {
-        "command": "extension.listMissingDependencies",
-        "title": "List Missing Dependencies",
         "category": "SDF"
       },
       {
@@ -313,18 +245,8 @@
         "category": "SDF"
       },
       {
-        "command": "extension.updateCustomRecordWithInstances",
-        "title": "Update Custom Record with Instances",
-        "category": "SDF"
-      },
-      {
         "command": "extension.validate",
         "title": "Validate Project",
-        "category": "SDF"
-      },
-      {
-        "command": "extension.resetPassword",
-        "title": "Reset Password",
         "category": "SDF"
       }
     ],
