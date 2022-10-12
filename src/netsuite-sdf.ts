@@ -178,6 +178,8 @@ export class NetSuiteSDF {
 
     let config = vscode.workspace.getConfiguration('netsuitesdf');
     const useQuickDeploy = config.get('useQuickDeploy');
+
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     if (useQuickDeploy) {
       await this._generateTempDeployDirectory();
 
