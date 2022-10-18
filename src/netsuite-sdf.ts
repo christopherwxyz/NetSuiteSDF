@@ -180,17 +180,23 @@ export class NetSuiteSDF {
     const useQuickDeploy = config.get('useQuickDeploy');
 
     this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
-    if (useQuickDeploy) {
-      await this._generateTempDeployDirectory();
 
-      await this.runCommand(CLICommand.Deploy);
+    // TODO: Resolve this temporary directory issue -- the CLI doesn't recognize
+    //        temp directories, so I'm unable to copy files over appropriately.
+    // if (useQuickDeploy) {
+    //   console.log('Quick deploy')
+    //   await this._generateTempDeployDirectory();
 
-      await rimraf(this.srcPath + '/var', (err: Error) => {
-        vscode.window.showErrorMessage(err.message);
-      });
-    } else {
+    //   console.log('Generated temp dir')
+    //   await this.runCommand(CLICommand.Deploy);
+
+    //   await rimraf(this.srcPath + '/var', (err: Error) => {
+    //     vscode.window.showErrorMessage(err.message);
+    //   });
+    // } else {
+      console.log('Regular deploy')
       await this.runCommand(CLICommand.Deploy);
-    }
+    // }
   }
 
   async importFiles() {
