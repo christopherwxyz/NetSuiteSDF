@@ -546,6 +546,7 @@ export class NetSuiteSDF {
       return;
     }
     await this.getConfig();
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     const deployPath = path.join(this.srcPath, 'deploy.xml');
 
     let currentFile: string;
