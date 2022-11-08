@@ -91,6 +91,7 @@ export class NetSuiteSDF {
     this.addDefaultParameters = false;
 
     await this.getConfig();
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     const projectName = this.sdfConfig.projectName || 'PROJECT_NAME_MISSING';
     const defaultXml = `
     <manifest projecttype="ACCOUNTCUSTOMIZATION">
@@ -101,7 +102,7 @@ export class NetSuiteSDF {
     fs.writeFile(path.join(this.srcPath, 'manifest.xml'), defaultXml, function (err) {
       if (err) throw err;
     });
-    await this.runCommand(CLICommand.AddDependencies, '-all');
+    await this.runCommand(CLICommand.AddDependencies);
   }
 
   async createProject() {
@@ -241,6 +242,8 @@ export class NetSuiteSDF {
           ignoreFocusOut: true,
         });
         if (selectedObjects && selectedObjects.length > 0) {
+          console.log(selectedObjects);
+          console.log(this.currentObject.destination);
           this.createPath(this.currentObject.destination);
           this._importObjects(this.currentObject.type, selectedObjects, this.currentObject.destination, true);
         }
@@ -1052,6 +1055,7 @@ export class NetSuiteSDF {
 
   async copyFile(relativeFrom: string, relativeTo: string) {
     const toDir = relativeTo.split('/').slice(0, -1).join('/');
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     this.createPath(toDir);
     const from = path.join(this.srcPath, relativeFrom);
     const to = path.join(this.srcPath, relativeTo);
@@ -1061,11 +1065,15 @@ export class NetSuiteSDF {
   createPath(targetDir) {
     // Strip leading '/'
     targetDir = targetDir.substring(1);
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     const initDir = this.srcPath;
     const baseDir = this.srcPath;
+    console.log(`baseDir ${baseDir}`);
 
     targetDir.split('/').reduce((parentDir, childDir) => {
       const curDir = path.resolve(baseDir, parentDir, childDir);
+      console.log(`baseDir ${curDir}`);
+
       try {
         fs.mkdirSync(curDir);
       } catch (err) {
