@@ -79,10 +79,11 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   let sync = vscode.commands.registerCommand('extension.sync', netsuiteSdf.sync.bind(netsuiteSdf));
   let update = vscode.commands.registerCommand('extension.update', netsuiteSdf.update.bind(netsuiteSdf));
-  // let updateCustomRecordWithInstances = vscode.commands.registerCommand(
-  //   'extension.updateCustomRecordWithInstances',
-  //   netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
-  // );
+  let updateCustomRecordWithInstances = vscode.commands.registerCommand(
+    'extension.updateCustomRecordWithInstances',
+    netsuiteSdf.updateCustomRecordWithInstances.bind(netsuiteSdf)
+  );
+  let uploadFiles = vscode.commands.registerCommand('extension.uploadFiles', netsuiteSdf.uploadFiles.bind(netsuiteSdf));
   let validate = vscode.commands.registerCommand('extension.validate', netsuiteSdf.validate.bind(netsuiteSdf));
 
   context.subscriptions.push(importFolder);
@@ -113,7 +114,8 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(selectEnvironment);
   context.subscriptions.push(sync);
   context.subscriptions.push(update);
-  // context.subscriptions.push(updateCustomRecordWithInstances);
+  context.subscriptions.push(updateCustomRecordWithInstances);
+  context.subscriptions.push(uploadFiles);
   // context.subscriptions.push(uploadFolders);
   context.subscriptions.push(validate);
 }

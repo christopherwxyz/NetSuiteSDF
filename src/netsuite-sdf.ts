@@ -195,8 +195,8 @@ export class NetSuiteSDF {
     //     vscode.window.showErrorMessage(err.message);
     //   });
     // } else {
-      console.log('Regular deploy')
-      await this.runCommand(CLICommand.Deploy);
+    console.log('Regular deploy')
+    await this.runCommand(CLICommand.Deploy);
     // }
   }
 
@@ -404,6 +404,7 @@ export class NetSuiteSDF {
     }
 
     await this.getConfig();
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
     const objectsRecordPath = path.join(this.srcPath, 'Objects');
     const pathExists = await this.fileExists(objectsRecordPath);
 
@@ -433,33 +434,80 @@ export class NetSuiteSDF {
     }
   }
 
-  // async updateCustomRecordWithInstances() {
-  //   if (!this.sdfCliIsInstalled) {
-  //     vscode.window.showErrorMessage(errorMessage);
-  //     return;
-  //   }
+  async updateCustomRecordWithInstances() {
+    if (!this.sdfCliIsInstalled) {
+      vscode.window.showErrorMessage(errorMessage);
+      return;
+    }
 
-  //   await this.getConfig();
-  //   const customRecordPath = path.join(this.srcPath, '/Objects/Records');
-  //   const pathExists = await this.fileExists(customRecordPath);
-  //   if (pathExists) {
-  //     const rawFileList = await this.ls(customRecordPath);
-  //     const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
+    await this.getConfig();
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
+    const customRecordPath = path.join(this.srcPath, '/Objects/Records');
+    const pathExists = await this.fileExists(customRecordPath);
+    if (pathExists) {
+      const rawFileList = await this.ls(customRecordPath);
+      const fileList = rawFileList.map((filename: string) => filename.slice(0, -4));
 
-  //     if (fileList) {
-  //       const objectId = await vscode.window.showQuickPick(fileList, {
-  //         ignoreFocusOut: true,
-  //       });
-  //       if (objectId) {
-  //         this.runCommand(CLICommand.UpdateCustomRecordsWithInstances, `--scriptid`, `${objectId}`, `--includeinstances`);
-  //       }
-  //     }
-  //   } else {
-  //     vscode.window.showErrorMessage(
-  //       'No custom records found in /Objects/Records. Import Objects before updating with custom records.'
-  //     );
-  //   }
-  // }
+      if (fileList) {
+        const objectId = await vscode.window.showQuickPick(fileList, {
+          ignoreFocusOut: true,
+        });
+        if (objectId) {
+          this.runCommand(CLICommand.Update, `--scriptid`, `${objectId}`, `--includeinstances`);
+        }
+      }
+    } else {
+      vscode.window.showErrorMessage(
+        'No custom records found in /Objects/Records. Import Objects before updating with custom records.'
+      );
+    }
+  }
+
+  async uploadFiles() {
+    await this.getConfig();
+    this.srcPath = `${this.rootPath}/${this.activeEnvironment.package}/src`;
+
+    const stripPath = (fsPath: string) =>
+      fsPath
+        .replace(path.join(this.srcPath, 'FileCabinet'), '')
+        .split('/')
+        .join('/');
+
+    console.log(`Path: ${this.srcPath}/FileCabinet/SuiteScripts/**/*.*`);
+    console.log(`Active environment: ${this.activeEnvironment.package}`);
+
+    const files = await vscode.workspace.findFiles(`${this.activeEnvironment.package}/src/FileCabinet/SuiteScripts/**/*.{js,ts,csv,json}`, `**/.attributes/**`);
+    const filesObj = _(files).reduce(
+      (acc: { [key: string]: true }, uri: vscode.Uri) => ({ ...acc, [stripPath(uri.fsPath)]: true }),
+      {}
+    );
+
+    const sortedFiles = _(filesObj)
+      .keys()
+      .sort()
+      .value();
+    if (sortedFiles.length === 0) {
+      vscode.window.showErrorMessage('No folders found in FileCabinet/SuiteScripts to upload');
+      return;
+    }
+
+    const selectedFiles = await vscode.window.showQuickPick(sortedFiles, {
+      canPickMany: true,
+      ignoreFocusOut: true
+    });
+    if (_.includes(selectedFiles, '/SuiteScripts')) {
+      const doContinue = await vscode.window.showQuickPick(['Yes', 'No'], {
+        placeHolder: 'Are you sure you want to upload your entire SuiteScripts directory?',
+        ignoreFocusOut: true
+      });
+      if (doContinue === 'No') {
+        return;
+      }
+    }
+    // const cleanedFolders = _.map(selectedFolders, folder => `"${folder}"`);
+    const fileString = selectedFiles.join(' ');
+    this.runCommand(CLICommand.UploadFiles, `--paths ${fileString}`);
+  }
 
   validate() {
     if (!this.sdfCliIsInstalled) {
@@ -665,6 +713,15 @@ export class NetSuiteSDF {
     }
   }
 
+  async setProjectAuthId() {
+    if (this.sdfConfig) {
+      const projectPath = `${this.rootPath}/${this.activeEnvironment.package}/project.json`;
+      let projectData = JSON.parse(fs.readFileSync(projectPath).toString());
+      projectData.defaultAuthId = this.activeEnvironment.authid;
+      fs.writeFileSync(projectPath, JSON.stringify(projectData));
+    }
+  }
+
   async resetPassword() {
     if (!this.sdfCliIsInstalled) {
       vscode.window.showErrorMessage(errorMessage);
@@ -735,6 +792,7 @@ export class NetSuiteSDF {
 
     if (this.sdfConfig) {
       await _selectEnvironment();
+      this.setProjectAuthId();
     } else {
       await this.getConfig({ force: true });
     }

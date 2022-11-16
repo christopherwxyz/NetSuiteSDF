@@ -10,5 +10,6 @@ export enum CLICommand {
   SaveToken = 'account:savetoken', // 2022.2
   Setup = 'account:setup', // TODO: Setup this per environment.
   Update = 'object:update', // 2022.2
+  UploadFiles = 'file:upload', // 2022.2
   Validate = 'project:validate' // 2022.2
 }

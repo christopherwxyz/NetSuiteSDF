@@ -40,7 +40,7 @@ const config = {
             options: {
               compilerOptions: {
                 module: 'commonjs',
-                target: 'es6',
+                target: 'ESNext',
                 outDir: 'out',
                 lib: ['es6', 'es2016.array.include', 'es2017.object'],
                 sourceMap: true,

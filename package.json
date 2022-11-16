@@ -2,7 +2,7 @@
   "name": "netsuitesdf",
   "displayName": "NetSuiteSDF",
   "description": "Plugin to integrate NetSuite SDF CLI",
-  "version": "2022.11.8",
+  "version": "2022.11.16",
   "publisher": "christopherwxyz",
   "license": "MIT",
   "repository": "https://github.com/christopherwxyz/NetSuiteSDF",
@@ -38,6 +38,8 @@
     "onCommand:extension.selectEnvironment",
     "onCommand:extension.sync",
     "onCommand:extension.update",
+    "onCommand:extension.updateCustomRecordWithInstances",
+    "onCommand:extension.uploadFiles",
     "onCommand:extension.validate"
   ],
   "main": "./dist/extension",
@@ -245,6 +247,16 @@
         "category": "SDF"
       },
       {
+        "command": "extension.updateCustomRecordWithInstances",
+        "title": "Update Record with Instances",
+        "category": "SDF"
+      },
+      {
+        "command": "extension.uploadFiles",
+        "title": "Upload files",
+        "category": "SDF"
+      },
+      {
         "command": "extension.validate",
         "title": "Validate Project",
         "category": "SDF"
@@ -309,7 +321,6 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@oracle/suitecloud-cli": "^1.6.1",
     "@types/command-exists": "^1.2.0",
     "@types/fs-extra": "^7.0.0",
     "@types/mocha": "^2.2.42",
