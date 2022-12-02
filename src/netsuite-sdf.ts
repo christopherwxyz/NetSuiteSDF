@@ -716,6 +716,11 @@ export class NetSuiteSDF {
   async setProjectAuthId() {
     if (this.sdfConfig) {
       const projectPath = `${this.rootPath}/${this.activeEnvironment.package}/project.json`;
+      if (!fs.existsSync(projectPath)) {
+        fs.writeFileSync(projectPath, `{
+          "defaultAuthId": "EXAMPLEAUTHID"
+        }`);
+      }
       let projectData = JSON.parse(fs.readFileSync(projectPath).toString());
       projectData.defaultAuthId = this.activeEnvironment.authid;
       fs.writeFileSync(projectPath, JSON.stringify(projectData));
